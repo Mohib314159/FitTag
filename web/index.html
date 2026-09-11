@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FitTag — know if it fits before you buy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#1A1714; --ink-soft:#4A443C; --paper:#F6F1E7; --paper-2:#EFE7D7; --card:#FFFFFF;
+    --tape:#E8B500; --tape-dark:#B98A00; --line:#DAD0BD; --indigo:#3F4E70;
+    --tight:#C5453E; --snug:#D98A2B; --ideal:#2E7D5B; --loose:#3E6FA3; --over:#6E59A5;
+    --r:14px; --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+  .mono{font-family:"Space Mono",monospace}
+  .disp{font-family:"Space Grotesk",sans-serif}
+
+  /* tape-tick rule — the signature device */
+  .tape{height:26px; position:relative; background:var(--tape);
+    border-top:2px solid var(--ink); border-bottom:2px solid var(--ink);
+    background-image:repeating-linear-gradient(90deg, var(--ink) 0 1.5px, transparent 1.5px 100%);
+    background-size:14px 100%;}
+  .tape::after{content:"";position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 100%);
+    background-size:70px 100%; opacity:.001}
+  .tape-num{position:absolute;top:50%;transform:translateY(-50%);font-size:10px;
+    font-family:"Space Mono",monospace;color:var(--ink);background:var(--tape);padding:0 5px}
+
+  /* nav */
+  header{position:sticky;top:0;z-index:20;background:rgba(246,241,231,.86);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.02em}
+  .brand .glyph{display:grid;grid-template-columns:repeat(3,6px);grid-template-rows:repeat(3,6px);
+    gap:2px;padding:4px;background:var(--ink);border-radius:4px}
+  .brand .glyph i{background:var(--paper)}
+  .brand .glyph i.on{background:var(--ink);box-shadow:inset 0 0 0 1px var(--paper)}
+  .nav-cta{font-size:14px;font-weight:600;padding:9px 16px;border:2px solid var(--ink);
+    border-radius:999px;background:var(--tape);color:var(--ink);text-decoration:none;cursor:pointer}
+  .nav-cta:hover{background:var(--ink);color:var(--tape)}
+
+  /* hero */
+  .hero{padding:54px 0 30px;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+  .eyebrow{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-soft);margin-bottom:18px;display:flex;gap:8px;align-items:center}
+  .eyebrow b{color:var(--tape-dark)}
+  h1{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(34px,5vw,56px);
+    line-height:1.02;letter-spacing:-.03em;margin-bottom:18px}
+  h1 .u{background:linear-gradient(transparent 62%, var(--tape) 62% 92%, transparent 92%);padding:0 2px}
+  .lede{font-size:17px;color:var(--ink-soft);max-width:46ch;margin-bottom:26px}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{font-weight:600;font-size:15px;padding:13px 22px;border-radius:999px;cursor:pointer;
+    border:2px solid var(--ink);text-decoration:none;display:inline-block}
+  .btn-primary{background:var(--ink);color:var(--paper)}
+  .btn-primary:hover{background:var(--tape);color:var(--ink)}
+  .btn-ghost{background:transparent;color:var(--ink)}
+  .btn-ghost:hover{background:var(--paper-2)}
+
+  /* flat-lay overlay card (the signature visual) */
+  .lay{background:var(--card);border:2px solid var(--ink);border-radius:var(--r);
+    box-shadow:8px 8px 0 var(--ink);overflow:hidden}
+  .lay-top{display:flex;justify-content:space-between;align-items:center;
+    padding:11px 14px;border-bottom:1px solid var(--line);font-size:12px}
+  .badge{display:flex;align-items:center;gap:8px;font-family:"Space Mono",monospace}
+  .marker{display:grid;grid-template-columns:repeat(5,4px);grid-template-rows:repeat(5,4px);
+    gap:1px;padding:3px;background:#000;border-radius:2px}
+  .marker i{background:#000}.marker i.w{background:#fff}
+  .pill{font-family:"Space Mono",monospace;font-size:11px;padding:3px 8px;border-radius:999px;
+    background:var(--ideal);color:#fff;font-weight:700}
+  .lay svg{display:block;width:100%;height:auto;background:
+    linear-gradient(var(--paper-2) 1px,transparent 1px) 0 0/100% 24px,
+    linear-gradient(90deg,var(--paper-2) 1px,transparent 1px) 0 0/24px 100%, var(--card)}
+  .mline{stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+  .mcap{fill:var(--ink);font-family:"Space Mono",monospace;font-size:13px;font-weight:700}
+  .mcap-bg{fill:#fff;opacity:.82}
+  .dot{fill:var(--tape);stroke:var(--ink);stroke-width:1.5}
+  @media (prefers-reduced-motion:no-preference){
+    .draw{stroke-dashoffset:var(--len);animation:draw .9s ease forwards}
+    .draw.d2{animation-delay:.15s}.draw.d3{animation-delay:.3s}.draw.d4{animation-delay:.45s}
+    .fade{opacity:0;animation:fade .5s ease forwards}
+    .fade.d2{animation-delay:.5s}.fade.d3{animation-delay:.65s}.fade.d4{animation-delay:.8s}.fade.d5{animation-delay:.95s}
+    @keyframes draw{to{stroke-dashoffset:0}} @keyframes fade{to{opacity:1}}
+  }
+
+  section{padding:46px 0}
+  .kicker{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--tape-dark);margin-bottom:10px}
+  h2{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(24px,3.4vw,34px);
+    letter-spacing:-.02em;margin-bottom:14px}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}
+  .step{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);padding:20px}
+  .step .n{font-family:"Space Mono",monospace;font-size:13px;font-weight:700;color:var(--tape-dark);
+    border-bottom:2px solid var(--tape);display:inline-block;padding-bottom:2px;margin-bottom:12px}
+  .step h3{font-family:"Space Grotesk",sans-serif;font-size:17px;font-weight:600;margin-bottom:6px}
+  .step p{font-size:14px;color:var(--ink-soft)}
+
+  /* fit demo */
+  .demo{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+  .panel{background:var(--card);border:2px solid var(--ink);border-radius:var(--r);padding:22px}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .panel-h .tag{font-family:"Space Mono",monospace;font-size:11px;color:var(--ink-soft)}
+  .seg{display:flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;margin:14px 0 18px}
+  .seg button{flex:1;border:0;background:transparent;padding:9px;font-weight:600;font-size:13px;
+    cursor:pointer;font-family:"Inter",sans-serif}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+  .ctrl{margin:15px 0}
+  .ctrl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:7px}
+  .ctrl label .v{font-family:"Space Mono",monospace;color:var(--indigo)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;
+    background:var(--paper-2);outline-offset:3px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--tape);border:2px solid var(--ink);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--tape);
+    border:2px solid var(--ink);cursor:pointer}
+  .pref{display:flex;gap:8px;margin-top:6px}
+  .pref button{flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:8px;
+    padding:8px;font-size:12px;font-weight:600;cursor:pointer}
+  .pref button[aria-pressed="true"]{border-color:var(--ink);background:var(--paper-2)}
+
+  /* measured list */
+  .meas{list-style:none;margin-top:6px}
+  .meas li{display:flex;justify-content:space-between;align-items:baseline;
+    padding:11px 0;border-bottom:1px dashed var(--line)}
+  .meas li:last-child{border-bottom:0}
+  .meas .name{font-size:14px;font-weight:500}
+  .meas .val{font-family:"Space Mono",monospace;font-weight:700;font-size:15px}
+  .meas .tol{font-family:"Space Mono",monospace;font-size:11px;color:var(--ink-soft);margin-left:6px}
+
+  /* fit result */
+  .zones{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+  .zone{display:flex;align-items:center;justify-content:space-between;
+    padding:11px 13px;border-radius:10px;border:1.5px solid var(--line)}
+  .zone .z-name{font-size:13px;font-weight:600}
+  .zone .z-right{display:flex;align-items:center;gap:10px}
+  .zone .z-ease{font-family:"Space Mono",monospace;font-size:12px;color:var(--ink-soft)}
+  .chip{font-size:12px;font-weight:700;color:#fff;padding:3px 10px;border-radius:999px}
+  .summary{margin-top:16px;padding:15px;border-radius:10px;background:var(--paper-2);
+    border-left:4px solid var(--ideal)}
+  .summary .head{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:16px;margin-bottom:4px}
+  .summary .sub{font-size:13px;color:var(--ink-soft)}
+  .summary .rec{font-family:"Space Mono",monospace;font-size:12px;margin-top:8px;
+    display:inline-block;padding:4px 10px;border:1.5px solid var(--ink);border-radius:999px}
+
+  .tryon{margin-top:16px;border:1.5px dashed var(--line);border-radius:10px;padding:14px;
+    display:flex;gap:14px;align-items:center}
+  .tryon .ph{width:54px;height:64px;border-radius:8px;background:
+    linear-gradient(135deg,var(--indigo),#5d6f96);flex:none;position:relative;overflow:hidden}
+  .tryon .ph::after{content:"";position:absolute;left:50%;top:18%;width:54%;height:40%;
+    transform:translateX(-50%);background:rgba(255,255,255,.22);border-radius:6px}
+  .tryon .t-txt{font-size:12px;color:var(--ink-soft)}
+  .tryon .t-txt b{color:var(--ink);font-weight:600}
+
+  /* wedge */
+  .wedge{background:var(--ink);color:var(--paper);border-radius:var(--r);padding:34px;margin-top:8px}
+  .wedge h2{color:var(--paper)}
+  .vs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:22px}
+  .vs .cell{border:1px solid #3a342c;border-radius:10px;padding:16px}
+  .vs .who{font-family:"Space Mono",monospace;font-size:12px;color:var(--tape);margin-bottom:8px}
+  .vs p{font-size:13.5px;color:#D9D2C5}
+  .vs .cell.us{border-color:var(--tape);background:#211d17}
+  .vs .cell.us p{color:var(--paper)}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--ink-soft);font-size:13px}
+  footer .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .note{font-family:"Space Mono",monospace;font-size:11px;color:var(--ink-soft);margin-top:18px}
+
+  .uploader{border:1.5px dashed var(--ink);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px;background:var(--paper-2)}
+  .up-btn{font-weight:600;font-size:14px;padding:10px 16px;border:2px solid var(--ink);border-radius:999px;background:var(--tape);cursor:pointer;font-family:"Inter",sans-serif}
+  .up-btn:hover{background:var(--ink);color:var(--tape)} .up-btn:disabled{opacity:.5;cursor:wait}
+  .up-link{display:block;margin:9px auto 0;background:none;border:0;font-size:13px;color:var(--indigo);text-decoration:underline;cursor:pointer}
+  .up-hint{font-size:11.5px;color:var(--ink-soft);margin-top:8px;font-family:"Space Mono",monospace}
+  .overlay-img{width:100%;border-radius:10px;border:1.5px solid var(--ink);margin-bottom:12px;display:block}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:999px;font-size:13px;z-index:50;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
+  .toast.show{opacity:1}
+  .size-badge{display:inline-block;font-family:"Space Mono",monospace;font-size:11px;font-weight:700;
+    background:var(--indigo);color:#fff;padding:3px 9px;border-radius:999px;margin-bottom:6px}
+  .fb-row{margin-top:12px;padding:12px;border:1.5px dashed var(--line);border-radius:10px}
+  .fb-q{font-size:12.5px;color:var(--ink-soft);display:block;margin-bottom:8px}
+  .fb-btns{display:flex;gap:8px}
+  .fb-btns button{flex:1;border:1.5px solid var(--ink);background:var(--card);border-radius:8px;padding:8px;
+    font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif}
+  .fb-btns button:hover{background:var(--paper-2)}
+  .zone .z-note{font-family:"Space Mono",monospace;font-size:10px;color:var(--ink-soft);display:block;margin-top:2px}
+  .ref-up{width:100%;border:1.5px solid var(--ink);background:var(--tape);border-radius:8px;padding:9px;
+    font-weight:600;font-size:13px;cursor:pointer;margin-bottom:6px;font-family:"Inter",sans-serif}
+  .ref-up:hover{background:var(--ink);color:var(--tape)}
+  .search-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+  .s-card{border:1.5px solid var(--ink);border-radius:12px;padding:14px;background:var(--card)}
+  .s-card .s-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .s-card .s-title{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:14px}
+  .s-card .s-price{font-family:"Space Mono",monospace;font-size:12px;color:var(--ink-soft)}
+  .s-card .s-fit{font-size:12px;color:var(--ink-soft);margin-bottom:8px}
+  .s-chips{display:flex;gap:5px;flex-wrap:wrap}
+  .s-chip{font-size:10px;font-weight:700;color:#fff;padding:2px 7px;border-radius:999px}
+  .s-rank{font-family:"Space Mono",monospace;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;border:1.5px solid var(--ink)}
+  .tryon-btn{margin-top:10px;border:1.5px solid var(--ink);background:var(--card);border-radius:8px;padding:8px 14px;
+    font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif}
+  .tryon-btn:hover{background:var(--paper-2)}
+  .tryon-img{width:100%;max-width:240px;border-radius:10px;border:1.5px solid var(--ink);margin-top:10px;display:block}
+  @media(max-width:860px){ .search-grid{grid-template-columns:1fr} }
+  @media(max-width:860px){
+    .hero{grid-template-columns:1fr;gap:28px;padding-top:34px}
+    .steps{grid-template-columns:1fr}
+    .demo{grid-template-columns:1fr}
+    .vs{grid-template-columns:1fr}
+    .lay{box-shadow:5px 5px 0 var(--ink)}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="brand">
+      <span class="glyph" aria-hidden="true">
+        <i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i>
+      </span>
+      FitTag
+    </div>
+    <a class="nav-cta" href="#fit">Try the fit check</a>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <div class="wrap hero">
+    <div>
+      <div class="eyebrow"><span>The truth layer for resale</span> · <b>measured, not guessed</b></div>
+      <h1>Know if it <span class="u">actually fits</span><br>before you buy it.</h1>
+      <p class="lede">Second-hand has no size charts and the label lies. FitTag reads a small marker in
+        the seller's photo and measures the garment to the centimetre — then tells the buyer exactly
+        how it'll sit. The geometry does the measuring; the AI only names the garment.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#fit">Check a fit</a>
+        <a class="btn btn-ghost" href="#how">How it works</a>
+      </div>
+    </div>
+
+    <!-- signature flat-lay overlay -->
+    <div class="lay">
+      <div class="lay-top">
+        <span class="badge">
+          <span class="marker" aria-hidden="true">
+            <i></i><i class="w"></i><i></i><i class="w"></i><i></i>
+            <i class="w"></i><i></i><i class="w"></i><i></i><i class="w"></i>
+            <i></i><i class="w"></i><i></i><i></i><i></i>
+            <i class="w"></i><i></i><i class="w"></i><i class="w"></i><i class="w"></i>
+            <i></i><i class="w"></i><i></i><i class="w"></i><i></i>
+          </span>
+          calibrated · 4-marker mat
+        </span>
+        <span class="pill">±1.0 cm</span>
+      </div>
+      <svg viewBox="0 0 420 470" role="img" aria-label="A t-shirt measured to the centimetre">
+        <!-- garment -->
+        <polygon points="120,120 175,120 190,142 232,142 247,120 300,120 360,150 344,212 300,196 300,432 120,432 120,196 76,212 60,150" fill="#41506E" opacity="0.92"/>
+        <!-- length -->
+        <line class="mline draw" x1="210" y1="122" x2="210" y2="430" style="--len:310" />
+        <circle class="dot fade" cx="210" cy="122" r="4"/><circle class="dot fade" cx="210" cy="430" r="4"/>
+        <rect class="mcap-bg" x="216" y="268" width="86" height="20" rx="3"/>
+        <text class="mcap fade" x="220" y="283">72.0 cm</text>
+        <!-- pit to pit -->
+        <line class="mline draw d2" x1="120" y1="196" x2="300" y2="196" style="--len:180"/>
+        <circle class="dot fade d2" cx="120" cy="196" r="4"/><circle class="dot fade d2" cx="300" cy="196" r="4"/>
+        <rect class="mcap-bg" x="168" y="176" width="86" height="20" rx="3"/>
+        <text class="mcap fade d2" x="172" y="191">51.8 cm</text>
+        <!-- shoulder -->
+        <line class="mline draw d3" x1="120" y1="128" x2="300" y2="128" style="--len:180"/>
+        <rect class="mcap-bg" x="168" y="108" width="86" height="20" rx="3"/>
+        <text class="mcap fade d3" x="172" y="123">51.9 cm</text>
+        <!-- hem -->
+        <line class="mline draw d4" x1="120" y1="424" x2="300" y2="424" style="--len:180"/>
+        <rect class="mcap-bg" x="168" y="428" width="86" height="20" rx="3"/>
+        <text class="mcap fade d4" x="172" y="443">50.0 cm</text>
+        <!-- sleeve -->
+        <line class="mline draw d4" x1="300" y1="172" x2="352" y2="184" style="--len:54"/>
+        <rect class="mcap-bg" x="300" y="150" width="78" height="19" rx="3"/>
+        <text class="mcap fade d5" x="304" y="164">12.1 cm</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="tape" aria-hidden="true">
+    <span class="tape-num" style="left:8%">10</span><span class="tape-num" style="left:28%">20</span>
+    <span class="tape-num" style="left:48%">30</span><span class="tape-num" style="left:68%">40</span>
+    <span class="tape-num" style="left:88%">50</span>
+  </div>
+
+  <!-- HOW -->
+  <section id="how" class="wrap">
+    <div class="kicker">How it works</div>
+    <h2>A ruler the camera understands.</h2>
+    <p class="lede" style="max-width:60ch">No app to wrestle with — the seller already lays clothes flat
+      to photograph them. They just lay it on the FitTag sheet.</p>
+    <div class="steps">
+      <div class="step"><span class="n">STEP 01</span><h3>Drop in the tag</h3>
+        <p>The garment sits on a printed sheet with corner markers — a scale the lens can read, even at an angle.</p></div>
+      <div class="step"><span class="n">STEP 02</span><h3>Geometry measures it</h3>
+        <p>One photo is rectified to a true top-down view, and the silhouette is measured to the centimetre, with error bars. Nothing is estimated.</p></div>
+      <div class="step"><span class="n">STEP 03</span><h3>The buyer sees the fit</h3>
+        <p>Buyers enter their measurements once — or match a garment they own — and see exactly how it'll sit, per zone.</p></div>
+    </div>
+  </section>
+
+  <!-- FIT DEMO -->
+  <section id="fit" class="wrap">
+    <div class="kicker">Live fit check</div>
+    <h2>This vintage tee — will it fit you?</h2>
+    <p class="lede" style="max-width:58ch">A real measured listing on the left. Move the sliders on the
+      right; the verdict updates from the same arithmetic the engine uses.</p>
+
+    <div class="demo">
+      <!-- measured garment -->
+      <div class="panel">
+        <div class="panel-h">
+          <strong class="disp" style="font-size:18px">Measured garment</strong>
+          <span class="tag" id="modeBadge">demo data</span>
+        </div>
+        <div class="uploader">
+          <input type="file" id="fileInput" accept="image/*" hidden>
+          <button class="up-btn" id="uploadBtn">Upload a flat-lay photo</button>
+          <button class="up-link" id="sampleBtn">try a sample</button>
+          <div class="up-hint" id="upHint">Lay it on the FitTag mat, shoot from above.</div>
+        </div>
+        <img id="overlayImg" class="overlay-img" alt="Your garment, measured" hidden>
+        <span class="tag" id="garmentSub" style="display:block;margin:2px 0 4px">label reads “M” — meaningless in vintage</span>
+        <span id="sizeBadge" class="size-badge" hidden></span>
+        <ul class="meas" id="garmentList"></ul>
+        <div class="note" id="garmentNote">Source: geometry · calibration = 4-marker mat · type named by classifier</div>
+      </div>
+
+      <!-- buyer fit -->
+      <div class="panel">
+        <div class="panel-h">
+          <strong class="disp" style="font-size:18px">Your fit</strong>
+          <span class="tag" id="modeTag">vs your body</span>
+        </div>
+        <div class="seg" role="tablist" aria-label="Comparison mode">
+          <button id="mBody" aria-pressed="true" onclick="setMode('body')">My measurements</button>
+          <button id="mGarment" aria-pressed="false" onclick="setMode('garment')">A garment I own</button>
+        </div>
+
+        <div id="controls"></div>
+
+        <div id="prefRow" class="ctrl">
+          <label>Preferred fit</label>
+          <div class="pref" role="group" aria-label="Preferred fit">
+            <button data-pref="fitted" onclick="setPref('fitted')">Fitted</button>
+            <button data-pref="regular" aria-pressed="true" onclick="setPref('regular')">Regular</button>
+            <button data-pref="oversized" onclick="setPref('oversized')">Oversized</button>
+          </div>
+        </div>
+
+        <div class="zones" id="zones"></div>
+        <div class="summary" id="summary"></div>
+        <div id="feedbackRow" class="fb-row" hidden>
+          <span class="fb-q">Bought it? Tell us how it really fit — this trains the model:</span>
+          <div class="fb-btns">
+            <button onclick="sendFeedback('tighter')">Ran tighter</button>
+            <button onclick="sendFeedback('accurate')">Spot on</button>
+            <button onclick="sendFeedback('looser')">Ran looser</button>
+          </div>
+        </div>
+
+        <div class="tryon">
+          <div class="ph" aria-hidden="true"></div>
+          <div class="t-txt"><b>Try-on preview is illustrative.</b> It shows the look; the fit
+            verdict above is what's measured — that's the part you can trust.
+            <button class="tryon-btn" id="tryonBtn">Generate try-on</button></div>
+        </div>
+        <input type="file" id="buyerPhoto" accept="image/*" hidden>
+        <img id="tryonImg" class="tryon-img" alt="Illustrative try-on" hidden>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIT-BASED SEARCH -->
+  <section id="fitsearch" class="wrap">
+    <div class="kicker">Powered by measurements</div>
+    <h2>Items that actually fit you.</h2>
+    <p class="lede" style="max-width:60ch">Because every listing is measured, the catalog ranks by
+      <em>your</em> fit — the search no resale app has. Move the sliders above; this reorders live.</p>
+    <div id="searchResults" class="search-grid"></div>
+  </section>
+
+  <!-- WEDGE -->
+  <section class="wrap">
+    <div class="wedge">
+      <div class="kicker" style="color:var(--tape)">Why this can't be copied</div>
+      <h2>Everyone else needs data a one-off item doesn't have.</h2>
+      <div class="vs">
+        <div class="cell"><div class="who">Google try-on</div>
+          <p>Shows a plausible image — and its own app shrinks the clothes to match your photo. Size-blind.</p></div>
+        <div class="cell"><div class="who">Zara “What's my size”</div>
+          <p>Works off a million customers' return data per item. Secondhand has no SKU and no returns.</p></div>
+        <div class="cell us"><div class="who">FitTag</div>
+          <p>Measures the actual garment from one photo. The only way to know a one-off item — so we're the only ones who can tell you the truth.</p></div>
+      </div>
+    </div>
+    <div class="note">Prototype — garment numbers are from a real measured sample; the fit panel computes live.
+      The measurement engine (ArUco homography + silhouette geometry) runs server-side.</div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>FitTag · the truth layer for resale</span>
+    <span class="mono">geometry measures · AI only names</span>
+  </div>
+</footer>
+
+<script>
+let GARMENT = { type:"t-shirt",
+  m:{ pit_to_pit:51.8, shoulder_width:51.9, length:72.0, sleeve_length:12.1, hem_width:50.0 },
+  tol:{ pit_to_pit:1.0, shoulder_width:1.5, length:1.0, sleeve_length:1.5, hem_width:1.0 } };
+const CANON={top:["length","pit_to_pit","shoulder_width","sleeve_length","hem_width"],
+             bottom:["waist_flat","hip_flat","inseam","thigh","leg_opening"]};
+const LABELS={pit_to_pit:"Pit to pit",shoulder_width:"Shoulder",length:"Length",sleeve_length:"Sleeve",
+  hem_width:"Hem",waist_flat:"Waist (flat)",hip_flat:"Hip (flat)",inseam:"Inseam",thigh:"Thigh",leg_opening:"Leg opening"};
+const VCOL={too_tight:"var(--tight)",snug:"var(--snug)",ideal:"var(--ideal)",loose:"var(--loose)",oversized:"var(--over)"};
+const VTXT={too_tight:"too tight",snug:"snug",ideal:"ideal",loose:"loose",oversized:"oversized"};
+const cat=()=> ("pit_to_pit" in GARMENT.m) ? "top" : "bottom";
+
+const BANDS=[[-1e9,0,"too_tight"],[0,6,"snug"],[6,14,"ideal"],[14,22,"loose"],[22,1e9,"oversized"]];
+const REF=[[-1e9,-1.5,"too_tight"],[-1.5,1.5,"ideal"],[1.5,4,"loose"],[4,1e9,"oversized"]];
+const SHIFT={fitted:-4,regular:0,oversized:6};
+const TOP_MAP={pit_to_pit:["chest",true],shoulder_width:["shoulder",false],length:["length",false]};
+const BOT_MAP={waist_flat:["waist",true],hip_flat:["hip",true],inseam:["inseam",false]};
+const band=(e,b)=>{for(const[lo,hi,l]of b)if(e>=lo&&e<hi)return l;return "ideal";};
+const r1=x=>Math.round(x*10)/10;
+const isBottomType=t=>["jeans","trousers","shorts","skirt","pants"].includes(t);
+
+const CATALOG=[
+ {id:"tee-cobalt",type:"t-shirt",title:"90s cobalt boxy tee",price:18,m:{pit_to_pit:52,shoulder_width:52,length:72}},
+ {id:"tee-slim",type:"t-shirt",title:"Slim ringer tee",price:12,m:{pit_to_pit:47,shoulder_width:46,length:66}},
+ {id:"tee-xl",type:"t-shirt",title:"Oversized skate tee",price:22,m:{pit_to_pit:60,shoulder_width:60,length:76}},
+ {id:"jeans-501",type:"jeans",title:"Levi's 501 straight",price:45,m:{waist_flat:42,hip_flat:52,inseam:78}},
+ {id:"jeans-slim",type:"jeans",title:"Slim tapered jean",price:30,m:{waist_flat:38,hip_flat:48,inseam:74}},
+ {id:"jeans-baggy",type:"jeans",title:"Baggy carpenter jean",price:38,m:{waist_flat:48,hip_flat:58,inseam:80}},
+];
+const SEARCH_SCORE={ideal:2,snug:1,loose:1,too_tight:-3,oversized:-2};
+
+const CONTROLS={
+  top:{body:[["chest","Your chest (around)",80,128],["shoulder","Your shoulders (across)",38,54],["length","Your ideal length",58,82]],
+       garment:[["pit_to_pit","Their pit-to-pit",40,68],["shoulder_width","Their shoulder",38,60],["length","Their length",55,86]]},
+  bottom:{body:[["waist","Your waist (around)",58,110],["hip","Your hips (around)",80,130],["inseam","Your inseam",60,92]],
+          garment:[["waist_flat","Their waist (flat)",30,60],["hip_flat","Their hip (flat)",30,62],["inseam","Their inseam",55,90]]}
+};
+const DEFAULTS={ top:{body:{chest:98,shoulder:46,length:70},garment:{pit_to_pit:53,shoulder_width:47,length:71}},
+  bottom:{body:{waist:82,hip:98,inseam:78},garment:{waist_flat:42,hip_flat:50,inseam:76}} };
+let STATE=JSON.parse(JSON.stringify(DEFAULTS));
+let mode='body', pref='regular', lastPrimary='ideal';
+
+function fitZones(gm, gtype, target, source, prefv, tolMap){
+  tolMap=tolMap||{}; const MAP=isBottomType(gtype)?BOT_MAP:TOP_MAP; const z=[];
+  for(const flat in MAP){
+    if(!(flat in gm))continue;
+    const [bodyKey,doubled]=MAP[flat]; let ease,verdict,note="",conf="firm",vfun,etol;
+    if(source==="reference_garment"){
+      if(!(flat in target))continue; ease=r1(gm[flat]-target[flat]); vfun=e=>band(e,REF); etol=tolMap[flat]||1.0;
+    }else if(doubled){
+      if(!(bodyKey in target))continue; ease=r1(gm[flat]*2-target[bodyKey]); vfun=e=>band(e-SHIFT[prefv],BANDS); etol=2*(tolMap[flat]||1.0);
+    }else{
+      if(!(bodyKey in target))continue; ease=r1(gm[flat]-target[bodyKey]); vfun=e=>band(e,REF); etol=tolMap[flat]||1.0;
+    }
+    verdict=vfun(ease); const alts=[vfun(ease-etol),vfun(ease+etol)].filter(v=>v!==verdict);
+    if(alts.length){conf="near boundary";note=`likely ${VTXT[verdict]}, possibly ${VTXT[alts[0]]}`;}
+    z.push({zone:flat,ease,verdict,note,conf});
+  }
+  return z;
+}
+
+function renderGarmentList(){
+  const ul=document.getElementById('garmentList'); ul.innerHTML='';
+  for(const k of CANON[cat()]){ if(!(k in GARMENT.m))continue;
+    const tol=GARMENT.tol[k]!=null?GARMENT.tol[k]:1.0;
+    ul.insertAdjacentHTML('beforeend',`<li><span class="name">${LABELS[k]}</span><span><span class="val">${GARMENT.m[k].toFixed(1)} cm</span><span class="tol">\u00b1${tol.toFixed(1)}</span></span></li>`);
+  }
+}
+function renderControls(){
+  const box=document.getElementById('controls'); box.innerHTML='';
+  if(mode==='garment'){
+    box.insertAdjacentHTML('beforeend',`<button class="ref-up" id="refUpBtn">\ud83d\udcf7 Measure one you own from a photo</button>`);
+    document.getElementById('refUpBtn').addEventListener('click',()=>document.getElementById('refFile').click());
+  }
+  for(const[key,label,min,max]of CONTROLS[cat()][mode]){
+    const val=STATE[cat()][mode][key];
+    box.insertAdjacentHTML('beforeend',`<div class="ctrl"><label>${label}<span class="v"><span id="v_${key}">${val}</span> cm</span></label><input type="range" min="${min}" max="${max}" value="${val}" step="0.5" oninput="onSlide('${key}',this.value)" aria-label="${label}"></div>`);
+  }
+  document.getElementById('prefRow').style.display = mode==='body' ? 'block':'none';
+}
+function onSlide(key,v){ STATE[cat()][mode][key]=parseFloat(v); document.getElementById('v_'+key).textContent=v; update(); }
+function setMode(m){ mode=m; mBody.setAttribute('aria-pressed',m==='body'); mGarment.setAttribute('aria-pressed',m==='garment');
+  document.getElementById('modeTag').textContent=m==='body'?'vs your body':'vs a garment you own'; renderControls(); update(); }
+function setPref(p){ pref=p; document.querySelectorAll('[data-pref]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.pref===p)); update(); }
+
+function update(){
+  const target = mode==='body' ? STATE[cat()].body : STATE[cat()].garment;
+  const source = mode==='body' ? 'manual' : 'reference_garment';
+  const zones = fitZones(GARMENT.m, cat(), target, source, pref, GARMENT.tol);
+  const box=document.getElementById('zones'); box.innerHTML='';
+  for(const z of zones){
+    const sign=z.ease>0?'+':''; const unit=(mode==='body'&&["pit_to_pit","waist_flat","hip_flat"].includes(z.zone))?' circ.':'';
+    box.insertAdjacentHTML('beforeend',`<div class="zone" style="border-color:${VCOL[z.verdict]}33"><span class="z-name">${LABELS[z.zone]}${z.note?`<span class="z-note">${z.note}</span>`:''}</span><span class="z-right"><span class="z-ease">${sign}${z.ease} cm${unit}</span><span class="chip" style="background:${VCOL[z.verdict]}">${VTXT[z.verdict]}</span></span></div>`);
+  }
+  const s=document.getElementById('summary');
+  if(!zones.length){ s.innerHTML='<div class="sub">Not enough overlapping measurements.</div>'; document.getElementById('feedbackRow').hidden=true; }
+  else{
+    const primary=zones[0].verdict; lastPrimary=primary;
+    const head={too_tight:"Tight on you",snug:"Fits snug",ideal:"Fits you well",loose:"Roomy on you",oversized:"Oversized on you"}[primary];
+    const rec={too_tight:"size up",snug:"true to size (snug)",ideal:"true to size",loose:"true to size (relaxed)",oversized:"consider sizing down"}[primary];
+    const detail=zones.map(z=>`${LABELS[z.zone].toLowerCase()} ${VTXT[z.verdict]}`).join(' \u00b7 ');
+    s.style.borderLeftColor=VCOL[primary];
+    s.innerHTML=`<div class="head">${head}</div><div class="sub">${detail}.</div><span class="rec">recommendation \u2014 ${rec}</span>`;
+    document.getElementById('feedbackRow').hidden=false;
+  }
+  renderSearch();
+}
+
+function renderSearch(){
+  const body={...STATE.top.body, ...STATE.bottom.body};
+  const ranked=CATALOG.map(it=>{
+    const z=fitZones(it.m, it.type, body, 'manual', pref, {});
+    return {it, z, score:z.reduce((a,zz)=>a+(SEARCH_SCORE[zz.verdict]||0),0)};
+  }).filter(r=>r.z.length).sort((a,b)=>b.score-a.score).slice(0,6);
+  const box=document.getElementById('searchResults'); box.innerHTML='';
+  for(const {it,z,score} of ranked){
+    const chips=z.map(zz=>`<span class="s-chip" style="background:${VCOL[zz.verdict]}">${LABELS[zz.zone].split(' ')[0]}: ${VTXT[zz.verdict]}</span>`).join('');
+    box.insertAdjacentHTML('beforeend',`<div class="s-card"><div class="s-top"><span class="s-title">${it.title}</span><span class="s-rank" style="color:${score>=3?'var(--ideal)':score>=1?'var(--loose)':'var(--tight)'}">${score>=0?'+':''}${score}</span></div><div class="s-fit">£${it.price} \u00b7 ${score>=3?'great fit for you':score>=1?'good fit for you':'probably won\u2019t fit'}</div><div class="s-chips">${chips}</div></div>`);
+  }
+}
+
+// ---- live API wiring ----
+const API=location.origin; let LIVE=false;
+function toast(msg){ let t=document.getElementById('toast'); if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);} t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),3400); }
+async function checkHealth(){ try{const r=await fetch(API+'/health',{cache:'no-store'}); if(r.ok)LIVE=true;}catch(e){}
+  document.getElementById('modeBadge').textContent=LIVE?'live engine':'demo data';
+  if(!LIVE)document.getElementById('upHint').textContent='Backend offline — demo data. Run the API to measure real photos.'; }
+
+async function postMeasure(file, endpoint){
+  const fd=new FormData(); fd.append('file',file);
+  const r=await fetch(API+endpoint,{method:'POST',body:fd}); return r.json();
+}
+async function uploadPhoto(file){
+  if(!LIVE){toast('Start the backend (uvicorn api.server:app) to measure real photos.');return;}
+  const btn=document.getElementById('uploadBtn'); btn.disabled=true; const t=btn.textContent; btn.textContent='Measuring\u2026';
+  try{ const d=await postMeasure(file,'/measure'); if(!d.ok)toast(d.error||'Could not measure.'); else applyGarment(d); }
+  catch(e){toast('Measurement failed: '+e.message);} btn.disabled=false; btn.textContent=t;
+}
+function applyGarment(d){
+  GARMENT.type=d.garment.garment_type; GARMENT.m={}; GARMENT.tol={};
+  for(const m of d.garment.measurements){GARMENT.m[m.name]=m.value_cm; GARMENT.tol[m.name]=m.tolerance_cm;}
+  const img=document.getElementById('overlayImg'); img.src=API+d.overlay_url+'?t='+Date.now(); img.hidden=false;
+  document.getElementById('garmentSub').textContent=d.garment.garment_type+' \u00b7 measured from your photo';
+  const sb=document.getElementById('sizeBadge'); if(d.size){sb.textContent='measures like '+d.size.label; sb.hidden=false;}
+  document.getElementById('garmentNote').textContent=(d.garment.notes||[]).join(' \u00b7 ');
+  document.getElementById('modeBadge').textContent='measured';
+  renderGarmentList(); renderControls(); update();
+}
+async function uploadReference(file){
+  if(!LIVE){toast('Start the backend to measure a garment you own.');return;}
+  toast('Measuring your garment\u2026');
+  try{ const d=await postMeasure(file,'/measure-reference'); if(!d.ok){toast(d.error);return;}
+    const c=isBottomType(d.garment.garment_type)?'bottom':'top';
+    for(const m of d.garment.measurements){ if(m.name in STATE[c].garment) STATE[c].garment[m.name]=m.value_cm; }
+    if(cat()!==c){ /* keep current garment category */ }
+    renderControls(); update(); toast('Set your fit target from that garment.');
+  }catch(e){toast('Failed: '+e.message);}
+}
+async function sendFeedback(outcome){
+  if(!LIVE){toast('Thanks — feedback recorded.');return;}
+  try{ const body={...STATE.top.body,...STATE.bottom.body};
+    const r=await fetch(API+'/feedback',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({item_id:GARMENT.type,predicted:lastPrimary,outcome,zone:cat()==='top'?'chest':'waist',profile:body})});
+    const d=await r.json(); toast(`Thanks — logged. ${d.signal.n} reports so far.`);
+  }catch(e){toast('Could not send feedback.');}
+}
+
+document.getElementById('uploadBtn').addEventListener('click',()=>document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change',e=>{ if(e.target.files[0])uploadPhoto(e.target.files[0]); });
+document.getElementById('sampleBtn').addEventListener('click',async()=>{ if(!LIVE){toast('Start the backend to run a sample.');return;}
+  try{const r=await fetch(API+'/sample-tee.png'); const b=await r.blob(); uploadPhoto(new File([b],'sample-tee.png',{type:'image/png'}));}catch(e){toast('Could not load sample.');} });
+document.getElementById('tryonBtn').addEventListener('click',()=>document.getElementById('buyerPhoto').click());
+document.getElementById('buyerPhoto').addEventListener('change',async e=>{
+  if(!LIVE){toast('Start the backend (and add a FASHN/Gemini key) to generate.');return;}
+  if(!e.target.files[0])return; toast('Generating try-on\u2026');
+  try{ const fd=new FormData(); fd.append('buyer_photo',e.target.files[0]);
+    const gr=await fetch(API+'/sample-tee.png'); fd.append('garment_photo',new File([await gr.blob()],'g.png',{type:'image/png'}));
+    const r=await fetch(API+'/tryon',{method:'POST',body:fd}); const d=await r.json();
+    if(d.image_url){const im=document.getElementById('tryonImg'); im.src=d.image_url; im.hidden=false;}
+    else toast('Add a FASHN or Gemini API key to generate. The fit verdict is already measured.');
+  }catch(err){toast('Try-on failed: '+err.message);}
+});
+
+// hidden ref-file input
+const rf=document.createElement('input'); rf.type='file'; rf.id='refFile'; rf.accept='image/*'; rf.hidden=true;
+rf.addEventListener('change',e=>{ if(e.target.files[0])uploadReference(e.target.files[0]); }); document.body.appendChild(rf);
+
+renderGarmentList(); renderControls(); update(); checkHealth();
+</script>
+</body>
+</html>

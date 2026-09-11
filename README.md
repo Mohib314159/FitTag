@@ -1,8 +1,18 @@
 # FitTag
 
-**The truth layer for secondhand fit.** Lay a garment on a marker mat, take one photo, and
-FitTag measures it to the centimetre with honest error bars — then tells a buyer whether it
-will actually fit. Built for the Fleek × a16z hackathon.
+**Live demo: https://mohib314159.github.io/FitTag/** (opens in the browser, nothing to install)
+
+Secondhand listings say "M" or "W32", which says little about how a one-off vintage piece
+fits. FitTag measures the actual garment from one phone photo: lay it on four printed A4
+sheets, shoot from roughly above, and it returns centimetres with error bars, then checks
+them against your size. Started at the Fleek × a16z hackathon.
+
+- The four sheets carry ArUco markers at known positions. OpenCV finds them and a homography
+  flattens the tilted photo into a top-down image at 0.5 mm per pixel.
+- It cuts the garment out of the background, then reads measurements off the outline row by
+  row (waistband, the row where the legs split, armpits, hems). No ML model produces a number.
+- The demo runs on simulated phone photos (`validation/render_scene.py`) with known true
+  dimensions: 14/14 measurements land inside their error bars. Not yet tested on a real photo.
 
 > **Geometry measures; the model only names.** ArUco markers + homography rectify the photo to
 > a metric top-down plane; silhouette geometry extracts measurements; a vision model is used
@@ -55,6 +65,14 @@ python -m validation.validate            # -> per-measurement MAE + within-toler
 ```
 Current synthetic result: **MAE 0.14 cm over 30 measurements, 100% within tolerance.** For real
 photos, replace `validation/photos/` + tape-measured numbers in `ground_truth.csv` and re-run.
+
+## Demo site
+`docs/` is a static page served by GitHub Pages. Rebuild it from the engine with:
+```bash
+python -m validation.render_scene     # simulated photos with known dimensions
+python -m tools.build_site_data       # run the engine on them -> docs/data/samples.json
+python -m tools.build_page            # -> docs/index.html
+```
 
 ## Tests
 ```bash

@@ -1,0 +1,7 @@
+photo,garment_type,length,pit_to_pit,shoulder_width,sleeve_length,hem_width,waist_flat,hip_flat,inseam,thigh,leg_opening
+tee_a.png,t-shirt,72.0,52.0,52.0,12.0,50.0,,,,,
+tee_b.png,t-shirt,64.0,48.0,48.0,11.0,46.0,,,,,
+tee_c.png,t-shirt,74.0,56.0,56.0,13.0,54.8,,,,,
+jeans_a.png,jeans,,,,,,40.0,40.0,62.0,18.0,18.0
+jeans_b.png,jeans,,,,,,36.0,36.0,54.0,15.0,15.0
+jeans_c.png,jeans,,,,,,50.0,50.0,70.0,22.0,22.0

@@ -1,0 +1,302 @@
+<title>FitTag</title>
+<meta name="description" content="Measure a secondhand garment from one photo and see whether it will fit you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F3F3F0; --surface:#FFFFFF; --ink:#16171B; --ink-2:#55575F; --line:#DCDCD6;
+  --tape:#F2C230; --tape-ink:#16171B; --measure:#2F5BD3; --measure-soft:rgba(47,91,211,.12);
+  --ok:#1E7F55; --warn:#B8741A; --bad:#C0412B; --outline:#F2C230;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#111216; --surface:#1A1B20; --ink:#ECECE7; --ink-2:#A3A5AD; --line:#2C2E35;
+  --measure:#86A2FF; --measure-soft:rgba(134,162,255,.14); --ok:#4CC08A; --warn:#E0A24B; --bad:#EF7A63;}}
+:root[data-theme="dark"]{
+  --ground:#111216; --surface:#1A1B20; --ink:#ECECE7; --ink-2:#A3A5AD; --line:#2C2E35;
+  --measure:#86A2FF; --measure-soft:rgba(134,162,255,.14); --ok:#4CC08A; --warn:#E0A24B; --bad:#EF7A63;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 var(--body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+a{color:inherit}
+h1,h2,h3{font-family:var(--display);font-stretch:80%;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.mono{font-family:var(--mono)}
+/* tape rule: the one decorative device */
+.tape{height:14px;background:var(--tape);
+  background-image:repeating-linear-gradient(90deg,var(--tape-ink) 0 1px,transparent 1px 10px),
+                   repeating-linear-gradient(90deg,var(--tape-ink) 0 1.5px,transparent 1.5px 50px);
+  background-size:100% 5px,100% 9px;background-repeat:repeat-x;background-position:0 0,0 0}
+header.top{padding-block:28px 22px;display:grid;grid-template-columns:1fr auto;gap:18px 32px;align-items:end}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.brand h1{font-size:44px;font-weight:800;line-height:1}
+.brand .tag{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.lede{grid-column:1/-1;max-width:68ch;font-size:17px;color:var(--ink);margin:0}
+.lede b{font-weight:600}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font:500 13px var(--body);padding:8px 14px;border:1px solid var(--ink);border-radius:999px;text-decoration:none;background:transparent;color:var(--ink);cursor:pointer}
+.btn:hover,.btn:focus-visible{background:var(--ink);color:var(--ground)}
+:focus-visible{outline:2px solid var(--measure);outline-offset:2px}
+
+.samples{display:flex;gap:10px;flex-wrap:wrap;margin-block:6px 18px}
+.samples button{display:flex;gap:10px;align-items:center;padding:6px 12px 6px 6px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;font:500 13px var(--body);text-align:left}
+.samples button img{width:34px;height:45px;object-fit:cover;border-radius:5px}
+.samples button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.samples small{display:block;color:var(--ink-2);font-weight:400;font-family:var(--mono);font-size:11px}
+
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.panel-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.panel-h h2{font-size:17px;font-weight:700}
+.panel-h span{font-family:var(--mono);font-size:11px;color:var(--ink-2);text-align:right}
+.fig{position:relative;background:#222}
+.fig img{display:block;width:100%;height:auto}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.toggles{display:flex;gap:6px;padding:8px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.chip{font:500 12px var(--body);padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink-2);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+
+table.spec{width:100%;border-collapse:collapse;font-size:14px}
+.spec th{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);text-align:right;padding:10px 14px 6px;border-bottom:1px solid var(--line)}
+.spec th:first-child,.spec td:first-child{text-align:left}
+.spec td{padding:9px 14px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+.spec tr:last-child td{border-bottom:0}
+.spec tbody tr{cursor:default}
+.spec tbody tr.hot{background:var(--measure-soft)}
+.spec .v{font-family:var(--mono);font-weight:500}
+.spec .tol{color:var(--ink-2);font-family:var(--mono);font-size:12px}
+.err{font-family:var(--mono);font-size:12px;padding:2px 7px;border-radius:999px}
+.err.in{color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.err.out{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.spec .na{color:var(--ink-2);font-size:12px;text-align:left}
+.meta{padding:12px 14px;border-top:1px solid var(--line);display:grid;gap:4px;font-size:13px;color:var(--ink-2)}
+.meta b{color:var(--ink);font-weight:600}
+.sizebadge{display:inline-block;font:600 13px var(--mono);background:var(--tape);color:var(--tape-ink);padding:3px 9px;border-radius:6px}
+
+section.fit{margin-block:28px 8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
+section.fit .panel{padding:18px}
+section.fit h2{font-size:26px;font-weight:800;margin-bottom:4px}
+.sub{color:var(--ink-2);margin:0 0 14px;max-width:60ch}
+.ctrl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin-bottom:14px}
+.ctrl label{font-weight:500}
+.ctrl output{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.ctrl input{grid-column:1/-1;width:100%;accent-color:var(--measure)}
+.pref{display:flex;gap:6px;flex-wrap:wrap}
+.zones{display:grid;gap:10px}
+.zone{display:grid;grid-template-columns:120px 1fr auto;gap:12px;align-items:center}
+.zone .name{font-weight:600}
+.bar{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--bad) 0 20%,var(--warn) 20% 35%,var(--ok) 35% 62%,var(--warn) 62% 80%,var(--bad) 80%);opacity:.85}
+.bar i{position:absolute;top:-4px;width:3px;height:18px;background:var(--ink);border-radius:2px;transform:translateX(-1px)}
+.bar s{position:absolute;top:-1px;height:12px;border-radius:6px;background:color-mix(in srgb,var(--ink) 22%,transparent);text-decoration:none}
+.pill{font:600 12px var(--body);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.pill.too_tight,.pill.oversized{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.pill.snug,.pill.loose{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.pill.ideal{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.zone .note{grid-column:2/-1;font-size:12px;color:var(--ink-2);margin-top:-6px}
+.verdict{font-family:var(--display);font-stretch:85%;font-size:22px;font-weight:700;margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+
+section.how{margin-block:36px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+section.how h3{font-size:18px;margin:6px 0 4px}
+section.how p{margin:0;color:var(--ink-2);font-size:14px}
+.step{font:500 12px var(--mono);color:var(--ink-2)}
+section.honest{margin-block:8px 40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;border-top:1px solid var(--line);padding-top:24px}
+section.honest h2{font-size:22px;margin-bottom:8px}
+section.honest ul{margin:0;padding-left:18px;color:var(--ink-2)}
+section.honest li{margin-bottom:6px}
+footer{padding-block:20px 36px;color:var(--ink-2);font-size:13px;display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+
+@media (max-width:980px){.stage{grid-template-columns:1fr 1fr}.stage .panel.spec-p{grid-column:1/-1}section.fit{grid-template-columns:1fr}section.how{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.stage{grid-template-columns:1fr}section.how,section.honest{grid-template-columns:1fr}.brand h1{font-size:36px}header.top{grid-template-columns:1fr}.zone{grid-template-columns:90px 1fr auto}}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:left .25s ease}}
+</style>
+
+<div class="tape" aria-hidden="true"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>FitTag</h1><span class="tag">measure secondhand clothes from one photo</span></div>
+    <div class="links">
+      <a class="btn" href="https://github.com/Mohib314159/FitTag">Code on GitHub</a>
+    </div>
+    <p class="lede">Vintage listings say <b>“M”</b> or <b>“W32”</b>, which tells you almost nothing about how a one-off piece fits. FitTag measures the actual garment: lay it on four printed sheets, take one photo from roughly above, and it returns real centimetres with error bars. Then it checks them against your size. Pick a sample below. Every number on this page comes from the Python engine in the repo running on these photos.</p>
+  </header>
+
+  <div class="samples" id="samples" role="group" aria-label="Sample photos"></div>
+
+  <div class="stage">
+    <div class="panel">
+      <div class="panel-h"><h2>The photo</h2><span id="camNote">handheld, tilted</span></div>
+      <div class="fig"><img id="photo" alt="Phone photo of the garment on the calibration sheets"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Flattened to scale</h2><span>1 px = 0.5 mm</span></div>
+      <div class="fig" id="flatFig"><img id="flat" alt="The same photo flattened to a top-down view, with measurement lines"><svg id="overlay" aria-hidden="true"></svg></div>
+      <div class="toggles" role="group" aria-label="Overlay layers">
+        <button class="chip" id="tgOutline" aria-pressed="true">Detected outline</button>
+        <button class="chip" id="tgLines" aria-pressed="true">Measurement lines</button>
+      </div>
+    </div>
+    <div class="panel spec-p">
+      <div class="panel-h"><h2>Measurements</h2><span>engine vs tape measure</span></div>
+      <table class="spec">
+        <thead><tr><th>Point</th><th>Measured</th><th>True</th><th>Off by</th></tr></thead>
+        <tbody id="spec"></tbody>
+      </table>
+      <div class="meta" id="meta"></div>
+    </div>
+  </div>
+
+  <section class="fit" aria-labelledby="fitH">
+    <div class="panel">
+      <h2 id="fitH">Will it fit you?</h2>
+      <p class="sub" id="fitSub">Enter your body measurements. The garment is laid flat, so FitTag doubles its flat widths to get circumference and compares the difference against ease bands.</p>
+      <div id="controls"></div>
+      <div class="pref" role="group" aria-label="How you like it to fit">
+        <button class="chip" data-pref="fitted" aria-pressed="false">Fitted</button>
+        <button class="chip" data-pref="regular" aria-pressed="true">Regular</button>
+        <button class="chip" data-pref="oversized" aria-pressed="false">Baggy</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="zones" id="zones"></div>
+      <p class="verdict" id="verdict"></p>
+    </div>
+  </section>
+
+  <section class="how" aria-label="How it works">
+    <div><span class="step">step 1</span><h3>Find the sheets</h3><p>OpenCV finds the four ArUco markers. Their printed positions are known to the millimetre, so the corners give 16 fixed reference points.</p></div>
+    <div><span class="step">step 2</span><h3>Flatten the photo</h3><p>A homography fitted to those 16 points undoes the camera tilt and turns the photo into a top-down image where every pixel is 0.5 mm.</p></div>
+    <div><span class="step">step 3</span><h3>Cut out the garment</h3><p>It measures the backdrop colour at the edges, marks everything clearly different as garment, then refines the edge with GrabCut.</p></div>
+    <div><span class="step">step 4</span><h3>Measure like a tailor</h3><p>It scans the outline row by row: the waistband, the row where two legs split (crotch), armpits where the width steps down, hems. No ML model outputs a number.</p></div>
+  </section>
+
+  <section class="honest">
+    <div>
+      <h2>What’s real here</h2>
+      <ul>
+        <li>The measuring code is the code in the repo, unchanged for the web. This page shows its output; <span class="mono">tools/build_site_data.py</span> regenerates it.</li>
+        <li>The photos are <b>simulated</b>. They're rendered from garments with known dimensions, then shot by a virtual phone camera with tilt, rotation, lens falloff, noise and JPEG compression. The sheets are the real printable ones, each deliberately placed a few mm off.</li>
+        <li>Rendering realistic photos surfaced three bugs that the old flat-red test images never hit. Background detection assumed white paper, the crotch was found at a stitching gap, and armpits were found at the neckline. All three are fixed.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Known limits</h2>
+      <ul>
+        <li>Not yet tested on a real photo of a real garment against a tape measure. That's the next test.</li>
+        <li>Shoulder width isn't measured separately yet (it reuses chest width), so it's left out of fit checks.</li>
+        <li>Thigh is measured about 6 cm below the crotch instead of the usual 2.5 cm, so it reads a little small on tapered legs.</li>
+        <li>It needs a backdrop that contrasts with the garment, e.g. dark jeans on a light sheet.</li>
+      </ul>
+    </div>
+  </section>
+  <footer><span>Built by Mohib Murtaza · started at the Fleek × a16z hackathon</span><a href="https://github.com/Mohib314159/FitTag">github.com/Mohib314159/FitTag</a></footer>
+</div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+(function(){
+const S = JSON.parse(document.getElementById('data').textContent);
+const NICE = {waist_flat:'Waist (flat)',hip_flat:'Hip (flat)',inseam:'Inseam',leg_opening:'Leg opening',thigh:'Thigh',
+  length:'Length',pit_to_pit:'Pit to pit',shoulder_width:'Shoulder',sleeve_length:'Sleeve',hem_width:'Hem width'};
+const BOTTOMS = new Set(['jeans','trousers','shorts','skirt','pants']);
+// fit rules, same as core/fit.py
+const BANDS=[[-1e9,0,'too_tight'],[0,6,'snug'],[6,14,'ideal'],[14,22,'loose'],[22,1e9,'oversized']];
+const REF=[[-1e9,-1.5,'too_tight'],[-1.5,1.5,'ideal'],[1.5,4,'loose'],[4,1e9,'oversized']];
+const SHIFT={fitted:-4,regular:0,oversized:6};
+const MAP_BOTTOM={waist_flat:['waist',true],hip_flat:['hip',true],inseam:['inseam',false]};
+const MAP_TOP={pit_to_pit:['chest',true],length:['length',false]};   // shoulder omitted: not measured separately yet
+const BODY={bottom:{waist:{label:"Your waist",min:60,max:110,val:76},hip:{label:"Your hips",min:80,max:125,val:94},inseam:{label:"Leg length you like (inseam)",min:65,max:90,val:76}},
+            top:{chest:{label:"Your chest",min:80,max:125,val:96},length:{label:"Top length you like",min:60,max:82,val:72}}};
+const WORD={too_tight:'too tight',snug:'snug',ideal:'good fit',loose:'roomy',oversized:'oversized'};
+const SUM={too_tight:'will be tight',snug:'will fit snugly',ideal:'should fit well',loose:'will be roomy',oversized:'will be oversized'};
+let cur=0, pref='regular', showOutline=true, showLines=true;
+const $=id=>document.getElementById(id);
+
+function verdict(e,b){for(const [lo,hi,l] of b) if(e>=lo&&e<hi) return l; return 'ideal';}
+
+function renderSamples(){
+  $('samples').innerHTML=S.map((s,i)=>`<button type="button" data-i="${i}" aria-pressed="${i===cur}"><img src="${s.photo}" alt=""><span>${s.caption}<small>${s.type} · ${s.markers}/4 markers</small></span></button>`).join('');
+  $('samples').querySelectorAll('button').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;render();});
+}
+function drawOverlay(s){
+  const [w,h]=s.flat_size, svg=$('overlay'); svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  const css=getComputedStyle(document.documentElement);
+  const mc=css.getPropertyValue('--measure').trim()||'#2F5BD3';
+  let o='';
+  if(showOutline) o+=`<polygon points="${s.outline.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#F2C230" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if(showLines) s.measurements.forEach((m,i)=>{
+    if(m.name==='shoulder_width') return;
+    const [x1,y1]=m.p1,[x2,y2]=m.p2;
+    o+=`<g data-m="${m.name}" class="ml"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".85"/>`+
+       `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2F5BD3" stroke-width="3" stroke-linecap="round"/>`+
+       `<circle cx="${x1}" cy="${y1}" r="5" fill="#2F5BD3" stroke="#fff" stroke-width="2"/><circle cx="${x2}" cy="${y2}" r="5" fill="#2F5BD3" stroke="#fff" stroke-width="2"/></g>`;
+  });
+  svg.innerHTML=o;
+}
+function hot(name,on){
+  document.querySelectorAll(`#spec tr[data-m="${name}"]`).forEach(r=>r.classList.toggle('hot',on));
+  document.querySelectorAll(`#overlay g.ml`).forEach(g=>g.style.opacity=on?(g.dataset.m===name?1:.25):1);
+}
+function renderSpec(s){
+  $('spec').innerHTML=s.measurements.map(m=>{
+    if(m.name==='shoulder_width') return `<tr data-m="${m.name}"><td>${NICE[m.name]}</td><td colspan="3" class="na">uses chest width for now, not shown</td></tr>`;
+    const inTol = m.err!==null && Math.abs(m.err)<=m.tol;
+    const err = m.err===null?'<span class="tol">—</span>':`<span class="err ${inTol?'in':'out'}">${m.err>0?'+':''}${m.err.toFixed(1)}</span>`;
+    return `<tr data-m="${m.name}"><td>${NICE[m.name]||m.name}</td><td><span class="v">${m.cm.toFixed(1)}</span> <span class="tol">±${m.tol.toFixed(1)}</span></td><td class="tol">${m.truth==null?'—':m.truth.toFixed(1)}</td><td>${err}</td></tr>`;
+  }).join('');
+  $('spec').querySelectorAll('tr').forEach(r=>{r.onmouseenter=()=>hot(r.dataset.m,true);r.onmouseleave=()=>hot(r.dataset.m,false);});
+  const ok=s.measurements.filter(m=>m.err!==null&&Math.abs(m.err)<=m.tol).length, n=s.measurements.filter(m=>m.err!==null).length;
+  $('meta').innerHTML=`<div><b>${ok} of ${n}</b> measurements within the stated error bar (cm).</div>`+
+    (s.size?`<div>Size estimate <span class="sizebadge">${s.size.label}</span> <span>${s.size.caveat}</span></div>`:'')+
+    `<div>Garment type: <b>${s.type}</b> (from outline shape) · calibration: <b>${s.markers} markers</b></div>`;
+}
+function renderControls(s){
+  const kind=BOTTOMS.has(s.type)?'bottom':'top', box=$('controls');
+  box.innerHTML=Object.entries(BODY[kind]).map(([k,c])=>`<div class="ctrl"><label for="in_${k}">${c.label}</label><output id="out_${k}">${c.val} cm</output><input type="range" id="in_${k}" min="${c.min}" max="${c.max}" step="1" value="${c.val}"></div>`).join('');
+  Object.keys(BODY[kind]).forEach(k=>$('in_'+k).oninput=e=>{BODY[kind][k].val=+e.target.value;$('out_'+k).textContent=e.target.value+' cm';renderFit(s);});
+}
+function renderFit(s){
+  const kind=BOTTOMS.has(s.type)?'bottom':'top', map=kind==='bottom'?MAP_BOTTOM:MAP_TOP, body=BODY[kind], sh=SHIFT[pref];
+  const zones=[];
+  for(const [flat,[bk,doubled]] of Object.entries(map)){
+    const m=s.measurements.find(x=>x.name===flat); if(!m) continue;
+    const target=body[bk].val;
+    let ease,etol,vf,lo,hi;
+    if(doubled){ease=+(m.cm*2-target).toFixed(1);etol=m.tol*2;vf=e=>verdict(e-sh,BANDS);lo=-10+sh;hi=30+sh;}
+    else{ease=+(m.cm-target).toFixed(1);etol=m.tol;vf=e=>verdict(e,REF);lo=-6;hi=8;}
+    const v=vf(ease), alts=[vf(ease-etol),vf(ease+etol)].filter(x=>x!==v);
+    zones.push({flat,ease,etol,v,alt:alts[0],lo,hi,doubled});
+  }
+  $('zones').innerHTML=zones.map(z=>{
+    const pct=x=>Math.max(0,Math.min(100,(x-z.lo)/(z.hi-z.lo)*100));
+    const what=z.doubled?`${z.ease>0?'+':''}${z.ease} cm room`:`${z.ease>0?'+':''}${z.ease} cm vs you`;
+    return `<div class="zone"><span class="name">${NICE[z.flat]}</span><div class="bar" title="${what}" style="background:${z.doubled?bandGrad(z.lo,z.hi,sh):refGrad(z.lo,z.hi)}"><s style="left:${pct(z.ease-z.etol)}%;width:${pct(z.ease+z.etol)-pct(z.ease-z.etol)}%"></s><i style="left:${pct(z.ease)}%"></i></div><span class="pill ${z.v}">${WORD[z.v]}</span>`+
+      `<span class="note mono">${what} ±${z.etol.toFixed(1)}${z.alt?` · could be ${WORD[z.alt]}`:''}</span></div>`;
+  }).join('');
+  const key=kind==='bottom'?'waist_flat':'pit_to_pit', p=zones.find(z=>z.flat===key)||zones[0];
+  $('verdict').textContent=p?`This ${SUM[p.v]} ${kind==='bottom'?'through the waist':'in the chest'}.`:'';
+}
+const C=()=>{const c=getComputedStyle(document.documentElement);return{b:c.getPropertyValue('--bad').trim(),w:c.getPropertyValue('--warn').trim(),o:c.getPropertyValue('--ok').trim()}};
+function grad(stops,lo,hi){const c=C(),col={too_tight:c.b,snug:c.w,ideal:c.o,loose:c.w,oversized:c.b};
+  let g=[];for(const [a,b,l] of stops){const x=Math.max(0,Math.min(100,(a-lo)/(hi-lo)*100)),y=Math.max(0,Math.min(100,(b-lo)/(hi-lo)*100));if(y>x)g.push(`${col[l]} ${x}% ${y}%`);}
+  return `linear-gradient(90deg,${g.join(',')})`;}
+function bandGrad(lo,hi,sh){return grad(BANDS.map(([a,b,l])=>[a+sh,b+sh,l]),lo,hi);}
+function refGrad(lo,hi){return grad(REF,lo,hi);}
+
+function render(){
+  const s=S[cur];
+  renderSamples();
+  $('photo').src=s.photo; $('flat').src=s.flat;
+  $('camNote').textContent=`tilted ${s.camera.pitch_deg}°, rotated ${s.camera.roll_deg}°`;
+  $('fitSub').textContent=BOTTOMS.has(s.type)
+    ?'Enter your measurements. Flat waist and hip widths are doubled to get circumference, then compared with your body. Inseam is compared with the leg length you like.'
+    :'Enter your measurements. Flat chest width is doubled to get circumference and compared with your body. Length is compared with the length you like.';
+  drawOverlay(s); renderSpec(s); renderControls(s); renderFit(s);
+}
+document.querySelectorAll('[data-pref]').forEach(b=>b.onclick=()=>{pref=b.dataset.pref;document.querySelectorAll('[data-pref]').forEach(x=>x.setAttribute('aria-pressed',x===b));renderFit(S[cur]);});
+$('tgOutline').onclick=e=>{showOutline=!showOutline;e.target.setAttribute('aria-pressed',showOutline);drawOverlay(S[cur]);};
+$('tgLines').onclick=e=>{showLines=!showLines;e.target.setAttribute('aria-pressed',showLines);drawOverlay(S[cur]);};
+render();
+})();
+</script>

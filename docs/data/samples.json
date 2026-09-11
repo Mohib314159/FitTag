@@ -1,0 +1,462 @@
+[
+ {
+  "id": "jeans-charcoal",
+  "caption": "Baggy charcoal jeans, shot handheld at an angle",
+  "type": "jeans",
+  "category": "bottom",
+  "type_source": "heuristic",
+  "mode": "mat",
+  "markers": 4,
+  "photo": "img/jeans-charcoal-photo.jpg",
+  "flat": "img/jeans-charcoal-flat.jpg",
+  "flat_size": [
+   700,
+   979
+  ],
+  "photo_size": [
+   700,
+   933
+  ],
+  "outline": [
+   [
+    490.7,
+    117.9
+   ],
+   [
+    206.8,
+    121.4
+   ],
+   [
+    168.7,
+    250.6
+   ],
+   [
+    140.0,
+    862.0
+   ],
+   [
+    302.4,
+    859.6
+   ],
+   [
+    348.6,
+    331.1
+   ],
+   [
+    399.7,
+    858.9
+   ],
+   [
+    564.2,
+    858.9
+   ],
+   [
+    560.7,
+    792.8
+   ],
+   [
+    594.3,
+    785.4
+   ],
+   [
+    559.6,
+    786.8
+   ],
+   [
+    531.6,
+    249.2
+   ]
+  ],
+  "measurements": [
+   {
+    "name": "waist_flat",
+    "cm": 41.1,
+    "tol": 1.0,
+    "truth": 41.0,
+    "err": 0.1,
+    "p1": [
+     206.5,
+     118.6
+    ],
+    "p2": [
+     493.8,
+     118.6
+    ]
+   },
+   {
+    "name": "inseam",
+    "cm": 75.8,
+    "tol": 1.0,
+    "truth": 76.0,
+    "err": -0.2,
+    "p1": [
+     350.0,
+     331.4
+    ],
+    "p2": [
+     350.0,
+     862.0
+    ]
+   },
+   {
+    "name": "hip_flat",
+    "cm": 51.8,
+    "tol": 1.0,
+    "truth": 52.0,
+    "err": -0.2,
+    "p1": [
+     168.7,
+     281.4
+    ],
+    "p2": [
+     531.6,
+     281.4
+    ]
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.6,
+    "tol": 1.5,
+    "truth": 23.5,
+    "err": 0.1,
+    "p1": [
+     138.2,
+     847.3
+    ],
+    "p2": [
+     303.1,
+     847.3
+    ]
+   },
+   {
+    "name": "thigh",
+    "cm": 25.4,
+    "tol": 1.5,
+    "truth": 25.9,
+    "err": -0.5,
+    "p1": [
+     166.2,
+     375.9
+    ],
+    "p2": [
+     344.0,
+     375.9
+    ]
+   }
+  ],
+  "size": {
+   "system": "waist",
+   "label": "~32\" waist \u00b7 UK 16",
+   "caveat": "approximate \u2014 vintage often runs a size small"
+  },
+  "camera": {
+   "pitch_deg": 17,
+   "roll_deg": 3.5,
+   "yaw_deg": 2.5
+  }
+ },
+ {
+  "id": "jeans-midwash",
+  "caption": "Mid-wash straight jeans, camera rotated the other way",
+  "type": "jeans",
+  "category": "bottom",
+  "type_source": "heuristic",
+  "mode": "mat",
+  "markers": 4,
+  "photo": "img/jeans-midwash-photo.jpg",
+  "flat": "img/jeans-midwash-flat.jpg",
+  "flat_size": [
+   700,
+   979
+  ],
+  "photo_size": [
+   700,
+   933
+  ],
+  "outline": [
+   [
+    218.8,
+    114.4
+   ],
+   [
+    179.2,
+    236.6
+   ],
+   [
+    164.1,
+    863.4
+   ],
+   [
+    309.8,
+    861.7
+   ],
+   [
+    352.4,
+    313.6
+   ],
+   [
+    392.0,
+    861.7
+   ],
+   [
+    534.8,
+    864.8
+   ],
+   [
+    522.5,
+    238.0
+   ],
+   [
+    487.2,
+    145.2
+   ],
+   [
+    486.1,
+    118.6
+   ]
+  ],
+  "measurements": [
+   {
+    "name": "waist_flat",
+    "cm": 38.7,
+    "tol": 1.0,
+    "truth": 38.5,
+    "err": 0.2,
+    "p1": [
+     215.6,
+     115.1
+    ],
+    "p2": [
+     486.5,
+     115.1
+    ]
+   },
+   {
+    "name": "inseam",
+    "cm": 78.8,
+    "tol": 1.0,
+    "truth": 79.0,
+    "err": -0.2,
+    "p1": [
+     351.0,
+     313.9
+    ],
+    "p2": [
+     351.0,
+     865.5
+    ]
+   },
+   {
+    "name": "hip_flat",
+    "cm": 49.1,
+    "tol": 1.0,
+    "truth": 49.0,
+    "err": 0.1,
+    "p1": [
+     179.2,
+     279.6
+    ],
+    "p2": [
+     522.5,
+     279.6
+    ]
+   },
+   {
+    "name": "leg_opening",
+    "cm": 20.9,
+    "tol": 1.5,
+    "truth": 20.5,
+    "err": 0.4,
+    "p1": [
+     164.1,
+     850.8
+    ],
+    "p2": [
+     310.4,
+     850.8
+    ]
+   },
+   {
+    "name": "thigh",
+    "cm": 24.1,
+    "tol": 1.5,
+    "truth": 24.4,
+    "err": -0.3,
+    "p1": [
+     177.8,
+     358.8
+    ],
+    "p2": [
+     346.1,
+     358.8
+    ]
+   }
+  ],
+  "size": {
+   "system": "waist",
+   "label": "~30\" waist \u00b7 UK 14",
+   "caveat": "approximate \u2014 vintage often runs a size small"
+  },
+  "camera": {
+   "pitch_deg": 12,
+   "roll_deg": -4.0,
+   "yaw_deg": -3.0
+  }
+ },
+ {
+  "id": "tee-burgundy",
+  "caption": "Burgundy tee, sleeves angled down like a real flat-lay",
+  "type": "t-shirt",
+  "category": "top",
+  "type_source": "heuristic",
+  "mode": "mat",
+  "markers": 4,
+  "photo": "img/tee-burgundy-photo.jpg",
+  "flat": "img/tee-burgundy-flat.jpg",
+  "flat_size": [
+   700,
+   979
+  ],
+  "photo_size": [
+   700,
+   933
+  ],
+  "outline": [
+   [
+    671.6,
+    278.9
+   ],
+   [
+    410.2,
+    238.0
+   ],
+   [
+    377.3,
+    274.0
+   ],
+   [
+    320.9,
+    274.4
+   ],
+   [
+    281.0,
+    236.6
+   ],
+   [
+    30.1,
+    277.9
+   ],
+   [
+    29.7,
+    401.8
+   ],
+   [
+    159.9,
+    400.0
+   ],
+   [
+    164.5,
+    739.2
+   ],
+   [
+    533.4,
+    741.3
+   ],
+   [
+    539.7,
+    399.3
+   ],
+   [
+    670.2,
+    400.8
+   ]
+  ],
+  "measurements": [
+   {
+    "name": "length",
+    "cm": 72.2,
+    "tol": 1.0,
+    "truth": 72.0,
+    "err": 0.2,
+    "p1": [
+     350.0,
+     236.2
+    ],
+    "p2": [
+     350.0,
+     741.6
+    ]
+   },
+   {
+    "name": "pit_to_pit",
+    "cm": 54.2,
+    "tol": 1.0,
+    "truth": 54.0,
+    "err": 0.2,
+    "p1": [
+     159.9,
+     422.4
+    ],
+    "p2": [
+     539.0,
+     422.4
+    ]
+   },
+   {
+    "name": "shoulder_width",
+    "cm": 54.2,
+    "tol": 1.5,
+    "truth": null,
+    "err": null,
+    "p1": [
+     159.9,
+     422.4
+    ],
+    "p2": [
+     539.0,
+     422.4
+    ]
+   },
+   {
+    "name": "sleeve_length",
+    "cm": 19.0,
+    "tol": 1.5,
+    "truth": 19.0,
+    "err": 0.0,
+    "p1": [
+     539.0,
+     422.4
+    ],
+    "p2": [
+     672.7,
+     422.4
+    ]
+   },
+   {
+    "name": "hem_width",
+    "cm": 53.2,
+    "tol": 1.0,
+    "truth": 52.8,
+    "err": 0.4,
+    "p1": [
+     163.8,
+     723.8
+    ],
+    "p2": [
+     536.2,
+     723.8
+    ]
+   }
+  ],
+  "size": {
+   "system": "alpha",
+   "label": "~L",
+   "caveat": "approximate \u2014 vintage often runs a size small"
+  },
+  "camera": {
+   "pitch_deg": 14,
+   "roll_deg": 2.0,
+   "yaw_deg": 4.0
+  }
+ }
+]
