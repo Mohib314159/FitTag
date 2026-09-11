@@ -48,6 +48,8 @@ def cases():
     for name, rgb in (("light grey sheet", (214, 216, 219)), ("beige carpet", (150, 170, 190)),
                       ("mid-grey floor", (120, 118, 116)), ("dark floor", (70, 68, 66))):
         out.append(case("backdrop", name, "jeans-charcoal", 400 + len(out), backdrop=rgb))
+    for i, c in enumerate(out):
+        c["idx"] = i
     return out
 
 
@@ -57,6 +59,10 @@ def run_case(c):
     photo, _, gt, _ = R.render(c["spec"])
     t1 = time.time()
     res = {k: c[k] for k in ("group", "label", "garment")}
+    thumb = ROOT / "docs" / "img" / "sweep" / f'{c["idx"]:02d}.jpg'
+    thumb.parent.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(str(thumb), cv2.resize(photo, (270, 360), interpolation=cv2.INTER_AREA), [cv2.IMWRITE_JPEG_QUALITY, 72])
+    res["thumb"] = f'img/sweep/{c["idx"]:02d}.jpg'
     res["truth"] = gt
     cal = calibrate(photo, mm_per_px_out=0.5)
     res["mode"], res["markers"] = cal.mode, cal.n_markers

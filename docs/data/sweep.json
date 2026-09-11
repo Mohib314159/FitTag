@@ -3,6 +3,7 @@
   "group": "tilt",
   "label": "0\u00b0",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/00.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -57,12 +58,13 @@
   "max_abs_err": 0.4,
   "within": 5,
   "n": 5,
-  "engine_s": 3.6
+  "engine_s": 3.7
  },
  {
   "group": "tilt",
   "label": "0\u00b0",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/01.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -117,12 +119,13 @@
   "max_abs_err": 0.4,
   "within": 5,
   "n": 5,
-  "engine_s": 4.6
+  "engine_s": 4.0
  },
  {
   "group": "tilt",
   "label": "0\u00b0",
   "garment": "tee-burgundy",
+  "thumb": "img/sweep/02.jpg",
   "truth": {
    "length": 72.0,
    "pit_to_pit": 54.0,
@@ -169,12 +172,13 @@
   "max_abs_err": 0.4,
   "within": 4,
   "n": 4,
-  "engine_s": 8.3
+  "engine_s": 8.7
  },
  {
   "group": "tilt",
   "label": "10\u00b0",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/03.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -229,12 +233,13 @@
   "max_abs_err": 0.6,
   "within": 5,
   "n": 5,
-  "engine_s": 3.5
+  "engine_s": 3.6
  },
  {
   "group": "tilt",
   "label": "10\u00b0",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/04.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -289,12 +294,13 @@
   "max_abs_err": 1.0,
   "within": 5,
   "n": 5,
-  "engine_s": 4.2
+  "engine_s": 3.8
  },
  {
   "group": "tilt",
   "label": "10\u00b0",
   "garment": "tee-burgundy",
+  "thumb": "img/sweep/05.jpg",
   "truth": {
    "length": 72.0,
    "pit_to_pit": 54.0,
@@ -341,12 +347,13 @@
   "max_abs_err": 0.2,
   "within": 4,
   "n": 4,
-  "engine_s": 9.5
+  "engine_s": 9.3
  },
  {
   "group": "tilt",
   "label": "20\u00b0",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/06.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -401,12 +408,13 @@
   "max_abs_err": 0.4,
   "within": 5,
   "n": 5,
-  "engine_s": 3.8
+  "engine_s": 3.3
  },
  {
   "group": "tilt",
   "label": "20\u00b0",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/07.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -461,12 +469,13 @@
   "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 3.8
+  "engine_s": 4.0
  },
  {
   "group": "tilt",
   "label": "20\u00b0",
   "garment": "tee-burgundy",
+  "thumb": "img/sweep/08.jpg",
   "truth": {
    "length": 72.0,
    "pit_to_pit": 54.0,
@@ -513,12 +522,13 @@
   "max_abs_err": 0.3,
   "within": 4,
   "n": 4,
-  "engine_s": 4.0
+  "engine_s": 4.1
  },
  {
   "group": "tilt",
   "label": "30\u00b0",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/09.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -573,12 +583,13 @@
   "max_abs_err": 0.3,
   "within": 5,
   "n": 5,
-  "engine_s": 3.8
+  "engine_s": 4.7
  },
  {
   "group": "tilt",
   "label": "30\u00b0",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/10.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -633,12 +644,13 @@
   "max_abs_err": 0.4,
   "within": 5,
   "n": 5,
-  "engine_s": 4.3
+  "engine_s": 5.0
  },
  {
   "group": "tilt",
   "label": "30\u00b0",
   "garment": "tee-burgundy",
+  "thumb": "img/sweep/11.jpg",
   "truth": {
    "length": 72.0,
    "pit_to_pit": 54.0,
@@ -685,12 +697,13 @@
   "max_abs_err": 0.3,
   "within": 4,
   "n": 4,
-  "engine_s": 4.2
+  "engine_s": 5.0
  },
  {
   "group": "tilt",
   "label": "40\u00b0",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/12.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -751,6 +764,7 @@
   "group": "tilt",
   "label": "40\u00b0",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/13.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -805,12 +819,13 @@
   "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 3.7
+  "engine_s": 4.2
  },
  {
   "group": "tilt",
   "label": "40\u00b0",
   "garment": "tee-burgundy",
+  "thumb": "img/sweep/14.jpg",
   "truth": {
    "length": 72.0,
    "pit_to_pit": 54.0,
@@ -857,12 +872,13 @@
   "max_abs_err": 0.4,
   "within": 4,
   "n": 4,
-  "engine_s": 4.1
+  "engine_s": 3.8
  },
  {
   "group": "tilt",
   "label": "50\u00b0",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/15.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -917,12 +933,13 @@
   "max_abs_err": 0.3,
   "within": 5,
   "n": 5,
-  "engine_s": 3.7
+  "engine_s": 4.0
  },
  {
   "group": "tilt",
   "label": "50\u00b0",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/16.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -977,12 +994,13 @@
   "max_abs_err": 1.4,
   "within": 4,
   "n": 5,
-  "engine_s": 3.6
+  "engine_s": 4.1
  },
  {
   "group": "tilt",
   "label": "50\u00b0",
   "garment": "tee-burgundy",
+  "thumb": "img/sweep/17.jpg",
   "truth": {
    "length": 72.0,
    "pit_to_pit": 54.0,
@@ -1029,12 +1047,13 @@
   "max_abs_err": 0.5,
   "within": 4,
   "n": 4,
-  "engine_s": 3.9
+  "engine_s": 4.4
  },
  {
   "group": "placement",
   "label": "\u00b10 mm",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/18.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1089,12 +1108,13 @@
   "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 4.2
+  "engine_s": 4.1
  },
  {
   "group": "placement",
   "label": "\u00b15 mm",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/19.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1149,12 +1169,13 @@
   "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 3.9
+  "engine_s": 4.0
  },
  {
   "group": "placement",
   "label": "\u00b110 mm",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/20.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1209,12 +1230,13 @@
   "max_abs_err": 0.3,
   "within": 5,
   "n": 5,
-  "engine_s": 3.7
+  "engine_s": 3.8
  },
  {
   "group": "placement",
   "label": "\u00b120 mm",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/21.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1269,12 +1291,13 @@
   "max_abs_err": 1.2,
   "within": 4,
   "n": 5,
-  "engine_s": 3.8
+  "engine_s": 4.0
  },
  {
   "group": "sheets",
   "label": "3 of 4 sheets",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/22.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -1329,12 +1352,13 @@
   "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 4.0
+  "engine_s": 3.9
  },
  {
   "group": "sheets",
   "label": "2 of 4 sheets",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/23.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -1389,12 +1413,13 @@
   "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 4.4
+  "engine_s": 4.1
  },
  {
   "group": "sheets",
   "label": "1 of 4 sheets",
   "garment": "jeans-midwash",
+  "thumb": "img/sweep/24.jpg",
   "truth": {
    "waist_flat": 38.5,
    "hip_flat": 49.0,
@@ -1449,12 +1474,13 @@
   "max_abs_err": 3.0,
   "within": 5,
   "n": 5,
-  "engine_s": 7.8
+  "engine_s": 7.4
  },
  {
   "group": "backdrop",
   "label": "light grey sheet",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/25.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1509,12 +1535,13 @@
   "max_abs_err": 0.4,
   "within": 5,
   "n": 5,
-  "engine_s": 3.4
+  "engine_s": 3.9
  },
  {
   "group": "backdrop",
   "label": "beige carpet",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/26.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1569,12 +1596,13 @@
   "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 18.3
+  "engine_s": 16.5
  },
  {
   "group": "backdrop",
   "label": "mid-grey floor",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/27.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1629,12 +1657,13 @@
   "max_abs_err": 2.8,
   "within": 4,
   "n": 5,
-  "engine_s": 4.4
+  "engine_s": 4.6
  },
  {
   "group": "backdrop",
   "label": "dark floor",
   "garment": "jeans-charcoal",
+  "thumb": "img/sweep/28.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1689,6 +1718,6 @@
   "max_abs_err": 18.6,
   "within": 3,
   "n": 5,
-  "engine_s": 5.8
+  "engine_s": 6.4
  }
 ]
