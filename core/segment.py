@@ -140,7 +140,10 @@ def segment_smart_grabcut(rectified, marker_size_mm=80.0, mm_per_px=0.5, iters=5
         mask = cv2.resize(mask, (W, H), interpolation=cv2.INTER_LINEAR)
         mask = np.where(mask >= 128, 255, 0).astype(np.uint8)
     mask = _blank_corners(mask, marker_size_mm, mm_per_px)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    # open with a ~12 mm disc: removes thin spurs where printed text on a sheet touching the
+    # garment got merged in, without touching anything garment-sized
+    k = max(5, int(round(12.0 / mm_per_px)) | 1)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)))
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
     return mask
 

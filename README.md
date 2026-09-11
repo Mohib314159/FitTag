@@ -2,6 +2,8 @@
 
 **Live demo: https://mohib314159.github.io/FitTag/** (opens in the browser, nothing to install)
 
+[![FitTag: a tilted phone photo of jeans on four marker sheets, flattened and measured](docs/og.png)](https://mohib314159.github.io/FitTag/)
+
 Secondhand listings say "M" or "W32", which says little about how a one-off vintage piece
 fits. FitTag measures the actual garment from one phone photo: lay it on four printed A4
 sheets, shoot from roughly above, and it returns centimetres with error bars, then checks
@@ -28,22 +30,22 @@ The front end auto-detects the backend: with it running you can upload a flat-la
 *Run a sample*) for a real measurement; without it, the page stays on demo data.
 
 ## Architecture
-Two layers: a **TRUTH** layer (measured fit — the product) and a **VISUAL** layer (generative
-try-on — explicitly illustrative, never drives a verdict).
+Two parts: the measured fit (everything below except `tryon.py`), and an optional generated
+try-on image that is labelled as illustrative and never affects a fit verdict.
 
 ```
 core/
-  calibrate.py   ArUco detection; MAT mode (>=2 markers -> homography over all corners, accurate)
+  calibrate.py   ArUco detection; MAT mode (>=1 markers -> homography over all corners, accurate)
                  vs SINGLE mode (1 marker fallback); calibrate_by_rectangle (markerless A4/card,
                  experimental); capture_guidance (glare/light/marker checks)
   segment.py     segment_auto = rembg (U^2-Net, optional) -> auto-seeded GrabCut (robust framing)
   classify.py    garment TYPE only: VLM -> CLIP (JeansFinder) -> deterministic silhouette heuristic
   measure.py     silhouette geometry via row-by-row width profile (armpit = width step-down;
-                 crotch = first split into two legs); t-shirt + jeans; honest tolerances
+                 crotch = first split into two legs); t-shirt + jeans; per-measurement tolerances
   fit.py         ease arithmetic -> per-zone verdict; manual (body) or reference_garment mode;
                  fit confidence propagates the measurement tolerance into the verdict
   sizing.py      approximate size translation (alpha / waist-inches + UK), always caveated
-  feedback.py    fit-feedback flywheel: append-only outcomes -> suggested band shift (the data moat)
+  feedback.py    records real fit outcomes ("ran small") -> suggested adjustment to the fit bands
   catalog.py     fit-based search: rank a catalog of measured listings by how well each fits you
   tryon.py       generative try-on (FASHN / Gemini), gated on an API key; labelled illustrative
   contracts.py   dataclasses (Measurement, GarmentMeasurement, BodyProfile, FitZone, FitReport)
@@ -92,8 +94,8 @@ and asserts `calibrate()` -> mat mode with all four markers.
 
 ## Prior art / reuse
 - ArUco px->cm measurement reuses the approach from my climbing-route optimiser. FitTag's
-  multi-marker mat is **more rigorous than the published `mkurc1/climbingcrux_model`** (single
-  marker + bbox centres → extrapolation): homography over all corners avoids that error.
+  multi-marker mat fits a homography over all marker corners, which avoids the extrapolation
+  error in the published `mkurc1/climbingcrux_model` (single marker + bounding-box centres).
 - `adapters/from_vinted.py` reuses my **JeansFinder** Vinted client + CLIP scorer for listing
   ingestion and the offline garment-type classifier path.
 
