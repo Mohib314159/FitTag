@@ -50,6 +50,13 @@ def mat_to_scene(x_mm, y_mm):
     return px(x_mm + MARGIN), px(y_mm + MARGIN)
 
 
+def set_margin(mm: float):
+    """Smaller backdrop = faster renders (used by the robustness sweep)."""
+    global MARGIN, SCENE_MM
+    MARGIN = mm
+    SCENE_MM = (MAT_MM[0] + 2 * MARGIN, MAT_MM[1] + 2 * MARGIN)
+
+
 # ---------------------------------------------------------------------------- noise
 
 def smooth_noise(shape, scale_px, rng, octaves=3):
@@ -86,10 +93,12 @@ def backdrop(shape, rng, base=(214, 216, 219)):
     return img
 
 
-def paste_sheets(img, rng, jitter_mm=2.5):
+def paste_sheets(img, rng, jitter_mm=2.5, missing=()):
     """Lay the real printed A4 sheets onto the backdrop, each slightly misplaced."""
     placed = {}
     for mid, fname in SHEET_FILES.items():
+        if mid in missing:          # simulate a sheet that's covered or out of frame
+            continue
         sheet = cv2.imread(str(ROOT / "print" / fname), cv2.IMREAD_COLOR)
         sw, sh = int(round(px(A4[0]))), int(round(px(A4[1])))
         sheet = cv2.resize(sheet, (sw, sh), interpolation=cv2.INTER_AREA).astype(np.float32)
@@ -330,8 +339,8 @@ SCENES = [
 def render(spec):
     rng = np.random.default_rng(spec["seed"])
     shape = (int(px(SCENE_MM[1])), int(px(SCENE_MM[0])))
-    img = backdrop(shape, rng)
-    placed = paste_sheets(img, rng)
+    img = backdrop(shape, rng, base=spec.get("backdrop", (214, 216, 219)))
+    placed = paste_sheets(img, rng, jitter_mm=spec.get("jitter", 2.5), missing=spec.get("missing", ()))
     cx = MAT_MM[0] / 2
     if spec["kind"] == "jeans":
         d = spec["dims"]

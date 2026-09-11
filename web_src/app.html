@@ -1,5 +1,10 @@
 <title>FitTag</title>
 <meta name="description" content="Measure a secondhand garment from one photo and see whether it will fit you.">
+<meta property="og:title" content="FitTag">
+<meta property="og:description" content="Measures secondhand clothes from one phone photo, in centimetres with error bars, then checks them against your size.">
+<meta property="og:image" content="https://mohib314159.github.io/FitTag/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='9' width='28' height='14' rx='2' fill='%23F2C230' stroke='%2316171B' stroke-width='2'/%3E%3Cpath d='M8 9v6M13 9v4M18 9v6M23 9v4' stroke='%2316171B' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -8,16 +13,19 @@
   --ground:#F3F3F0; --surface:#FFFFFF; --ink:#16171B; --ink-2:#55575F; --line:#DCDCD6;
   --tape:#F2C230; --tape-ink:#16171B; --measure:#2F5BD3; --measure-soft:rgba(47,91,211,.12);
   --ok:#1E7F55; --warn:#B8741A; --bad:#C0412B; --outline:#F2C230;
+  --s1:#2F5BD3; --s2:#C8741F; --s3:#8E3F9E; --grid:#E6E6E1;
   --display:"Archivo","Arial Narrow",system-ui,sans-serif;
   --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ground:#111216; --surface:#1A1B20; --ink:#ECECE7; --ink-2:#A3A5AD; --line:#2C2E35;
-  --measure:#86A2FF; --measure-soft:rgba(134,162,255,.14); --ok:#4CC08A; --warn:#E0A24B; --bad:#EF7A63;}}
+  --measure:#86A2FF; --measure-soft:rgba(134,162,255,.14); --ok:#4CC08A; --warn:#E0A24B; --bad:#EF7A63;
+  --s1:#6A8BF5; --s2:#C97A30; --s3:#A96BBD; --grid:#2A2C33;}}
 :root[data-theme="dark"]{
   --ground:#111216; --surface:#1A1B20; --ink:#ECECE7; --ink-2:#A3A5AD; --line:#2C2E35;
-  --measure:#86A2FF; --measure-soft:rgba(134,162,255,.14); --ok:#4CC08A; --warn:#E0A24B; --bad:#EF7A63;}
+  --measure:#86A2FF; --measure-soft:rgba(134,162,255,.14); --ok:#4CC08A; --warn:#E0A24B; --bad:#EF7A63;
+  --s1:#6A8BF5; --s2:#C97A30; --s3:#A96BBD; --grid:#2A2C33;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 var(--body);-webkit-font-smoothing:antialiased}
 .wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
@@ -104,9 +112,34 @@ section.how p{margin:0;color:var(--ink-2);font-size:14px}
 section.honest{margin-block:8px 40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;border-top:1px solid var(--line);padding-top:24px}
 section.honest h2{font-size:22px;margin-bottom:8px}
 section.honest ul{margin:0;padding-left:18px;color:var(--ink-2)}
+section.honest ul ul{margin-top:4px}
 section.honest li{margin-bottom:6px}
 footer{padding-block:20px 36px;color:var(--ink-2);font-size:13px;display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
 
+
+section.stress{margin-block:36px 12px}
+section.stress h2{font-size:26px;font-weight:800;margin-bottom:4px}
+.stress-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;margin-top:14px;align-items:start}
+.stress-grid .panel{padding:14px 16px}
+.chart-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.chart-h h3{font-size:16px}
+.lg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+#tiltChart{width:100%;height:auto;display:block;margin-top:6px}
+#tiltChart text{font-family:var(--mono);font-size:11px;fill:var(--ink-2)}
+#tiltChart .gl{stroke:var(--grid);stroke-width:1}
+#tiltChart .tol{stroke:var(--ink-2);stroke-width:1.5;stroke-dasharray:5 4}
+table.cases{width:100%;border-collapse:collapse;font-size:14px}
+.cases td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+.cases tr:last-child td{border-bottom:0}
+.cases .g{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);padding-top:12px}
+.cases td:last-child{text-align:right;white-space:nowrap}
+.res{font:600 12px var(--mono);padding:2px 8px;border-radius:999px}
+.res.pass{color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.res.fail{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.res.part{color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--ground);font:12px var(--mono);padding:6px 8px;border-radius:6px;z-index:9;white-space:nowrap}
+@media (max-width:980px){.stress-grid{grid-template-columns:1fr}}
 @media (max-width:980px){.stage{grid-template-columns:1fr 1fr}.stage .panel.spec-p{grid-column:1/-1}section.fit{grid-template-columns:1fr}section.how{grid-template-columns:1fr 1fr}}
 @media (max-width:620px){.stage{grid-template-columns:1fr}section.how,section.honest{grid-template-columns:1fr}.brand h1{font-size:36px}header.top{grid-template-columns:1fr}.zone{grid-template-columns:90px 1fr auto}}
 @media (prefers-reduced-motion:no-preference){.bar i{transition:left .25s ease}}
@@ -127,7 +160,7 @@ footer{padding-block:20px 36px;color:var(--ink-2);font-size:13px;display:flex;ga
   <div class="stage">
     <div class="panel">
       <div class="panel-h"><h2>The photo</h2><span id="camNote">handheld, tilted</span></div>
-      <div class="fig"><img id="photo" alt="Phone photo of the garment on the calibration sheets"></div>
+      <div class="fig"><img id="photo" alt="Phone photo of the garment on the calibration sheets"><svg id="photoOverlay" aria-hidden="true"></svg></div>
     </div>
     <div class="panel">
       <div class="panel-h"><h2>Flattened to scale</h2><span>1 px = 0.5 mm</span></div>
@@ -164,6 +197,19 @@ footer{padding-block:20px 36px;color:var(--ink-2);font-size:13px;display:flex;ga
     </div>
   </section>
 
+
+  <section class="stress" aria-labelledby="stressH" id="stressSec">
+    <h2 id="stressH">How hard can you push it?</h2>
+    <p class="sub">The same engine on <span id="nPhotos"></span> more simulated photos, changing one thing at a time. A measurement passes if it lands inside its own error bar. <b id="stressSum"></b></p>
+    <div class="stress-grid">
+      <div class="panel">
+        <div class="chart-h"><h3>Worst error per photo vs camera tilt</h3>
+          <div class="lg"><span><i style="background:var(--s1)"></i>charcoal jeans</span><span><i style="background:var(--s2)"></i>mid-wash jeans</span><span><i style="background:var(--s3)"></i>tee</span></div></div>
+        <svg id="tiltChart" viewBox="0 0 560 250" role="img" aria-label="Worst measurement error in centimetres for each photo, by camera tilt"></svg>
+      </div>
+      <div class="panel"><table class="cases"><tbody id="cases"></tbody></table></div>
+    </div>
+  </section>
   <section class="how" aria-label="How it works">
     <div><span class="step">step 1</span><h3>Find the sheets</h3><p>OpenCV finds the four ArUco markers. Their printed positions are known to the millimetre, so the corners give 16 fixed reference points.</p></div>
     <div><span class="step">step 2</span><h3>Flatten the photo</h3><p>A homography fitted to those 16 points undoes the camera tilt and turns the photo into a top-down image where every pixel is 0.5 mm.</p></div>
@@ -175,19 +221,29 @@ footer{padding-block:20px 36px;color:var(--ink-2);font-size:13px;display:flex;ga
     <div>
       <h2>What’s real here</h2>
       <ul>
-        <li>The measuring code is the code in the repo, unchanged for the web. This page shows its output; <span class="mono">tools/build_site_data.py</span> regenerates it.</li>
+        <li>The measuring code is the code in the repo, unchanged for the web. This page shows its output; <span class="mono">tools/build_site_data.py</span> and <span class="mono">validation/sweep.py</span> regenerate it.</li>
         <li>The photos are <b>simulated</b>. They're rendered from garments with known dimensions, then shot by a virtual phone camera with tilt, rotation, lens falloff, noise and JPEG compression. The sheets are the real printable ones, each deliberately placed a few mm off.</li>
-        <li>Rendering realistic photos surfaced three bugs that the old flat-red test images never hit. Background detection assumed white paper, the crotch was found at a stitching gap, and armpits were found at the neckline. All three are fixed.</li>
+        <li>Testing on these photos found bugs the old flat-red test images never hit, all now fixed:
+          <ul>
+            <li>crashing on any background that wasn't white paper</li>
+            <li>finding the crotch at a stitching gap</li>
+            <li>finding armpits at the neckline</li>
+            <li>calling jeans a top when one hem sat lower than the other</li>
+            <li>measuring one-sheet photos about a third too small</li>
+          </ul>
+          It now also refuses to measure when the garment blends into the floor, instead of returning a confident wrong answer.</li>
+        <li>Each photo takes about 3 seconds to measure, down from 25. The slow edge-finding step now runs at lower resolution, which changes results by at most 0.2 cm.</li>
       </ul>
     </div>
     <div>
-      <h2>Known limits</h2>
+      <h2>Known limits and what's next</h2>
       <ul>
         <li>Not yet tested on a real photo of a real garment against a tape measure. That's the next test.</li>
         <li>Shoulder width isn't measured separately yet (it reuses chest width), so it's left out of fit checks.</li>
-        <li>Thigh is measured about 6 cm below the crotch instead of the usual 2.5 cm, so it reads a little small on tapered legs.</li>
-        <li>It needs a backdrop that contrasts with the garment, e.g. dark jeans on a light sheet.</li>
+        <li>On a floor close in colour to the garment, the gap between the legs closes up and inseam reads short; the app warns about this.</li>
+        <li>Next: drop the printed sheets on phones with AR. ARKit already knows where the floor is relative to the camera, and that's the same flattening the markers give. Photos taken with the sheets still in frame would show exactly how accurate the AR version is.</li>
       </ul>
+      <p style="margin-top:12px"><a class="btn" href="https://github.com/Mohib314159/FitTag/tree/main/print">Print the sheets</a> <a class="btn" href="https://github.com/Mohib314159/FitTag#run">Run it on your own photos</a></p>
     </div>
   </section>
   <footer><span>Built by Mohib Murtaza · started at the Fleek × a16z hackathon</span><a href="https://github.com/Mohib314159/FitTag">github.com/Mohib314159/FitTag</a></footer>
@@ -196,7 +252,7 @@ footer{padding-block:20px 36px;color:var(--ink-2);font-size:13px;display:flex;ga
 <script id="data" type="application/json">/*DATA*/</script>
 <script>
 (function(){
-const S = JSON.parse(document.getElementById('data').textContent);
+const D = JSON.parse(document.getElementById('data').textContent), S = D.samples, SW = D.sweep || [];
 const NICE = {waist_flat:'Waist (flat)',hip_flat:'Hip (flat)',inseam:'Inseam',leg_opening:'Leg opening',thigh:'Thigh',
   length:'Length',pit_to_pit:'Pit to pit',shoulder_width:'Shoulder',sleeve_length:'Sleeve',hem_width:'Hem width'};
 const BOTTOMS = new Set(['jeans','trousers','shorts','skirt','pants']);
@@ -233,6 +289,13 @@ function drawOverlay(s){
        `<circle cx="${x1}" cy="${y1}" r="5" fill="#2F5BD3" stroke="#fff" stroke-width="2"/><circle cx="${x2}" cy="${y2}" r="5" fill="#2F5BD3" stroke="#fff" stroke-width="2"/></g>`;
   });
   svg.innerHTML=o;
+}
+function drawMarkers(s){
+  const [w,h]=s.photo_size, svg=$('photoOverlay'); svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  svg.innerHTML=(s.marker_quads||[]).map(m=>{const q=m.quad, cx=q.reduce((a,p)=>a+p[0],0)/4, top=Math.min(...q.map(p=>p[1]));
+    return `<polygon points="${q.map(p=>p.join(',')).join(' ')}" fill="rgba(242,194,48,.25)" stroke="#F2C230" stroke-width="3" stroke-linejoin="round"/>`+
+      `<circle cx="${q[0][0]}" cy="${q[0][1]}" r="4" fill="#F2C230" stroke="#16171B" stroke-width="1.5"/>`+
+      `<text x="${cx}" y="${top-8}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="15" font-weight="600" fill="#F2C230" stroke="#16171B" stroke-width="3" paint-order="stroke">ID ${m.id}</text>`;}).join('');
 }
 function hot(name,on){
   document.querySelectorAll(`#spec tr[data-m="${name}"]`).forEach(r=>r.classList.toggle('hot',on));
@@ -284,6 +347,50 @@ function grad(stops,lo,hi){const c=C(),col={too_tight:c.b,snug:c.w,ideal:c.o,loo
 function bandGrad(lo,hi,sh){return grad(BANDS.map(([a,b,l])=>[a+sh,b+sh,l]),lo,hi);}
 function refGrad(lo,hi){return grad(REF,lo,hi);}
 
+
+function renderStress(){
+  const tilt=SW.filter(r=>r.group==='tilt');
+  if(!SW.length){ $('stressSec').hidden=true; return; }
+  $('nPhotos').textContent=SW.length;
+  const used=SW.filter(r=>r.ok&&r.contrast_status!=='refuse'), inside=used.reduce((a,r)=>a+r.within,0), tot=used.reduce((a,r)=>a+r.n,0), ref=SW.filter(r=>r.contrast_status==='refuse').length;
+  $('stressSum').textContent=`${inside} of ${tot} measurements inside their error bars${ref?`; ${ref} photo correctly refused.`:'.'}`;
+  const xs=[...new Set(tilt.map(r=>parseFloat(r.label)))].sort((a,b)=>a-b), XM=Math.max(...xs);
+  const W=560,H=250,L=44,R=16,T=14,B=34;
+  const ymax=Math.max(2,Math.ceil(Math.max(...tilt.filter(r=>r.ok).map(r=>r.max_abs_err))*2)/2);
+  const X=v=>L+(v/XM)*(W-L-R), Y=v=>T+(1-v/ymax)*(H-T-B);
+  let g='';
+  for(let v=0;v<=ymax+1e-9;v+=0.5) g+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${v.toFixed(1)}</text>`;
+  xs.forEach(v=>g+=`<text x="${X(v)}" y="${H-B+18}" text-anchor="middle">${v}°</text>`);
+  g+=`<text x="${L}" y="${H-4}" text-anchor="start">camera tilt from straight down</text>`;
+  g+=`<line class="tol" x1="${L}" x2="${W-R}" y1="${Y(1)}" y2="${Y(1)}"/><text x="${W-R}" y="${Y(1)-6}" text-anchor="end">±1 cm bar: waist, hip, inseam, length, chest</text>`;
+  g+=`<line class="tol" x1="${L}" x2="${W-R}" y1="${Y(1.5)}" y2="${Y(1.5)}"/><text x="${W-R}" y="${Y(1.5)-6}" text-anchor="end">±1.5 cm bar: thigh, leg opening, sleeve</text>`;
+  const series=[['jeans-charcoal','var(--s1)',-4],['jeans-midwash','var(--s2)',0],['tee-burgundy','var(--s3)',4]];
+  for(const [gid,col,dx] of series){
+    const pts=tilt.filter(r=>r.garment===gid&&r.ok).map(r=>({t:parseFloat(r.label),e:r.max_abs_err,r})).sort((a,b)=>a.t-b.t);
+    g+=`<polyline points="${pts.map(p=>`${X(p.t)+dx},${Y(p.e)}`).join(' ')}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/>`;
+    pts.forEach(p=>g+=`<circle cx="${X(p.t)+dx}" cy="${Y(p.e)}" r="4.5" fill="${col}" stroke="var(--surface)" stroke-width="2" data-tip="${gid.replace('-',' ')} · ${p.t}° · worst ${p.e.toFixed(1)} cm · ${p.r.within}/${p.r.n} inside"/><circle cx="${X(p.t)+dx}" cy="${Y(p.e)}" r="12" fill="transparent" data-tip="${gid.replace('-',' ')} · ${p.t}° · worst ${p.e.toFixed(1)} cm · ${p.r.within}/${p.r.n} inside"/>`);
+  }
+  $('tiltChart').innerHTML=g;
+  let tip; $('tiltChart').querySelectorAll('[data-tip]').forEach(c=>{
+    c.addEventListener('mouseenter',e=>{tip=document.createElement('div');tip.className='tip';tip.textContent=c.dataset.tip;document.body.appendChild(tip);});
+    c.addEventListener('mousemove',e=>{if(tip){tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY-30)+'px';}});
+    c.addEventListener('mouseleave',()=>{tip&&tip.remove();tip=null;});});
+  const GN={placement:'Sheets taped carelessly',sheets:'Sheets hidden or out of frame',backdrop:'What it\'s lying on'};
+  let rows='';
+  for(const grp of ['placement','sheets','backdrop']){
+    rows+=`<tr><td class="g" colspan="2">${GN[grp]}</td></tr>`;
+    SW.filter(r=>r.group===grp).forEach(r=>{
+      let res;
+      if(r.ok&&r.contrast_status==='refuse') res=`<span class="res part">refuses: too little contrast</span>`;
+      else if(!r.ok) res=`<span class="res fail">failed: ${r.why}</span>`;
+      else if(r.within===r.n) res=`<span class="res pass">${r.within}/${r.n} inside</span>`;
+      else res=`<span class="res ${r.within>=r.n-1?'part':'fail'}">${r.within}/${r.n} inside</span>`;
+      const extra=(r.ok&&r.mode==='single-sheet'?' <span class="tol">(one-sheet mode: error bars ×4)</span>':'')+
+        (r.ok&&r.contrast_status==='warn'?' <span class="tol">(warns: low contrast)</span>':'');
+      rows+=`<tr><td>${r.label}${extra}</td><td>${res}</td></tr>`;});
+  }
+  $('cases').innerHTML=rows;
+}
 function render(){
   const s=S[cur];
   renderSamples();
@@ -292,11 +399,12 @@ function render(){
   $('fitSub').textContent=BOTTOMS.has(s.type)
     ?'Enter your measurements. Flat waist and hip widths are doubled to get circumference, then compared with your body. Inseam is compared with the leg length you like.'
     :'Enter your measurements. Flat chest width is doubled to get circumference and compared with your body. Length is compared with the length you like.';
-  drawOverlay(s); renderSpec(s); renderControls(s); renderFit(s);
+  drawOverlay(s); drawMarkers(s); renderSpec(s); renderControls(s); renderFit(s);
 }
 document.querySelectorAll('[data-pref]').forEach(b=>b.onclick=()=>{pref=b.dataset.pref;document.querySelectorAll('[data-pref]').forEach(x=>x.setAttribute('aria-pressed',x===b));renderFit(S[cur]);});
 $('tgOutline').onclick=e=>{showOutline=!showOutline;e.target.setAttribute('aria-pressed',showOutline);drawOverlay(S[cur]);};
 $('tgLines').onclick=e=>{showLines=!showLines;e.target.setAttribute('aria-pressed',showLines);drawOverlay(S[cur]);};
+renderStress();
 render();
 })();
 </script>

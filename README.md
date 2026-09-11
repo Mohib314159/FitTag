@@ -12,7 +12,7 @@ them against your size. Started at the Fleek × a16z hackathon.
 - It cuts the garment out of the background, then reads measurements off the outline row by
   row (waistband, the row where the legs split, armpits, hems). No ML model produces a number.
 - The demo runs on simulated phone photos (`validation/render_scene.py`) with known true
-  dimensions: 14/14 measurements land inside their error bars. Not yet tested on a real photo.
+  dimensions: 14/14 measurements land inside their error bars, and a stress test over 29 more photos (tilt up to 50°, sheets taped up to 2 cm off, 1–4 sheets visible, four floor colours) lands 131/134 inside and refuses the one photo it can’t measure. Not yet tested on a real photo.
 
 > **Geometry measures; the model only names.** ArUco markers + homography rectify the photo to
 > a metric top-down plane; silhouette geometry extracts measurements; a vision model is used
@@ -71,6 +71,8 @@ photos, replace `validation/photos/` + tape-measured numbers in `ground_truth.cs
 ```bash
 python -m validation.render_scene     # simulated photos with known dimensions
 python -m tools.build_site_data       # run the engine on them -> docs/data/samples.json
+python -m validation.sweep            # stress test, ~10 min on 2 cores -> docs/data/sweep.json
+python -m tools.make_og               # link-preview image -> docs/og.png
 python -m tools.build_page            # -> docs/index.html
 ```
 

@@ -118,15 +118,27 @@ def _auto_fg_rect(rectified, marker_size_mm, mm_per_px):
     return (x0, y0, x1 - x0, y1 - y0)
 
 
-def segment_smart_grabcut(rectified, marker_size_mm=80.0, mm_per_px=0.5, iters=5):
-    """GrabCut seeded by the auto-detected garment bbox (robust to framing)."""
+def segment_smart_grabcut(rectified, marker_size_mm=80.0, mm_per_px=0.5, iters=5,
+                          work_px=1100):
+    """GrabCut seeded by the auto-detected garment bbox (robust to framing).
+
+    GrabCut is the slow step (~20 s on a 2000x2800 rectified image), so it runs on a copy
+    scaled to ~1100 px on the long side (about 1.3 mm per pixel here) and the mask is scaled
+    back up. Edge error from this is well under a millimetre on measurements, which have
+    1 cm tolerances (checked against full-resolution GrabCut on the demo photos: <= 0.2 cm)."""
     H, W = rectified.shape[:2]
-    rect = _auto_fg_rect(rectified, marker_size_mm, mm_per_px) or \
-        (int(0.08 * W), int(0.08 * H), int(0.84 * W), int(0.84 * H))
-    gc = np.zeros((H, W), np.uint8)
+    s = min(1.0, work_px / max(H, W))
+    small = cv2.resize(rectified, (round(W * s), round(H * s)), interpolation=cv2.INTER_AREA) if s < 1 else rectified
+    h, w = small.shape[:2]
+    rect = _auto_fg_rect(small, marker_size_mm, mm_per_px / s) or \
+        (int(0.08 * w), int(0.08 * h), int(0.84 * w), int(0.84 * h))
+    gc = np.zeros((h, w), np.uint8)
     bgd, fgd = np.zeros((1, 65), np.float64), np.zeros((1, 65), np.float64)
-    cv2.grabCut(rectified, gc, rect, bgd, fgd, iters, cv2.GC_INIT_WITH_RECT)
+    cv2.grabCut(small, gc, rect, bgd, fgd, iters, cv2.GC_INIT_WITH_RECT)
     mask = np.where((gc == cv2.GC_FGD) | (gc == cv2.GC_PR_FGD), 255, 0).astype(np.uint8)
+    if s < 1:
+        mask = cv2.resize(mask, (W, H), interpolation=cv2.INTER_LINEAR)
+        mask = np.where(mask >= 128, 255, 0).astype(np.uint8)
     mask = _blank_corners(mask, marker_size_mm, mm_per_px)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
@@ -153,3 +165,35 @@ def segment_auto(rectified, marker_size_mm=80.0, mm_per_px=0.5):
     if m is not None and largest_contour(m) is not None:
         return m
     return segment_smart_grabcut(rectified, marker_size_mm, mm_per_px)
+
+
+def contrast(rectified: np.ndarray, mask: np.ndarray, ring_px: int = 40) -> float:
+    """How different the garment looks from what it's lying on: Lab colour distance between
+    the median garment pixel and the median pixel in a band just outside the outline.
+
+    Low values mean the edges (and the gap between the legs) are unreliable. Callers use it
+    to warn or refuse instead of returning confident wrong numbers."""
+    lab = cv2.cvtColor(rectified, cv2.COLOR_BGR2LAB).astype(np.float32)
+    inside = mask > 0
+    ring = cv2.dilate(mask, np.ones((ring_px, ring_px), np.uint8)) > 0
+    ring &= ~inside
+    if inside.sum() < 100 or ring.sum() < 100:
+        return 0.0
+    return float(np.linalg.norm(np.median(lab[inside], axis=0) - np.median(lab[ring], axis=0)))
+
+
+# Thresholds set from the stress test (validation/sweep.py): light sheet ~126, beige carpet
+# ~93 measured fine; mid-grey floor ~38 lost 6 cm of inseam; dark floor ~11 was badly wrong.
+CONTRAST_REFUSE = 20.0
+CONTRAST_WARN = 60.0
+
+
+def contrast_check(value: float) -> tuple[str, str]:
+    """-> ("ok" | "warn" | "refuse", message for the user)."""
+    if value < CONTRAST_REFUSE:
+        return "refuse", ("The garment is too close in colour to what it's lying on to find its "
+                          "edges. Lay it on a lighter or darker sheet and try again.")
+    if value < CONTRAST_WARN:
+        return "warn", ("Low contrast with the background: edges, and especially the gap between "
+                        "the legs, may be off. A plain sheet in a contrasting colour helps.")
+    return "ok", ""

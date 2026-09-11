@@ -13,7 +13,7 @@ from pathlib import Path
 
 import cv2
 
-from core.calibrate import calibrate
+from core.calibrate import calibrate, _detect_markers
 from core.segment import segment_auto, largest_contour
 from core.classify import classify
 from core.measure import measure
@@ -57,6 +57,12 @@ def main():
         rc = cv2.resize(R, (WEB_W, int(R.shape[0] * s)), interpolation=cv2.INTER_AREA)
         cv2.imwrite(str(IMG / f"{m['name']}-photo.jpg"), ph, [cv2.IMWRITE_JPEG_QUALITY, 82])
         cv2.imwrite(str(IMG / f"{m['name']}-flat.jpg"), rc, [cv2.IMWRITE_JPEG_QUALITY, 82])
+        # where the marker detector found each sheet, for the photo overlay
+        ps = WEB_W / photo.shape[1]
+        corners, ids = _detect_markers(cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY))
+        markers = [] if ids is None else [
+            {"id": int(i), "quad": [[round(float(x) * ps, 1), round(float(y) * ps, 1)] for x, y in c.reshape(4, 2)]}
+            for c, i in zip(corners, ids.flatten())]
         gt = m["ground_truth_cm"]
         meas = []
         for x in ms:
@@ -71,7 +77,7 @@ def main():
             "photo": f"img/{m['name']}-photo.jpg", "flat": f"img/{m['name']}-flat.jpg",
             "flat_size": [rc.shape[1], rc.shape[0]], "photo_size": [ph.shape[1], ph.shape[0]],
             "outline": [[round(float(a) * s, 1), round(float(b) * s, 1)] for a, b in poly],
-            "measurements": meas,
+            "measurements": meas, "marker_quads": markers,
             "size": estimate_size(gtype, {x.name: x.value_cm for x in ms}),
             "camera": m["camera"],
         })

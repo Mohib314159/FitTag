@@ -123,7 +123,10 @@ def calibrate(
     # --- MAT mode: >=2 known markers -> homography over all corners ----------
     if mat_layout is not None:
         known = [mid for mid in found if mid in mat_layout]
-        if len(known) >= 2:
+        # One mat sheet is still usable: its marker's position on the mat is known, so its
+        # four corners alone give the homography. Less accurate (the fit extrapolates from an
+        # 8 cm square across the whole mat), so error bars are widened.
+        if len(known) >= 1:
             src_pts, dst_pts = [], []
             for mid in known:
                 src_pts.append(found[mid])
@@ -137,8 +140,9 @@ def calibrate(
                                             flags=cv2.INTER_LINEAR,
                                             borderMode=cv2.BORDER_CONSTANT,
                                             borderValue=(255, 255, 255))
-            return Calibration(rectified, mm_per_px_out, H, ok=True, mode="mat",
-                               n_markers=len(known), tol_scale=1.0,
+            return Calibration(rectified, mm_per_px_out, H, ok=True,
+                               mode="mat" if len(known) >= 2 else "single-sheet",
+                               n_markers=len(known), tol_scale=1.0 if len(known) >= 2 else 4.0,
                                marker_size_mm=mat_marker_mm)
 
     # --- SINGLE mode: one marker, rectify with a wider tolerance --------------

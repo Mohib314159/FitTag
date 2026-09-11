@@ -44,8 +44,12 @@ def _classify_heuristic(contour) -> tuple[str, str]:
     Uses the aspect ratio to disambiguate trousers vs shorts/top."""
     mask, x0, y0, w, h = _raster(contour)
     ymax = y0 + h
-    hem_runs = _runs(mask[max(y0, ymax - 3)])
-    if len(hem_runs) >= 2:
+    # look for two separate legs across the bottom 15%, not just the last row: with a
+    # slight tilt one hem ends a few rows above the other and the last row shows one leg
+    rows = [int(ymax - f * h) for f in (0.02, 0.05, 0.08, 0.11, 0.14)]
+    min_leg = 0.04 * h
+    two_legs = sum(sum((b - a) >= min_leg for a, b in _runs(mask[max(y0, r)])) >= 2 for r in rows)
+    if two_legs >= 3:
         gtype = "jeans" if h > 1.2 * w else "shorts"
         return gtype, "bottom"
     # single blob -> top; very tall single blob could be a dress

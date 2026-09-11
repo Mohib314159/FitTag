@@ -26,7 +26,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import BaseModel
@@ -34,7 +34,7 @@ from pydantic import BaseModel
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from core.calibrate import calibrate, capture_guidance
-from core.segment import segment_auto, largest_contour, touches_border
+from core.segment import segment_auto, largest_contour, touches_border, contrast, contrast_check
 from core.classify import classify
 from core.measure import measure
 from core.fit import compute_fit
@@ -69,7 +69,7 @@ async def _decode(file: UploadFile):
     return cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR), raw
 
 
-def _run_measure(img, item_prefix="item"):
+def _run_measure(img, item_prefix="item", garment_type: str | None = None):
     cal = calibrate(img, mm_per_px_out=MM_PER_PX)
     if not cal.ok:
         return {"ok": False, "error": "No calibration markers found. Lay the garment on the "
@@ -78,9 +78,19 @@ def _run_measure(img, item_prefix="item"):
     contour = largest_contour(mask)
     if contour is None:
         return {"ok": False, "error": "Couldn't separate the garment from the background."}
-    gtype, category, src = classify(image_bgr=cal.rectified, contour=contour)
+    filled = np.zeros_like(mask)
+    cv2.drawContours(filled, [contour], -1, 255, cv2.FILLED)
+    status, msg = contrast_check(contrast(cal.rectified, filled))
+    if status == "refuse":
+        return {"ok": False, "error": msg}
+    if garment_type in ("jeans", "t-shirt"):          # the user said what it is: trust them
+        gtype, category, src = garment_type, ("bottom" if garment_type == "jeans" else "top"), "user"
+    else:
+        gtype, category, src = classify(image_bgr=cal.rectified, contour=contour)
     measurements = measure(contour, gtype, cal.mm_per_px, tol_scale=cal.tol_scale)
     notes = [f"calibration {cal.mode} ({cal.n_markers} markers)", f"type via {src}"]
+    if status == "warn":
+        notes.append(msg)
     if touches_border(contour, cal.rectified.shape):
         notes.append("garment touches mat edge — use a larger mat")
     g = GarmentMeasurement(item_id=f"{item_prefix}-{uuid.uuid4().hex[:6]}", garment_type=gtype,
@@ -102,10 +112,10 @@ def health(): return {"ok": True, "service": "fittag"}
 
 
 @app.post("/measure")
-async def measure_ep(file: UploadFile = File(...)):
+async def measure_ep(file: UploadFile = File(...), garment_type: str | None = Form(None)):
     img, _ = await _decode(file)
     if img is None: return JSONResponse({"ok": False, "error": "Unreadable image."}, 400)
-    return _run_measure(img, "listing")
+    return _run_measure(img, "listing", garment_type)
 
 
 @app.post("/measure-reference")
