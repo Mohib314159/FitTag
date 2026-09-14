@@ -178,7 +178,7 @@ section.log h2{font-size:22px;margin-bottom:10px}
 .sub2{grid-column:1/-1;max-width:60ch;color:var(--ink-2);margin:-2px 0 0;font-size:15px}
 .btn.primary{background:var(--tape);border-color:var(--tape);color:var(--tape-ink);font-weight:600}
 .btn.primary:hover{background:var(--ink);border-color:var(--ink);color:var(--tape)}
-section.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-block:26px 10px}
+section.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-block:26px 10px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:2px}
 .tile b{font-family:var(--display);font-stretch:80%;font-size:30px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
 .tile span{font-size:13px;color:var(--ink-2)}
@@ -263,6 +263,7 @@ details.notes[open]>summary::before{content:"−"}
     <div class="tile"><b id="t1">—</b><span>measurements inside their error bars, across <i id="t1b">—</i> simulated photos</span></div>
     <div class="tile"><b>50°</b><span>of camera tilt tested; accuracy holds to about 30°</span></div>
     <div class="tile"><b>~3 s</b><span>to measure one photo on a laptop</span></div>
+    <div class="tile"><b>0.8 cm</b><span>median error with no printing: one sheet of A4 and a box drawn round the garment</span></div>
     <div class="tile warn"><b>0</b><span>real garments measured yet — that test is next</span></div>
   </section>
 
@@ -315,7 +316,8 @@ details.notes[open]>summary::before{content:"−"}
         <ol class="tl">
           <li><span class="when">Jul 2026</span><div><b>Built at the Fleek × a16z hackathon.</b> Printable sheets, flattening, measuring, fit verdicts, API.</div></li>
           <li><span class="when">Sep 2026</span><div><b>Photoreal test photos, six bugs fixed, 8× faster</b> (25 s → 3 s per photo), refuses low-contrast shots.</div></li>
-          <li><span class="when">Sep 2026</span><div><b>Card mode, experimental.</b> A bank card is 85.60 × 53.98 mm worldwide, so scale works — rectified through a detected card, the card measures back at 85.2 mm. Framing doesn't: the sheets also fix orientation and crop, so segmentation grabs shadow. In the repo, off by default.</div></li>
+          <li><span class="when">Sep 2026</span><div><b>No printing needed.</b> A plain sheet of A4 is 210 × 297 mm everywhere, and as a ruler it lands within 1% of truth. Framing was the part that needed a person — shadows and folds look like denim to a threshold — so the user drags a box round the garment and everything downstream works: median error 0.8 cm, worst 3.5 cm, against 0.5 cm for the printed mat.</div></li>
+      <li><span class="when">Sep 2026</span><div><b>Card mode, experimental.</b> A bank card is 85.60 × 53.98 mm worldwide, so scale works — rectified through a detected card, the card measures back at 85.2 mm. Framing doesn't: the sheets also fix orientation and crop, so segmentation grabs shadow. In the repo, off by default.</div></li>
           <li><span class="when">next</span><div><b>A real photo against a tape measure</b>, published whatever it shows.</div></li>
           <li><span class="when">next</span><div><b>Tap-the-corners on a phone.</b> Mark a card or a blank A4, drag a box round the garment: no printing, and the geometry is already exact.</div></li>
         </ol>
@@ -478,9 +480,9 @@ function renderStress(){
     c.addEventListener('mouseenter',e=>{tip=document.createElement('div');tip.className='tip';tip.textContent=c.dataset.tip;document.body.appendChild(tip);});
     c.addEventListener('mousemove',e=>{if(tip){tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY-30)+'px';}});
     c.addEventListener('mouseleave',()=>{tip&&tip.remove();tip=null;});});
-  const GN={placement:'Sheets taped carelessly',sheets:'Sheets hidden or out of frame',backdrop:"What it's lying on",lens:'Lens distortion left in',card:'No sheets: a bank card for scale'};
+  const GN={placement:'Sheets taped carelessly',sheets:'Sheets hidden or out of frame',backdrop:"What it's lying on",lens:'Lens distortion left in',paper:'No printing: one sheet of A4',card:'No printing: a bank card'};
   let rows='';
-  for(const grp of ['placement','sheets','backdrop','lens','card']){
+  for(const grp of ['placement','sheets','backdrop','paper','card','lens']){
     rows+=`<tr><td class="g" colspan="2">${GN[grp]}</td></tr>`;
     SW.filter(r=>r.group===grp).forEach(r=>{
       let res;

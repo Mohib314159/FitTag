@@ -194,17 +194,23 @@ def segment_with_prior(rectified, prior, mm_per_px=0.5, iters=5, work_px=1100):
     return mask
 
 
-def segment_auto(rectified, marker_size_mm=80.0, mm_per_px=0.5, prior=None):
+def segment_auto(rectified, marker_size_mm=80.0, mm_per_px=0.5, prior=None, exclude=None):
     """Best available: a seeded GrabCut when we know roughly where the garment is, else
     rembg if installed, else auto-seeded GrabCut."""
+    def _cut(m):
+        if m is not None and exclude is not None:
+            m = m.copy()
+            m[exclude > 0] = 0
+        return m
+
     if prior is not None:
-        m = segment_with_prior(rectified, prior, mm_per_px)
+        m = _cut(segment_with_prior(rectified, prior, mm_per_px))
         if m is not None and largest_contour(m) is not None:
             return m
-    m = segment_rembg(rectified, marker_size_mm, mm_per_px)
+    m = _cut(segment_rembg(rectified, marker_size_mm, mm_per_px))
     if m is not None and largest_contour(m) is not None:
         return m
-    return segment_smart_grabcut(rectified, marker_size_mm, mm_per_px)
+    return _cut(segment_smart_grabcut(rectified, marker_size_mm, mm_per_px))
 
 
 def contrast(rectified: np.ndarray, mask: np.ndarray, ring_px: int = 40) -> float:

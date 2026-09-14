@@ -45,6 +45,11 @@ def cases():
     out.append(case("sheets", "3 of 4 sheets", "jeans-midwash", 301, missing=(2,)))
     out.append(case("sheets", "2 of 4 sheets", "jeans-midwash", 302, missing=(1, 3)))
     out.append(case("sheets", "1 of 4 sheets", "jeans-midwash", 303, missing=(1, 2, 3)))
+    # markerless: one blank sheet of A4 and a box drawn round the garment (the user's drag)
+    for pitch in (5, 12, 20, 28):
+        out.append(case("paper", f"one sheet of A4, {pitch}° tilt", "jeans-charcoal", 700 + pitch,
+                        paper=True, missing=(0, 1, 2, 3),
+                        camera={"pitch_deg": pitch, "height_mm": 1700.0, "out_size": (2268, 3024)}))
     # markerless: a bank card is the only thing of known size in the picture
     for pitch in (8, 22):
         out.append(case("card", f"bank card only, {pitch}° tilt", "jeans-charcoal", 600 + pitch,
@@ -73,7 +78,16 @@ def run_case(c):
     cv2.imwrite(str(thumb), cv2.resize(photo, (270, 360), interpolation=cv2.INTER_AREA), [cv2.IMWRITE_JPEG_QUALITY, 72])
     res["thumb"] = f'img/sweep/{c["idx"]:02d}.jpg'
     res["truth"] = gt
-    if c["spec"].get("card"):
+    if c["spec"].get("paper"):
+        from core.markerless import find_rectangle
+        from core.calibrate import calibrate_by_paper
+        g = cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY)
+        dark = cv2.morphologyEx((cv2.GaussianBlur(g, (0, 0), 3) < np.percentile(g, 22)).astype(np.uint8) * 255,
+                                cv2.MORPH_OPEN, np.ones((25, 25), np.uint8))
+        cs, _ = cv2.findContours(dark, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        box = cv2.boxPoints(cv2.minAreaRect(max(cs, key=cv2.contourArea))) if cs else None
+        cal = calibrate_by_paper(photo, corners=find_rectangle(photo), garment_box_px=box)
+    elif c["spec"].get("card"):
         cal = calibrate_by_card(photo)
     else:
         cal = calibrate(photo, mm_per_px_out=0.5)

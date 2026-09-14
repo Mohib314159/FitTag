@@ -39,6 +39,7 @@ class Calibration:
     tol_scale: float = 1.0       # multiply intrinsic measurement tolerance by this
     marker_size_mm: float = 50.0
     prior: "np.ndarray | None" = None   # rough garment mask (same size as rectified), if known
+    exclude: "np.ndarray | None" = None # region the scale reference occupies, not garment
 
 
 # --- Default calibration mat -----------------------------------------------------
@@ -378,7 +379,12 @@ def _warp_mm(photo, H0, x0, y0, x1, y1, mm_per_px):
 
 
 def _content_mask(coarse, valid, strict=1.0, erode_mm=0.0, mm_per_px=2.0):
-    """Rough mask of whatever is lying on the background, at whatever scale `coarse` is."""
+    """Rough mask of whatever is lying on the background.
+
+    Flat-field first (divide by a heavily blurred copy) so a vignette or a fold's shading
+    doesn't read as an object, then split lightness with Otsu — a garment on a sheet is a
+    two-level picture, and Otsu handles that far more reliably than a distance threshold.
+    Whichever side is farther from the border's lightness is the object."""
     h, w = coarse.shape[:2]
     vb = cv2.boundingRect((valid > 0.5).astype(np.uint8))
     if vb[2] < 20 or vb[3] < 20:
@@ -387,32 +393,48 @@ def _content_mask(coarse, valid, strict=1.0, erode_mm=0.0, mm_per_px=2.0):
     img = coarse.astype(np.float32) + 1.0
     low = cv2.GaussianBlur(img, (0, 0), max(8.0, 0.06 * min(vw, vh)))
     flat = np.clip(img / low * float(np.median(low)), 0, 255).astype(np.uint8)
-    lab = cv2.cvtColor(cv2.GaussianBlur(flat, (0, 0), 2), cv2.COLOR_BGR2LAB).astype(np.float32)
+    lab = cv2.cvtColor(cv2.GaussianBlur(flat, (0, 0), 2), cv2.COLOR_BGR2LAB)
+    L = lab[:, :, 0]
+    inside = valid > 0.5
+
     b = max(3, int(0.05 * min(vw, vh)))
     ring = np.zeros((h, w), bool)
     ring[vy:vy + b, vx:vx + vw] = ring[vy + vh - b:vy + vh, vx:vx + vw] = True
     ring[vy:vy + vh, vx:vx + b] = ring[vy:vy + vh, vx + vw - b:vx + vw] = True
-    ring &= valid > 0.5
+    ring &= inside
     if ring.sum() < 50:
         return None
-    bg = np.median(lab[ring], axis=0)
-    dist = np.linalg.norm(lab - bg, axis=2) * (valid > 0.5)
-    ring_d = dist[ring]
-    mad = float(np.median(np.abs(ring_d - np.median(ring_d)))) * 1.4826
-    thr = max(10.0, float(np.median(ring_d)) + 5.0 * mad * strict)
-    m = ((dist > thr) & (valid > 0.5)).astype(np.uint8) * 255
-    m = cv2.morphologyEx(m, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
-    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    # Lightness alone follows the room's shadows. Cloth also has texture — weave, stitching,
+    # fabric grain — and a bedsheet or a floor does not, so high-frequency energy separates
+    # the garment from a shadow that happens to be the same brightness.
+    hp = cv2.absdiff(L, cv2.GaussianBlur(L, (0, 0), 2.0)).astype(np.float32)
+    tex = cv2.boxFilter(hp, -1, (9, 9))
+    tex8 = np.clip(tex / max(1e-6, np.percentile(tex[inside], 99)) * 255, 0, 255).astype(np.uint8)
+    t_thr, _ = cv2.threshold(tex8[inside], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    textured = (tex8 > t_thr) & inside
+
+    thr, _ = cv2.threshold(L[inside], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    bg_L = float(np.median(L[ring]))
+    dark = (L < thr) & inside
+    light = (L >= thr) & inside
+    lit_side = dark if abs(float(np.median(L[dark])) - bg_L) > abs(float(np.median(L[light])) - bg_L) else light
+    obj = textured & lit_side
+    if obj.sum() < 0.002 * inside.sum():          # texture too weak to help (blurry photo)
+        obj = lit_side
+    m = (obj.astype(np.uint8)) * 255
+    k = max(3, int(round(20.0 / mm_per_px)) | 1)
+    m = cv2.morphologyEx(m, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)))
+    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)))
     cnts, _ = cv2.findContours(m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not cnts:
         return None
     areas = [cv2.contourArea(c) for c in cnts]
-    keep = [c for c, a in zip(cnts, areas) if a > 0.12 * max(areas)]
+    keep = [c for c, a_ in zip(cnts, areas) if a_ > 0.12 * max(areas)]
     out = np.zeros((h, w), np.uint8)
     cv2.drawContours(out, keep, -1, 255, cv2.FILLED)
     if erode_mm > 0:
-        k = max(3, int(round(erode_mm / mm_per_px)) | 1)
-        out = cv2.erode(out, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)))
+        k2 = max(3, int(round(erode_mm / mm_per_px)) | 1)
+        out = cv2.erode(out, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k2, k2)))
     return out
 
 
@@ -471,7 +493,7 @@ def _content_frame_mm(coarse, valid, mm_per_px, x0, y0, frame_mm=(1300.0, 1600.0
 
 
 def calibrate_by_card(photo, card_mm=CARD_MM, mm_per_px_out=0.5, corners=None,
-                      frame_mm=(1300.0, 1600.0)):
+                      frame_mm=(1300.0, 1600.0), garment_box_px=None):
     """Rectify using a bank card as the only scale reference — no printed sheets.
 
     Pass `corners` (four points in pixels, clockwise from the card's top-left) to skip
@@ -499,45 +521,36 @@ def calibrate_by_card(photo, card_mm=CARD_MM, mm_per_px_out=0.5, corners=None,
     coarse, Hc = _warp_mm(photo, H0, -span, -span, span, span, coarse_mm)
     valid = cv2.warpPerspective(ones, Hc, (coarse.shape[1], coarse.shape[0]),
                                 flags=cv2.INTER_NEAREST) / 255.0
-    centre, tilt = _content_frame_mm(coarse, valid, coarse_mm, -span, -span)
-    if centre is None:
-        centre, tilt = (0.0, 0.0), 0.0
-
-    def _rot(h0, deg):
-        th = math.radians(deg)
-        c_, s_ = math.cos(th), math.sin(th)
-        return np.array([[c_, -s_, 0], [s_, c_, 0], [0, 0, 1]], np.float32) @ h0
-
-    def _upright_score(h0):
-        """Warp the coarse view and ask how tall-and-narrow the garment looks. Sign
-        conventions between the moment angle and the warp are easy to get backwards, so the
-        candidates are simply tried and scored."""
-        cc, Hc2 = _warp_mm(photo, h0, -span, -span, span, span, coarse_mm)
-        v2 = cv2.warpPerspective(ones, Hc2, (cc.shape[1], cc.shape[0]), flags=cv2.INTER_NEAREST) / 255.0
-        ctr, _ = _content_frame_mm(cc, v2, coarse_mm, -span, -span)
-        if ctr is None:
-            return -1.0, None
-        gray_c = cv2.cvtColor(cc, cv2.COLOR_BGR2GRAY)
-        lab = cv2.cvtColor(cv2.GaussianBlur(cc, (0, 0), 2), cv2.COLOR_BGR2LAB).astype(np.float32)
-        bg = np.median(lab[(v2 > 0.5)].reshape(-1, 3), axis=0)
-        d = (np.linalg.norm(lab - bg, axis=2) > 25) & (v2 > 0.5)
-        ys, xs = np.nonzero(d)
-        if ys.size < 200:
-            return -1.0, ctr
-        return float((ys.max() - ys.min() + 1) / (xs.max() - xs.min() + 1)), ctr
-
-    best_h, best_centre, best_up = H0, centre, -2.0
-    seen = set()
-    for cand in (0.0, tilt, tilt + 90.0, -tilt, -tilt + 90.0):
-        key = round(((cand + 90) % 180) - 90, 1)
-        if key in seen:
-            continue
-        seen.add(key)
-        h_try = H0 if abs(key) < 0.5 else _rot(H0, key)
-        up, ctr = _upright_score(h_try)
-        if up > best_up:
-            best_h, best_centre, best_up = h_try, ctr or centre, up
-    H0, centre = best_h, best_centre
+    if garment_box_px is not None:
+        # The user drew a box round the garment (two gestures in an app). That removes the
+        # only part of markerless mode that isn't solved — knowing which dark shape is the
+        # garment and which way up it lies — so use it when it's offered.
+        pts = cv2.perspectiveTransform(np.asarray(garment_box_px, np.float32).reshape(1, -1, 2), Hc)[0]
+        rect = cv2.minAreaRect(pts.astype(np.float32))
+        (rc, (rw, rh), ang) = rect
+        tilt = ang if rw <= rh else ang + 90.0
+        tilt = ((tilt + 90) % 180) - 90
+        centre = (-span + rc[0] * coarse_mm, -span + rc[1] * coarse_mm)
+        span_w = max(rw, rh) * coarse_mm
+        frame_mm = (max(frame_mm[0], min(rw, rh) * coarse_mm + 260.0), span_w + 260.0)
+        mask = None
+    else:
+        mask = _content_mask(coarse, valid)
+    if garment_box_px is not None:
+        pass
+    elif mask is None or mask.max() == 0:
+        centre_px, tilt = (coarse.shape[1] / 2, coarse.shape[0] / 2), 0.0
+        centre = (-span + centre_px[0] * coarse_mm, -span + centre_px[1] * coarse_mm)
+    else:
+        cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        pts = np.vstack(cnts)
+        (rc, (rw, rh), ang) = cv2.minAreaRect(pts)
+        # turn the plane so the garment stands upright: the long side of its bounding box
+        # goes vertical. minAreaRect is far steadier than image moments on a shape with legs.
+        tilt = ang if rw <= rh else ang + 90.0
+        tilt = ((tilt + 90) % 180) - 90
+        centre_px = rc
+        centre = (-span + centre_px[0] * coarse_mm, -span + centre_px[1] * coarse_mm)
 
     fw, fh = frame_mm
     x0, y0 = centre[0] - fw / 2, centre[1] - fh / 2
@@ -552,5 +565,58 @@ def calibrate_by_card(photo, card_mm=CARD_MM, mm_per_px_out=0.5, corners=None,
     prior = _content_mask(cc, v3, strict=2.4, erode_mm=18.0, mm_per_px=coarse_mm)
     if prior is not None:
         prior = cv2.resize(prior, (rect.shape[1], rect.shape[0]), interpolation=cv2.INTER_NEAREST)
+    # Straighten in the rectified image rather than in the homography: find the garment's
+    # bounding box here and turn the whole picture so it stands upright. Doing it at this
+    # stage keeps the sign conventions honest — you can see the result.
+    ref_pts = (np.asarray(garment_box_px, np.float32).reshape(1, -1, 2) if garment_box_px is not None
+               else None)
+    if ref_pts is not None:
+        gb = cv2.perspectiveTransform(ref_pts, Hm)[0]
+        (grc, (grw, grh), gang) = cv2.minAreaRect(gb.astype(np.float32))
+        turn = gang if grw <= grh else gang + 90.0
+        turn = ((turn + 90) % 180) - 90
+        if abs(turn) > 0.4:
+            M = cv2.getRotationMatrix2D((rect.shape[1] / 2, rect.shape[0] / 2), turn, 1.0)
+            rect = cv2.warpAffine(rect, M, (rect.shape[1], rect.shape[0]),
+                                  flags=cv2.INTER_LINEAR, borderValue=(255, 255, 255))
+            M3 = np.vstack([M, [0, 0, 1]]).astype(np.float32)
+            Hm = M3 @ Hm
+            if prior is not None:
+                prior = cv2.warpAffine(prior, M, (prior.shape[1], prior.shape[0]), flags=cv2.INTER_NEAREST)
+
+    # the reference object is in the picture and is not the garment: mark where it landed
+    ref_quad = cv2.perspectiveTransform(q.reshape(1, 4, 2).astype(np.float32), Hm)[0]
+    exclude = np.zeros(rect.shape[:2], np.uint8)
+    cv2.fillPoly(exclude, [np.int32(ref_quad)], 255)
+    exclude = cv2.dilate(exclude, np.ones((15, 15), np.uint8))
+    if prior is not None:
+        prior[exclude > 0] = 0
     return Calibration(rect, mm_per_px_out, Hm, ok=True, mode="card", n_markers=0,
-                       tol_scale=3.0, marker_size_mm=float(max(card_mm)), prior=prior)
+                       tol_scale=3.0, marker_size_mm=float(max(card_mm)), prior=prior,
+                       exclude=exclude)
+
+
+A4_MM = (210.0, 297.0)
+
+
+def calibrate_by_paper(photo, paper_mm=A4_MM, mm_per_px_out=0.5, corners=None,
+                       garment_box_px=None):
+    """Rectify using a plain sheet of A4 — the no-printing scale reference.
+
+    A4 is 210 x 297 mm everywhere outside North America (US Letter is 216 x 279 and is a
+    different aspect, so pass paper_mm for it). It is big, flat, high-contrast and already in
+    the house, which makes it both an accurate ruler and easy to find in a photo.
+
+    Pass `corners` from markerless.find_rectangle, and `garment_box_px` for the four corners
+    of a box round the garment — in an app that box is the user's drag, and it is what makes
+    this reliable: scale from the paper, framing from the person.
+    """
+    from core.markerless import find_rectangle
+    q = corners if corners is not None else find_rectangle(photo, paper_mm)
+    if q is None:
+        return Calibration(photo, mm_per_px_out, np.eye(3), ok=False, mode="none")
+    cal = calibrate_by_card(photo, card_mm=paper_mm, mm_per_px_out=mm_per_px_out, corners=q,
+                            garment_box_px=garment_box_px)
+    cal.mode = "paper" if cal.ok else cal.mode
+    cal.tol_scale = 2.0 if garment_box_px is not None else 3.0
+    return cal

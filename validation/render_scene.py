@@ -255,6 +255,28 @@ def place_card(alb, hgt, rng, centre_mm, angle_deg=None, card_mm=(85.60, 53.98))
     return wm
 
 
+def place_hardware(alb, hgt, rng, centre_mm, diameter_mm=17.0, kind="button"):
+    """A tack button or a rivet: a small metal disc, domed, brighter than denim.
+
+    These are the only things on a pair of jeans with a near-standard size (17 mm buttons,
+    about 9 mm rivets), which is what markerless scaling has to lean on."""
+    H, W = alb.shape[:2]
+    r = px(diameter_mm / 2)
+    cx_, cy_ = mat_to_scene(*centre_mm)
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    d2 = (xx - cx_) ** 2 + (yy - cy_) ** 2
+    m = np.clip(r + 0.8 - np.sqrt(d2), 0, 1)                       # anti-aliased disc
+    dome = np.clip(1 - d2 / (r * r), 0, 1) ** 0.5                  # domed top
+    metal = np.array([150, 152, 158], np.float32) if kind == "button" else np.array([138, 140, 146], np.float32)
+    tone = (0.82 + 0.35 * dome)[..., None]
+    alb[:] = alb * (1 - m[..., None]) + metal * tone * m[..., None]
+    if kind == "button":                                            # rim and a stamped centre
+        rim = np.clip(1.2 - np.abs(np.sqrt(d2) - r * 0.86) / max(1.0, px(0.5)), 0, 1) * m
+        alb[:] = alb * (1 - 0.35 * rim[..., None])
+    hgt += m * (1.4 * dome + 0.5)
+    return m
+
+
 def place_paper(alb, hgt, rng, centre_mm, angle_deg=None, paper_mm=A4):
     """A blank sheet of A4 lying beside the garment — the no-printing scale reference."""
     H, W = alb.shape[:2]
@@ -507,17 +529,23 @@ def render(spec):
         cxy = spec.get("card_at", (cx + 60, top + 260))
         card = place_card(alb, hgt, rng, cxy, spec.get("card_angle"))
 
+    if spec["kind"] == "jeans" and spec.get("hardware", True):
+        band_y = top + 40.0
+        place_hardware(alb, hgt, rng, (cx - 6, top + 22), 17.0, "button")
+        for rx, ry in ((-d["waist"] / 2 + 18, band_y + 8), (d["waist"] / 2 - 18, band_y + 8),
+                       (-d["waist"] / 2 + 120, band_y + 105), (d["waist"] / 2 - 120, band_y + 105)):
+            place_hardware(alb, hgt, rng, (cx + rx, ry), 9.0, "rivet")
+
     lit = shade(alb, hgt, PX, spec=spec_str, shine=shine)
     if card is not None:                      # plastic catches the light more than cloth
         lit = lit * (1 - card[..., None]) + shade(alb, hgt, PX, spec=0.06, shine=60.0) * card[..., None]
 
     # contact shadows: the garment and the paper both sit above the sheet
     occl = ambient_occlusion(cover, px(6.0), 0.40) * cast_shadow(cover, 1.6, PX, strength=0.45)
-    if card is not None:
+    if card is not None and getattr(card, "size", 0):
         occl *= ambient_occlusion(card, px(2.5), 0.30) * cast_shadow(card, 0.8, PX, softness_px=3, strength=0.40)
-    if paper is not None:
+    if paper is not None and getattr(paper, "size", 0):
         occl *= ambient_occlusion(paper, px(3.0), 0.22) * cast_shadow(paper, 0.6, PX, softness_px=4, strength=0.30)
-    occl *= ambient_occlusion(paper, px(3.0), 0.22) * cast_shadow(paper, 0.6, PX, softness_px=4, strength=0.30)
     lit *= occl[..., None]
 
     photo, jpg = handheld_photo(np.clip(lit, 0, 255), rng, **spec["camera"])
