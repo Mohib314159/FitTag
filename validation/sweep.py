@@ -16,7 +16,7 @@ from pathlib import Path
 import cv2
 
 from validation import render_scene as R
-from core.calibrate import calibrate
+from core.calibrate import calibrate, calibrate_by_card
 import numpy as np
 from core.segment import segment_auto, largest_contour, contrast, contrast_check
 from core.classify import classify
@@ -45,6 +45,15 @@ def cases():
     out.append(case("sheets", "3 of 4 sheets", "jeans-midwash", 301, missing=(2,)))
     out.append(case("sheets", "2 of 4 sheets", "jeans-midwash", 302, missing=(1, 3)))
     out.append(case("sheets", "1 of 4 sheets", "jeans-midwash", 303, missing=(1, 2, 3)))
+    # markerless: a bank card is the only thing of known size in the picture
+    for pitch in (8, 22):
+        out.append(case("card", f"bank card only, {pitch}° tilt", "jeans-charcoal", 600 + pitch,
+                        card=True, missing=(0, 1, 2, 3),
+                        camera={"pitch_deg": pitch, "height_mm": 1250.0, "out_size": (2268, 3024)}))
+    out.append(case("lens", "phone lens left uncorrected", "jeans-charcoal", 500,
+                    camera={"k1": 0.06}))
+    out.append(case("lens", "strong barrel distortion", "jeans-charcoal", 501,
+                    camera={"k1": 0.14}))
     for name, rgb in (("light grey sheet", (214, 216, 219)), ("beige carpet", (150, 170, 190)),
                       ("mid-grey floor", (120, 118, 116)), ("dark floor", (70, 68, 66))):
         out.append(case("backdrop", name, "jeans-charcoal", 400 + len(out), backdrop=rgb))
@@ -64,12 +73,16 @@ def run_case(c):
     cv2.imwrite(str(thumb), cv2.resize(photo, (270, 360), interpolation=cv2.INTER_AREA), [cv2.IMWRITE_JPEG_QUALITY, 72])
     res["thumb"] = f'img/sweep/{c["idx"]:02d}.jpg'
     res["truth"] = gt
-    cal = calibrate(photo, mm_per_px_out=0.5)
+    if c["spec"].get("card"):
+        cal = calibrate_by_card(photo)
+    else:
+        cal = calibrate(photo, mm_per_px_out=0.5)
     res["mode"], res["markers"] = cal.mode, cal.n_markers
     if not cal.ok:
         res.update(ok=False, why="no markers found")
         return res
-    mask = segment_auto(cal.rectified, marker_size_mm=cal.marker_size_mm, mm_per_px=cal.mm_per_px)
+    mask = segment_auto(cal.rectified, marker_size_mm=cal.marker_size_mm, mm_per_px=cal.mm_per_px,
+                        prior=getattr(cal, "prior", None))
     contour = largest_contour(mask)
     if contour is None:
         res.update(ok=False, why="garment not found")

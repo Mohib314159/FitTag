@@ -244,7 +244,7 @@ section.log h2{font-size:22px;margin-bottom:10px}
     </div>
   </section>
   <section class="how" aria-label="How it works">
-    <div><span class="step">step 1</span><h3>Find the sheets</h3><p>OpenCV finds the four ArUco markers. Their printed positions are known to the millimetre, so the corners give 16 fixed reference points.</p></div>
+    <div><span class="step">step 1</span><h3>Find the sheets</h3><p>OpenCV finds the four printed markers. Their positions are known to the millimetre, so the corners give 16 reference points — and, just as usefully, they tell the code where the garment is and which way up it lies.</p></div>
     <div><span class="step">step 2</span><h3>Flatten the photo</h3><p>A homography fitted to those 16 points undoes the camera tilt and turns the photo into a top-down image where every pixel is 0.5 mm.</p></div>
     <div><span class="step">step 3</span><h3>Cut out the garment</h3><p>It measures the backdrop colour at the edges, marks everything clearly different as garment, then refines the edge with GrabCut.</p></div>
     <div><span class="step">step 4</span><h3>Measure like a tailor</h3><p>It scans the outline row by row: the waistband, the row where two legs split (crotch), armpits where the width steps down, hems. No ML model outputs a number.</p></div>
@@ -257,6 +257,7 @@ section.log h2{font-size:22px;margin-bottom:10px}
       <li><span class="when">Sep 2026</span><span class="st done">shipped</span><div><b>Made the test photos realistic, then fixed what broke.</b> Six bugs the flat test shapes never triggered, 8× faster measuring, a refusal when the garment blends into the floor, and this page.</div></li>
       <li><span class="when">next</span><span class="st next">next</span><div><b>A real photo against a tape measure.</b> Print the sheets, measure five garments by hand, and publish the comparison here whatever it shows.</div></li>
       <li><span class="when">next</span><span class="st next">next</span><div><b>Measure shoulders properly.</b> Find the shoulder seam points on the outline instead of reusing chest width.</div></li>
+      <li><span class="when">Sep 2026</span><span class="st idea">experimental</span><div><b>Measuring with a bank card instead of the sheets.</b> A card is 85.60 × 53.98 mm everywhere in the world, so it can be the ruler and nothing needs printing: rectified through a detected card, the card measures back at 85.2 mm. What doesn't survive is the framing — the sheets also fix which way up the garment lies and where to crop — so the segmentation grabs shadow instead of denim. It's in the repo as <span class="mono">calibrate_by_card</span>, off by default. The fix isn't cleverer image processing, it's a phone app where you tap the card's corners and drag a box round the garment.</div></li>
       <li><span class="when">exploring</span><span class="st idea">exploring</span><div><b>No printed sheets, on phones with AR.</b> ARKit knows where the floor is relative to the camera, which is the same flattening the sheets provide. Photos with the sheets still in frame would show exactly how accurate the AR version is.</div></li>
     </ol>
   </section>
@@ -284,6 +285,7 @@ section.log h2{font-size:22px;margin-bottom:10px}
         <li>Not yet tested on a real photo of a real garment against a tape measure. That's the next test.</li>
         <li>Shoulder width isn't measured separately yet (it reuses chest width), so it's left out of fit checks.</li>
         <li>On a floor close in colour to the garment, the gap between the legs closes up and inseam reads short; the app warns about this.</li>
+        <li>Card mode (measure with no printing) gets the scale right but not the framing yet — see the build log.</li>
       </ul>
       <p style="margin-top:12px"><a class="btn" href="https://github.com/Mohib314159/FitTag/tree/main/print">Print the sheets</a> <a class="btn" href="https://github.com/Mohib314159/FitTag#run">Run it on your own photos</a></p>
     </div>
@@ -440,9 +442,9 @@ function renderStress(){
     c.addEventListener('mouseenter',e=>{tip=document.createElement('div');tip.className='tip';tip.textContent=c.dataset.tip;document.body.appendChild(tip);});
     c.addEventListener('mousemove',e=>{if(tip){tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY-30)+'px';}});
     c.addEventListener('mouseleave',()=>{tip&&tip.remove();tip=null;});});
-  const GN={placement:'Sheets taped carelessly',sheets:'Sheets hidden or out of frame',backdrop:'What it\'s lying on'};
+  const GN={placement:'Sheets taped carelessly',sheets:'Sheets hidden or out of frame',backdrop:"What it's lying on",lens:'Lens distortion left in',card:'No sheets: a bank card for scale'};
   let rows='';
-  for(const grp of ['placement','sheets','backdrop']){
+  for(const grp of ['placement','sheets','backdrop','lens','card']){
     rows+=`<tr><td class="g" colspan="2">${GN[grp]}</td></tr>`;
     SW.filter(r=>r.group===grp).forEach(r=>{
       let res;

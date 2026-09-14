@@ -14,7 +14,10 @@ them against your size. Started at the Fleek × a16z hackathon.
 - It cuts the garment out of the background, then reads measurements off the outline row by
   row (waistband, the row where the legs split, armpits, hems). No ML model produces a number.
 - The demo runs on simulated phone photos (`validation/render_scene.py`) with known true
-  dimensions: 14/14 measurements land inside their error bars, and a stress test over 29 more photos (tilt up to 50°, sheets taped up to 2 cm off, 1–4 sheets visible, four floor colours) lands 131/134 inside and refuses the one photo it can’t measure. Not yet tested on a real photo.
+  dimensions: 14/14 measurements land inside their error bars. A stress test over 33 more
+  photos — tilt up to 50°, sheets taped up to 2 cm out, 1 to 4 sheets visible, four floor
+  colours, uncorrected lens distortion — lands 134/144 inside, refuses the photo it can't
+  measure, and shows card mode failing (3/10). Not yet tested on a real photo.
 
 > **Geometry measures; the model only names.** ArUco markers + homography rectify the photo to
 > a metric top-down plane; silhouette geometry extracts measurements; a vision model is used
@@ -59,6 +62,15 @@ validation/      make_dataset.py + validate.py + ground_truth.csv -> engine-vs-t
 tests/           synth.py (marker mat + known garments under tilt); test_measure, test_jeans
 demo.py          end-to-end: calibrate -> segment -> classify -> measure -> fit (+ overlay)
 ```
+
+## Markerless card mode (experimental)
+`calibrate_by_card` uses a bank card (85.60 x 53.98 mm, ISO/IEC 7810 ID-1) as the only scale
+reference, so nothing has to be printed. Scale comes out right — rectified through a detected
+card, the card measures back at 85.2 mm — but the four sheets do more than set scale: they also
+fix which way up the garment lies and where to crop it. Without them the framing and the
+segmentation are unreliable, which the stress test shows. The intended fix is a phone app where
+the user taps the card's corners and drags a box around the garment, rather than more guessing
+in the image processing.
 
 ## Validation
 ```bash

@@ -162,8 +162,45 @@ def segment_rembg(rectified, marker_size_mm=80.0, mm_per_px=0.5):
         return None
 
 
-def segment_auto(rectified, marker_size_mm=80.0, mm_per_px=0.5):
-    """Best available: rembg if installed, else auto-seeded GrabCut."""
+def segment_with_prior(rectified, prior, mm_per_px=0.5, iters=5, work_px=1100):
+    """GrabCut seeded by a rough mask of where the garment is.
+
+    Card mode knows roughly where the garment sits (it had to find it to frame the picture),
+    and handing that over removes the guesswork: inside the eroded prior is definitely
+    garment, well outside the dilated prior is definitely background, and GrabCut only has
+    to decide the edge."""
+    H, W = rectified.shape[:2]
+    s = min(1.0, work_px / max(H, W))
+    small = cv2.resize(rectified, (round(W * s), round(H * s)), interpolation=cv2.INTER_AREA) if s < 1 else rectified
+    p = cv2.resize(prior, (small.shape[1], small.shape[0]), interpolation=cv2.INTER_NEAREST)
+    k = max(3, int(round(25.0 / (mm_per_px / max(s, 1e-6)))) | 1)
+    sure_fg = cv2.erode(p, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)))
+    maybe = cv2.dilate(p, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k * 2 + 1, k * 2 + 1)))
+    gc = np.full(p.shape, cv2.GC_BGD, np.uint8)
+    gc[maybe > 0] = cv2.GC_PR_BGD
+    gc[p > 0] = cv2.GC_PR_FGD
+    gc[sure_fg > 0] = cv2.GC_FGD
+    if (gc == cv2.GC_FGD).sum() < 50 or (gc == cv2.GC_BGD).sum() < 50:
+        return None
+    bgd, fgd = np.zeros((1, 65), np.float64), np.zeros((1, 65), np.float64)
+    cv2.grabCut(small, gc, None, bgd, fgd, iters, cv2.GC_INIT_WITH_MASK)
+    mask = np.where((gc == cv2.GC_FGD) | (gc == cv2.GC_PR_FGD), 255, 0).astype(np.uint8)
+    if s < 1:
+        mask = cv2.resize(mask, (W, H), interpolation=cv2.INTER_LINEAR)
+        mask = np.where(mask >= 128, 255, 0).astype(np.uint8)
+    kk = max(5, int(round(12.0 / mm_per_px)) | 1)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kk, kk)))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    return mask
+
+
+def segment_auto(rectified, marker_size_mm=80.0, mm_per_px=0.5, prior=None):
+    """Best available: a seeded GrabCut when we know roughly where the garment is, else
+    rembg if installed, else auto-seeded GrabCut."""
+    if prior is not None:
+        m = segment_with_prior(rectified, prior, mm_per_px)
+        if m is not None and largest_contour(m) is not None:
+            return m
     m = segment_rembg(rectified, marker_size_mm, mm_per_px)
     if m is not None and largest_contour(m) is not None:
         return m

@@ -17,24 +17,24 @@
     },
     "sheet_misplacement": {
       "0": {
-        "dx_mm": -0.9,
-        "dy_mm": -0.1,
-        "rot_deg": 0.02
+        "dx_mm": 0.7,
+        "dy_mm": 1.9,
+        "rot_deg": 0.35
       },
       "1": {
-        "dx_mm": 1.2,
-        "dy_mm": 1.9,
-        "rot_deg": -0.36
+        "dx_mm": -2.1,
+        "dy_mm": -1.4,
+        "rot_deg": 0.41
       },
       "2": {
-        "dx_mm": -1.3,
-        "dy_mm": 0.0,
-        "rot_deg": -0.08
+        "dx_mm": 0.0,
+        "dy_mm": 0.1,
+        "rot_deg": -0.09
       },
       "3": {
-        "dx_mm": -1.3,
-        "dy_mm": -2.4,
-        "rot_deg": 0.26
+        "dx_mm": 0.3,
+        "dy_mm": -0.0,
+        "rot_deg": -0.24
       }
     }
   },
@@ -56,24 +56,24 @@
     },
     "sheet_misplacement": {
       "0": {
-        "dx_mm": -2.0,
-        "dy_mm": 0.8,
-        "rot_deg": 0.36
+        "dx_mm": -1.1,
+        "dy_mm": -1.1,
+        "rot_deg": -0.35
       },
       "1": {
-        "dx_mm": 2.5,
-        "dy_mm": -2.2,
-        "rot_deg": 0.41
+        "dx_mm": 0.8,
+        "dy_mm": -2.3,
+        "rot_deg": 0.16
       },
       "2": {
-        "dx_mm": -2.5,
-        "dy_mm": 0.5,
-        "rot_deg": 0.18
+        "dx_mm": -0.5,
+        "dy_mm": -1.2,
+        "rot_deg": 0.45
       },
       "3": {
-        "dx_mm": 1.9,
-        "dy_mm": -2.0,
-        "rot_deg": 0.31
+        "dx_mm": -1.6,
+        "dy_mm": 0.5,
+        "rot_deg": -0.04
       }
     }
   },
@@ -94,24 +94,24 @@
     },
     "sheet_misplacement": {
       "0": {
-        "dx_mm": -0.1,
-        "dy_mm": -1.1,
-        "rot_deg": 0.48
+        "dx_mm": -1.8,
+        "dy_mm": 0.7,
+        "rot_deg": -0.15
       },
       "1": {
-        "dx_mm": 2.3,
-        "dy_mm": 1.6,
-        "rot_deg": -0.14
+        "dx_mm": 0.6,
+        "dy_mm": -1.6,
+        "rot_deg": 0.34
       },
       "2": {
-        "dx_mm": -1.3,
-        "dy_mm": 0.3,
-        "rot_deg": -0.58
+        "dx_mm": -1.0,
+        "dy_mm": 0.5,
+        "rot_deg": 0.47
       },
       "3": {
-        "dx_mm": 0.4,
-        "dy_mm": 1.2,
-        "rot_deg": 0.39
+        "dx_mm": 2.5,
+        "dy_mm": -1.8,
+        "rot_deg": 0.25
       }
     }
   }

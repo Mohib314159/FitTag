@@ -17,6 +17,7 @@ Assumption: the garment lies flat in the markers' plane (state it in the pitch).
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 import cv2
@@ -37,6 +38,7 @@ class Calibration:
     n_markers: int = 0
     tol_scale: float = 1.0       # multiply intrinsic measurement tolerance by this
     marker_size_mm: float = 50.0
+    prior: "np.ndarray | None" = None   # rough garment mask (same size as rectified), if known
 
 
 # --- Default calibration mat -----------------------------------------------------
@@ -236,3 +238,319 @@ def calibrate_by_rectangle(photo, ref_mm=(297.0, 210.0), aspect_tol=0.12,
     rect = cv2.warpPerspective(photo, Hm, (out_w, out_h), borderValue=(255, 255, 255))
     return Calibration(rect, mm_per_px_out, Hm, ok=True, mode="rectangle",
                        n_markers=0, tol_scale=3.0, marker_size_mm=0.0)
+
+
+# --- card mode: markerless, using a bank card as the ruler ------------------------
+
+CARD_MM = (85.60, 53.98)          # ISO/IEC 7810 ID-1, the size of every bank card
+
+
+def _quad_score(q, ref_aspect):
+    """How card-like a quadrilateral is: side ratio, parallel opposite sides, squareness."""
+    d = [np.linalg.norm(q[(i + 1) % 4] - q[i]) for i in range(4)]
+    if min(d) < 1e-3:
+        return 0.0
+    w, h = (d[0] + d[2]) / 2, (d[1] + d[3]) / 2
+    asp = max(w, h) / min(w, h)
+    a_err = abs(asp - ref_aspect) / ref_aspect
+    opp = abs(d[0] - d[2]) / max(d[0], d[2]) + abs(d[1] - d[3]) / max(d[1], d[3])
+    ang = []
+    for i in range(4):
+        v1 = q[(i + 1) % 4] - q[i]
+        v2 = q[(i - 1) % 4] - q[i]
+        c = abs(float(v1 @ v2) / (np.linalg.norm(v1) * np.linalg.norm(v2) + 1e-6))
+        ang.append(c)
+    return max(0.0, 1 - 2.2 * a_err) * max(0.0, 1 - 1.5 * opp) * max(0.0, 1 - 1.6 * float(np.mean(ang)))
+
+
+def find_card(photo, card_mm=CARD_MM, min_frac=0.0003, max_frac=0.06):
+    """Locate a card-shaped rectangle in the photo. Returns its four corners (TL,TR,BR,BL)
+    in pixels, or None.
+
+    Rounded corners make polygon approximation unreliable, so this works from the rotated
+    bounding box of each blob instead: find edges, close them into shapes, and keep the one
+    whose box has a card's proportions, is nearly filled, is flat in colour inside, and
+    stands out from what surrounds it."""
+    img = photo if photo.ndim == 3 else cv2.cvtColor(photo, cv2.COLOR_GRAY2BGR)
+    H, W = img.shape[:2]
+    scale = min(1.0, 2000.0 / max(H, W))
+    small = cv2.resize(img, (int(W * scale), int(H * scale)), interpolation=cv2.INTER_AREA)
+    h, w = small.shape[:2]
+    gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
+    g = cv2.bilateralFilter(gray, 7, 40, 40)
+
+    gx = cv2.Scharr(g, cv2.CV_32F, 1, 0)
+    gy = cv2.Scharr(g, cv2.CV_32F, 0, 1)
+    mag = cv2.magnitude(gx, gy)
+    ref_aspect = max(card_mm) / min(card_mm)
+    best, best_score = None, 0.30
+
+    def edge_profile(box):
+        """Look across each side of the box. A card gives a step: brightness jumps within a
+        pixel or two and stays there. A fold or a shadow gives a ramp, which is what this
+        rejects. Returns (mean jump in grey levels, how step-like it is, polarity agreement)."""
+        jumps, steps, signs = [], [], []
+        cen = box.mean(0)
+        for i in range(4):
+            p0, p1 = box[i], box[(i + 1) % 4]
+            mid = (p0 + p1) / 2
+            n = mid - cen
+            n /= np.linalg.norm(n) + 1e-6                      # outward normal
+            n_samples = max(5, int(np.linalg.norm(p1 - p0) / 6))
+            near_in, near_out, far_in, far_out = [], [], [], []
+            for t in np.linspace(0.15, 0.85, n_samples):
+                q0 = p0 + (p1 - p0) * t
+                for d, acc in ((-2.0, near_in), (2.0, near_out), (-7.0, far_in), (7.0, far_out)):
+                    x, y = q0 + n * d
+                    xi, yi = int(round(x)), int(round(y))
+                    if 0 <= xi < w and 0 <= yi < h:
+                        acc.append(float(gray[yi, xi]))
+            if min(len(near_in), len(near_out), len(far_in), len(far_out)) < 4:
+                return 0.0, 0.0, 0.0
+            d_near = np.mean(near_in) - np.mean(near_out)
+            d_far = np.mean(far_in) - np.mean(far_out)
+            jumps.append(abs(d_near))
+            steps.append(abs(d_near) / (abs(d_far) + 1e-6))
+            signs.append(np.sign(d_near))
+        agree = abs(float(np.mean(signs)))
+        return float(np.mean(jumps)), float(np.mean(steps)), agree
+
+    # MSER finds regions that stay the same shape as the threshold moves — exactly what a
+    # flat card on cloth looks like. Run it on the image and its inverse so a dark card on a
+    # light garment is found too.
+    mser = cv2.MSER_create()
+    mser.setMinArea(int(0.0002 * h * w))
+    mser.setMaxArea(int(0.06 * h * w))
+    mser.setDelta(6)
+    regions = []
+    for img_v in (g, 255 - g):
+        try:
+            regs, _ = mser.detectRegions(img_v)
+        except cv2.error:
+            continue
+        regions += list(regs)
+
+    for r in regions:
+        pts = r.reshape(-1, 1, 2).astype(np.float32)
+        (rc, (rw, rh), ang) = cv2.minAreaRect(pts)
+        if min(rw, rh) < 12:
+            continue
+        # a card photographed with a whole garment in frame takes up a predictable slice of
+        # the picture: a few percent of the long side. Bigger is the garment itself, smaller
+        # is a label or a pocket rivet.
+        long_frac = max(rw, rh) / max(h, w)
+        if not (0.02 <= long_frac <= 0.22):
+            continue
+        if len(r) / (rw * rh + 1e-6) < 0.80:        # a card fills its own bounding box
+            continue
+        asp = max(rw, rh) / min(rw, rh)
+        a_err = abs(asp - ref_aspect) / ref_aspect
+        if a_err > 0.22:
+            continue
+        box = cv2.boxPoints(((rc), (rw, rh), ang)).astype(np.float32)
+        jump, stepness, agree = edge_profile(box)
+        if jump < 10.0 or stepness < 0.55 or agree < 0.99:
+            continue
+        inside = np.zeros((h, w), np.uint8)
+        cv2.fillPoly(inside, [np.int32(box)], 255)
+        ins = gray[cv2.erode(inside, np.ones((7, 7), np.uint8)) > 0]
+        if ins.size < 60:
+            continue
+        flat = float(np.clip(1.0 - ins.std() / 30.0, 0, 1))
+        score = (1 - a_err / 0.22) * min(1.0, jump / 35.0) * min(1.0, stepness) * (0.4 + 0.6 * flat)
+        if score > best_score:
+            best, best_score = box, score
+    if best is None:
+        return None
+    return _order_quad(best / scale)
+
+
+def _warp_mm(photo, H0, x0, y0, x1, y1, mm_per_px):
+    """Warp the photo into the metric box [x0,x1]x[y0,y1] (mm) at the given pixel pitch."""
+    T = np.array([[1, 0, -x0], [0, 1, -y0], [0, 0, 1]], np.float32)
+    S = np.diag([1 / mm_per_px, 1 / mm_per_px, 1.0]).astype(np.float32)
+    Hm = S @ T @ H0
+    out_w = int(np.clip((x1 - x0) / mm_per_px, 8, 6000))
+    out_h = int(np.clip((y1 - y0) / mm_per_px, 8, 6000))
+    rect = cv2.warpPerspective(photo, Hm, (out_w, out_h), flags=cv2.INTER_LINEAR,
+                               borderMode=cv2.BORDER_CONSTANT, borderValue=(255, 255, 255))
+    return rect, Hm
+
+
+def _content_mask(coarse, valid, strict=1.0, erode_mm=0.0, mm_per_px=2.0):
+    """Rough mask of whatever is lying on the background, at whatever scale `coarse` is."""
+    h, w = coarse.shape[:2]
+    vb = cv2.boundingRect((valid > 0.5).astype(np.uint8))
+    if vb[2] < 20 or vb[3] < 20:
+        return None
+    vx, vy, vw, vh = vb
+    img = coarse.astype(np.float32) + 1.0
+    low = cv2.GaussianBlur(img, (0, 0), max(8.0, 0.06 * min(vw, vh)))
+    flat = np.clip(img / low * float(np.median(low)), 0, 255).astype(np.uint8)
+    lab = cv2.cvtColor(cv2.GaussianBlur(flat, (0, 0), 2), cv2.COLOR_BGR2LAB).astype(np.float32)
+    b = max(3, int(0.05 * min(vw, vh)))
+    ring = np.zeros((h, w), bool)
+    ring[vy:vy + b, vx:vx + vw] = ring[vy + vh - b:vy + vh, vx:vx + vw] = True
+    ring[vy:vy + vh, vx:vx + b] = ring[vy:vy + vh, vx + vw - b:vx + vw] = True
+    ring &= valid > 0.5
+    if ring.sum() < 50:
+        return None
+    bg = np.median(lab[ring], axis=0)
+    dist = np.linalg.norm(lab - bg, axis=2) * (valid > 0.5)
+    ring_d = dist[ring]
+    mad = float(np.median(np.abs(ring_d - np.median(ring_d)))) * 1.4826
+    thr = max(10.0, float(np.median(ring_d)) + 5.0 * mad * strict)
+    m = ((dist > thr) & (valid > 0.5)).astype(np.uint8) * 255
+    m = cv2.morphologyEx(m, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    cnts, _ = cv2.findContours(m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not cnts:
+        return None
+    areas = [cv2.contourArea(c) for c in cnts]
+    keep = [c for c, a in zip(cnts, areas) if a > 0.12 * max(areas)]
+    out = np.zeros((h, w), np.uint8)
+    cv2.drawContours(out, keep, -1, 255, cv2.FILLED)
+    if erode_mm > 0:
+        k = max(3, int(round(erode_mm / mm_per_px)) | 1)
+        out = cv2.erode(out, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)))
+    return out
+
+
+def _content_frame_mm(coarse, valid, mm_per_px, x0, y0, frame_mm=(1300.0, 1600.0)):
+    """Where the garment is and which way it lies, from image moments rather than a
+    threshold. Flat-fielding removes the vignette; the colour distance from the background
+    is then used as a weight, so shading contributes a little and denim contributes a lot.
+    Returns ((cx, cy) in mm, tilt in degrees) for a fixed-size metric frame."""
+    h, w = coarse.shape[:2]
+    vb = cv2.boundingRect((valid > 0.5).astype(np.uint8))
+    if vb[2] < 20 or vb[3] < 20:
+        return None, 0.0
+    vx, vy, vw, vh = vb
+    img = coarse.astype(np.float32) + 1.0
+    low = cv2.GaussianBlur(img, (0, 0), max(8.0, 0.06 * min(vw, vh)))
+    flat = np.clip(img / low * float(np.median(low)), 0, 255).astype(np.uint8)
+    lab = cv2.cvtColor(cv2.GaussianBlur(flat, (0, 0), 2), cv2.COLOR_BGR2LAB).astype(np.float32)
+
+    b = max(3, int(0.05 * min(vw, vh)))
+    ring = np.zeros((h, w), bool)
+    ring[vy:vy + b, vx:vx + vw] = ring[vy + vh - b:vy + vh, vx:vx + vw] = True
+    ring[vy:vy + vh, vx:vx + b] = ring[vy:vy + vh, vx + vw - b:vx + vw] = True
+    ring &= valid > 0.5
+    if ring.sum() < 50:
+        return None, 0.0
+    bg = np.median(lab[ring], axis=0)
+    dist = np.linalg.norm(lab - bg, axis=2) * (valid > 0.5)
+    ring_d = dist[ring]
+    mad = float(np.median(np.abs(ring_d - np.median(ring_d)))) * 1.4826
+    thr = max(10.0, float(np.median(ring_d)) + 5.0 * mad)
+    wgt = np.clip(dist - thr, 0, None) ** 2                     # far-from-background wins
+    if wgt.sum() < 1e-6:
+        return None, 0.0
+    m = cv2.moments(wgt)
+    cx, cy = m["m10"] / m["m00"], m["m01"] / m["m00"]
+    mu20, mu02, mu11 = m["mu20"] / m["m00"], m["mu02"] / m["m00"], m["mu11"] / m["m00"]
+    axis = math.degrees(0.5 * math.atan2(2 * mu11, mu20 - mu02))   # major axis, -90..90
+    tilt = 90.0 - axis                                             # turn it upright
+    # the major axis is only defined up to 180 degrees: keep whichever choice leaves the
+    # garment taller than it is wide, which is true of everything we measure laid flat
+    def spread(t):
+        """Height/width of the weighted blob after turning it by t degrees."""
+        M = cv2.getRotationMatrix2D((cx, cy), t, 1.0)
+        r = cv2.warpAffine(wgt, M, (wgt.shape[1], wgt.shape[0]))
+        pos = r[r > 0]
+        if pos.size < 50:
+            return 0.0
+        ys, xs = np.nonzero(r > float(np.percentile(pos, 60)))
+        if ys.size < 10:
+            return 0.0
+        return (ys.max() - ys.min() + 1) / float(xs.max() - xs.min() + 1)
+    if spread(tilt) < spread(tilt + 90.0):
+        tilt += 90.0
+    tilt = ((tilt + 90) % 180) - 90
+    return (x0 + cx * mm_per_px, y0 + cy * mm_per_px), float(tilt)
+
+
+def calibrate_by_card(photo, card_mm=CARD_MM, mm_per_px_out=0.5, corners=None,
+                      frame_mm=(1300.0, 1600.0)):
+    """Rectify using a bank card as the only scale reference — no printed sheets.
+
+    Pass `corners` (four points in pixels, clockwise from the card's top-left) to skip
+    detection, which is what the app does when the user marks the card by hand.
+
+    The card is 8.5 cm across and a pair of jeans is a metre long, so every measurement is
+    extrapolated well beyond the reference: error bars are widened accordingly (see
+    validation/sweep.py for what that costs in practice).
+    """
+    q = np.asarray(corners, np.float32) if corners is not None else find_card(photo, card_mm)
+    if q is None:
+        return Calibration(photo, mm_per_px_out, np.eye(3), ok=False, mode="none")
+    q = _order_quad(np.asarray(q, np.float32))
+    d = [np.linalg.norm(q[(i + 1) % 4] - q[i]) for i in range(4)]
+    wide = (d[0] + d[2]) / 2 >= (d[1] + d[3]) / 2
+    cw, ch = (max(card_mm), min(card_mm)) if wide else (min(card_mm), max(card_mm))
+    dst_mm = np.array([[0, 0], [cw, 0], [cw, ch], [0, ch]], np.float32)
+    H0 = cv2.getPerspectiveTransform(q, dst_mm)
+
+    # Two passes: a coarse metric view locates the garment and which way it lies, then one
+    # tight upright warp at full resolution. Without this the canvas covers everything the
+    # camera could see, which is mostly floor.
+    coarse_mm, span = 2.0, 1500.0
+    ones = np.full(photo.shape[:2], 255, np.uint8)
+    coarse, Hc = _warp_mm(photo, H0, -span, -span, span, span, coarse_mm)
+    valid = cv2.warpPerspective(ones, Hc, (coarse.shape[1], coarse.shape[0]),
+                                flags=cv2.INTER_NEAREST) / 255.0
+    centre, tilt = _content_frame_mm(coarse, valid, coarse_mm, -span, -span)
+    if centre is None:
+        centre, tilt = (0.0, 0.0), 0.0
+
+    def _rot(h0, deg):
+        th = math.radians(deg)
+        c_, s_ = math.cos(th), math.sin(th)
+        return np.array([[c_, -s_, 0], [s_, c_, 0], [0, 0, 1]], np.float32) @ h0
+
+    def _upright_score(h0):
+        """Warp the coarse view and ask how tall-and-narrow the garment looks. Sign
+        conventions between the moment angle and the warp are easy to get backwards, so the
+        candidates are simply tried and scored."""
+        cc, Hc2 = _warp_mm(photo, h0, -span, -span, span, span, coarse_mm)
+        v2 = cv2.warpPerspective(ones, Hc2, (cc.shape[1], cc.shape[0]), flags=cv2.INTER_NEAREST) / 255.0
+        ctr, _ = _content_frame_mm(cc, v2, coarse_mm, -span, -span)
+        if ctr is None:
+            return -1.0, None
+        gray_c = cv2.cvtColor(cc, cv2.COLOR_BGR2GRAY)
+        lab = cv2.cvtColor(cv2.GaussianBlur(cc, (0, 0), 2), cv2.COLOR_BGR2LAB).astype(np.float32)
+        bg = np.median(lab[(v2 > 0.5)].reshape(-1, 3), axis=0)
+        d = (np.linalg.norm(lab - bg, axis=2) > 25) & (v2 > 0.5)
+        ys, xs = np.nonzero(d)
+        if ys.size < 200:
+            return -1.0, ctr
+        return float((ys.max() - ys.min() + 1) / (xs.max() - xs.min() + 1)), ctr
+
+    best_h, best_centre, best_up = H0, centre, -2.0
+    seen = set()
+    for cand in (0.0, tilt, tilt + 90.0, -tilt, -tilt + 90.0):
+        key = round(((cand + 90) % 180) - 90, 1)
+        if key in seen:
+            continue
+        seen.add(key)
+        h_try = H0 if abs(key) < 0.5 else _rot(H0, key)
+        up, ctr = _upright_score(h_try)
+        if up > best_up:
+            best_h, best_centre, best_up = h_try, ctr or centre, up
+    H0, centre = best_h, best_centre
+
+    fw, fh = frame_mm
+    x0, y0 = centre[0] - fw / 2, centre[1] - fh / 2
+    rect, Hm = _warp_mm(photo, H0, x0, y0, x0 + fw, y0 + fh, mm_per_px_out)
+
+    # a rough garment mask from the coarse pass, to seed segmentation later: without it the
+    # segmenter has to guess which of the sheet, the shadow and the garment is the object
+    cc, Hc3 = _warp_mm(photo, H0, x0, y0, x0 + fw, y0 + fh, coarse_mm)
+    v3 = cv2.warpPerspective(ones, Hc3, (cc.shape[1], cc.shape[0]), flags=cv2.INTER_NEAREST) / 255.0
+    # a tighter mask for seeding: the soft shadow around a garment also differs from the
+    # background, so ask for a bigger difference and pull the edge in
+    prior = _content_mask(cc, v3, strict=2.4, erode_mm=18.0, mm_per_px=coarse_mm)
+    if prior is not None:
+        prior = cv2.resize(prior, (rect.shape[1], rect.shape[0]), interpolation=cv2.INTER_NEAREST)
+    return Calibration(rect, mm_per_px_out, Hm, ok=True, mode="card", n_markers=0,
+                       tol_scale=3.0, marker_size_mm=float(max(card_mm)), prior=prior)

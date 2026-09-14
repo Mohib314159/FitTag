@@ -13,7 +13,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 126.2,
+  "contrast": 102.2,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -28,16 +28,16 @@
    },
    {
     "name": "inseam",
-    "cm": 75.9,
+    "cm": 75.4,
     "truth": 76.0,
-    "err": -0.1,
+    "err": -0.6,
     "tol": 1.0
    },
    {
     "name": "hip_flat",
-    "cm": 52.0,
+    "cm": 52.2,
     "truth": 52.0,
-    "err": 0.0,
+    "err": 0.2,
     "tol": 1.0
    },
    {
@@ -55,10 +55,10 @@
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.4,
+  "max_abs_err": 0.6,
   "within": 5,
   "n": 5,
-  "engine_s": 2.7
+  "engine_s": 3.7
  },
  {
   "group": "tilt",
@@ -74,7 +74,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 110.5,
+  "contrast": 91.4,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -82,191 +82,16 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 38.8,
+    "cm": 38.9,
     "truth": 38.5,
-    "err": 0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 78.6,
-    "truth": 79.0,
-    "err": -0.4,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 49.1,
-    "truth": 49.0,
-    "err": 0.1,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 20.7,
-    "truth": 20.5,
-    "err": 0.2,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 24.0,
-    "truth": 24.4,
-    "err": -0.4,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 0.4,
-  "within": 5,
-  "n": 5,
-  "engine_s": 2.9
- },
- {
-  "group": "tilt",
-  "label": "0\u00b0",
-  "garment": "tee-burgundy",
-  "thumb": "img/sweep/02.jpg",
-  "truth": {
-   "length": 72.0,
-   "pit_to_pit": 54.0,
-   "hem_width": 52.8,
-   "sleeve_length": 19.0
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 138.6,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "t-shirt",
-  "errors": [
-   {
-    "name": "length",
-    "cm": 72.2,
-    "truth": 72.0,
-    "err": 0.2,
-    "tol": 1.0
-   },
-   {
-    "name": "pit_to_pit",
-    "cm": 54.3,
-    "truth": 54.0,
-    "err": 0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "sleeve_length",
-    "cm": 19.2,
-    "truth": 19.0,
-    "err": 0.2,
-    "tol": 1.5
-   },
-   {
-    "name": "hem_width",
-    "cm": 53.2,
-    "truth": 52.8,
     "err": 0.4,
     "tol": 1.0
-   }
-  ],
-  "max_abs_err": 0.4,
-  "within": 4,
-  "n": 4,
-  "engine_s": 7.8
- },
- {
-  "group": "tilt",
-  "label": "10\u00b0",
-  "garment": "jeans-charcoal",
-  "thumb": "img/sweep/03.jpg",
-  "truth": {
-   "waist_flat": 41.0,
-   "hip_flat": 52.0,
-   "inseam": 76.0,
-   "leg_opening": 23.5,
-   "thigh": 25.9
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 127.2,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 41.2,
-    "truth": 41.0,
-    "err": 0.2,
-    "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 75.5,
-    "truth": 76.0,
-    "err": -0.5,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 52.2,
-    "truth": 52.0,
-    "err": 0.2,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 23.5,
-    "truth": 23.5,
-    "err": 0.0,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 25.5,
-    "truth": 25.9,
-    "err": -0.4,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 0.5,
-  "within": 5,
-  "n": 5,
-  "engine_s": 2.5
- },
- {
-  "group": "tilt",
-  "label": "10\u00b0",
-  "garment": "jeans-midwash",
-  "thumb": "img/sweep/04.jpg",
-  "truth": {
-   "waist_flat": 38.5,
-   "hip_flat": 49.0,
-   "inseam": 79.0,
-   "leg_opening": 20.5,
-   "thigh": 24.4
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 113.4,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 38.8,
-    "truth": 38.5,
-    "err": 0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 78.2,
+    "cm": 78.5,
     "truth": 79.0,
-    "err": -0.8,
+    "err": -0.5,
     "tol": 1.0
    },
    {
@@ -285,16 +110,191 @@
    },
    {
     "name": "thigh",
+    "cm": 24.1,
+    "truth": 24.4,
+    "err": -0.3,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 0.5,
+  "within": 5,
+  "n": 5,
+  "engine_s": 4.6
+ },
+ {
+  "group": "tilt",
+  "label": "0\u00b0",
+  "garment": "tee-burgundy",
+  "thumb": "img/sweep/02.jpg",
+  "truth": {
+   "length": 72.0,
+   "pit_to_pit": 54.0,
+   "hem_width": 52.8,
+   "sleeve_length": 19.0
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 118.5,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "t-shirt",
+  "errors": [
+   {
+    "name": "length",
+    "cm": 72.4,
+    "truth": 72.0,
+    "err": 0.4,
+    "tol": 1.0
+   },
+   {
+    "name": "pit_to_pit",
+    "cm": 54.3,
+    "truth": 54.0,
+    "err": 0.3,
+    "tol": 1.0
+   },
+   {
+    "name": "sleeve_length",
+    "cm": 19.1,
+    "truth": 19.0,
+    "err": 0.1,
+    "tol": 1.5
+   },
+   {
+    "name": "hem_width",
+    "cm": 53.1,
+    "truth": 52.8,
+    "err": 0.3,
+    "tol": 1.0
+   }
+  ],
+  "max_abs_err": 0.4,
+  "within": 4,
+  "n": 4,
+  "engine_s": 5.3
+ },
+ {
+  "group": "tilt",
+  "label": "10\u00b0",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/03.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 99.3,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 41.2,
+    "truth": 41.0,
+    "err": 0.2,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 75.9,
+    "truth": 76.0,
+    "err": -0.1,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 52.1,
+    "truth": 52.0,
+    "err": 0.1,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.5,
+    "truth": 23.5,
+    "err": 0.0,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 25.5,
+    "truth": 25.9,
+    "err": -0.4,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 0.4,
+  "within": 5,
+  "n": 5,
+  "engine_s": 2.9
+ },
+ {
+  "group": "tilt",
+  "label": "10\u00b0",
+  "garment": "jeans-midwash",
+  "thumb": "img/sweep/04.jpg",
+  "truth": {
+   "waist_flat": 38.5,
+   "hip_flat": 49.0,
+   "inseam": 79.0,
+   "leg_opening": 20.5,
+   "thigh": 24.4
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 90.5,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 38.8,
+    "truth": 38.5,
+    "err": 0.3,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 78.5,
+    "truth": 79.0,
+    "err": -0.5,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 49.1,
+    "truth": 49.0,
+    "err": 0.1,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 20.7,
+    "truth": 20.5,
+    "err": 0.2,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
     "cm": 24.0,
     "truth": 24.4,
     "err": -0.4,
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.8,
+  "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 2.9
+  "engine_s": 2.7
  },
  {
   "group": "tilt",
@@ -309,7 +309,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 138.6,
+  "contrast": 118.2,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -317,16 +317,16 @@
   "errors": [
    {
     "name": "length",
-    "cm": 72.1,
+    "cm": 72.8,
     "truth": 72.0,
-    "err": 0.1,
+    "err": 0.8,
     "tol": 1.0
    },
    {
     "name": "pit_to_pit",
-    "cm": 54.0,
+    "cm": 54.3,
     "truth": 54.0,
-    "err": 0.0,
+    "err": 0.3,
     "tol": 1.0
    },
    {
@@ -338,16 +338,16 @@
    },
    {
     "name": "hem_width",
-    "cm": 53.0,
+    "cm": 53.2,
     "truth": 52.8,
-    "err": 0.2,
+    "err": 0.4,
     "tol": 1.0
    }
   ],
-  "max_abs_err": 0.2,
+  "max_abs_err": 0.8,
   "within": 4,
   "n": 4,
-  "engine_s": 8.7
+  "engine_s": 9.8
  },
  {
   "group": "tilt",
@@ -363,7 +363,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 127.2,
+  "contrast": 100.2,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -371,184 +371,9 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 41.3,
+    "cm": 41.2,
     "truth": 41.0,
-    "err": 0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 75.7,
-    "truth": 76.0,
-    "err": -0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 52.2,
-    "truth": 52.0,
     "err": 0.2,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 23.8,
-    "truth": 23.5,
-    "err": 0.3,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 25.5,
-    "truth": 25.9,
-    "err": -0.4,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 0.4,
-  "within": 5,
-  "n": 5,
-  "engine_s": 2.7
- },
- {
-  "group": "tilt",
-  "label": "20\u00b0",
-  "garment": "jeans-midwash",
-  "thumb": "img/sweep/07.jpg",
-  "truth": {
-   "waist_flat": 38.5,
-   "hip_flat": 49.0,
-   "inseam": 79.0,
-   "leg_opening": 20.5,
-   "thigh": 24.4
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 111.5,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 38.8,
-    "truth": 38.5,
-    "err": 0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 78.7,
-    "truth": 79.0,
-    "err": -0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 49.1,
-    "truth": 49.0,
-    "err": 0.1,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 20.6,
-    "truth": 20.5,
-    "err": 0.1,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 24.0,
-    "truth": 24.4,
-    "err": -0.4,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 0.4,
-  "within": 5,
-  "n": 5,
-  "engine_s": 3.0
- },
- {
-  "group": "tilt",
-  "label": "20\u00b0",
-  "garment": "tee-burgundy",
-  "thumb": "img/sweep/08.jpg",
-  "truth": {
-   "length": 72.0,
-   "pit_to_pit": 54.0,
-   "hem_width": 52.8,
-   "sleeve_length": 19.0
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 141.8,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "t-shirt",
-  "errors": [
-   {
-    "name": "length",
-    "cm": 72.2,
-    "truth": 72.0,
-    "err": 0.2,
-    "tol": 1.0
-   },
-   {
-    "name": "pit_to_pit",
-    "cm": 54.2,
-    "truth": 54.0,
-    "err": 0.2,
-    "tol": 1.0
-   },
-   {
-    "name": "sleeve_length",
-    "cm": 18.9,
-    "truth": 19.0,
-    "err": -0.1,
-    "tol": 1.5
-   },
-   {
-    "name": "hem_width",
-    "cm": 53.1,
-    "truth": 52.8,
-    "err": 0.3,
-    "tol": 1.0
-   }
-  ],
-  "max_abs_err": 0.3,
-  "within": 4,
-  "n": 4,
-  "engine_s": 3.4
- },
- {
-  "group": "tilt",
-  "label": "30\u00b0",
-  "garment": "jeans-charcoal",
-  "thumb": "img/sweep/09.jpg",
-  "truth": {
-   "waist_flat": 41.0,
-   "hip_flat": 52.0,
-   "inseam": 76.0,
-   "leg_opening": 23.5,
-   "thigh": 25.9
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 126.2,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 41.3,
-    "truth": 41.0,
-    "err": 0.3,
     "tol": 1.0
    },
    {
@@ -567,9 +392,9 @@
    },
    {
     "name": "leg_opening",
-    "cm": 23.6,
+    "cm": 23.8,
     "truth": 23.5,
-    "err": 0.1,
+    "err": 0.3,
     "tol": 1.5
    },
    {
@@ -583,7 +408,182 @@
   "max_abs_err": 0.3,
   "within": 5,
   "n": 5,
-  "engine_s": 2.6
+  "engine_s": 2.8
+ },
+ {
+  "group": "tilt",
+  "label": "20\u00b0",
+  "garment": "jeans-midwash",
+  "thumb": "img/sweep/07.jpg",
+  "truth": {
+   "waist_flat": 38.5,
+   "hip_flat": 49.0,
+   "inseam": 79.0,
+   "leg_opening": 20.5,
+   "thigh": 24.4
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 91.8,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 39.0,
+    "truth": 38.5,
+    "err": 0.5,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 78.6,
+    "truth": 79.0,
+    "err": -0.4,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 49.3,
+    "truth": 49.0,
+    "err": 0.3,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 20.7,
+    "truth": 20.5,
+    "err": 0.2,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 24.0,
+    "truth": 24.4,
+    "err": -0.4,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 0.5,
+  "within": 5,
+  "n": 5,
+  "engine_s": 3.7
+ },
+ {
+  "group": "tilt",
+  "label": "20\u00b0",
+  "garment": "tee-burgundy",
+  "thumb": "img/sweep/08.jpg",
+  "truth": {
+   "length": 72.0,
+   "pit_to_pit": 54.0,
+   "hem_width": 52.8,
+   "sleeve_length": 19.0
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 118.6,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "t-shirt",
+  "errors": [
+   {
+    "name": "length",
+    "cm": 72.4,
+    "truth": 72.0,
+    "err": 0.4,
+    "tol": 1.0
+   },
+   {
+    "name": "pit_to_pit",
+    "cm": 54.0,
+    "truth": 54.0,
+    "err": 0.0,
+    "tol": 1.0
+   },
+   {
+    "name": "sleeve_length",
+    "cm": 19.1,
+    "truth": 19.0,
+    "err": 0.1,
+    "tol": 1.5
+   },
+   {
+    "name": "hem_width",
+    "cm": 53.1,
+    "truth": 52.8,
+    "err": 0.3,
+    "tol": 1.0
+   }
+  ],
+  "max_abs_err": 0.4,
+  "within": 4,
+  "n": 4,
+  "engine_s": 7.5
+ },
+ {
+  "group": "tilt",
+  "label": "30\u00b0",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/09.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 101.2,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 41.6,
+    "truth": 41.0,
+    "err": 0.6,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 75.4,
+    "truth": 76.0,
+    "err": -0.6,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 52.1,
+    "truth": 52.0,
+    "err": 0.1,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.9,
+    "truth": 23.5,
+    "err": 0.4,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 25.7,
+    "truth": 25.9,
+    "err": -0.2,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 0.6,
+  "within": 5,
+  "n": 5,
+  "engine_s": 3.3
  },
  {
   "group": "tilt",
@@ -599,7 +599,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 111.5,
+  "contrast": 90.8,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -607,16 +607,16 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 38.9,
+    "cm": 39.0,
     "truth": 38.5,
-    "err": 0.4,
+    "err": 0.5,
     "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 78.6,
+    "cm": 78.2,
     "truth": 79.0,
-    "err": -0.4,
+    "err": -0.8,
     "tol": 1.0
    },
    {
@@ -628,23 +628,23 @@
    },
    {
     "name": "leg_opening",
-    "cm": 20.7,
+    "cm": 20.8,
     "truth": 20.5,
-    "err": 0.2,
+    "err": 0.3,
     "tol": 1.5
    },
    {
     "name": "thigh",
-    "cm": 24.1,
+    "cm": 24.0,
     "truth": 24.4,
-    "err": -0.3,
+    "err": -0.4,
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.4,
+  "max_abs_err": 0.8,
   "within": 5,
   "n": 5,
-  "engine_s": 2.7
+  "engine_s": 3.5
  },
  {
   "group": "tilt",
@@ -659,7 +659,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 139.8,
+  "contrast": 116.6,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -667,37 +667,37 @@
   "errors": [
    {
     "name": "length",
-    "cm": 72.2,
+    "cm": 72.4,
     "truth": 72.0,
-    "err": 0.2,
+    "err": 0.4,
     "tol": 1.0
    },
    {
     "name": "pit_to_pit",
-    "cm": 54.3,
+    "cm": 54.6,
     "truth": 54.0,
-    "err": 0.3,
+    "err": 0.6,
     "tol": 1.0
    },
    {
     "name": "sleeve_length",
-    "cm": 19.0,
+    "cm": 19.1,
     "truth": 19.0,
-    "err": 0.0,
+    "err": 0.1,
     "tol": 1.5
    },
    {
     "name": "hem_width",
-    "cm": 53.0,
+    "cm": 53.4,
     "truth": 52.8,
-    "err": 0.2,
+    "err": 0.6,
     "tol": 1.0
    }
   ],
-  "max_abs_err": 0.3,
+  "max_abs_err": 0.6,
   "within": 4,
   "n": 4,
-  "engine_s": 3.5
+  "engine_s": 3.6
  },
  {
   "group": "tilt",
@@ -713,7 +713,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 128.2,
+  "contrast": 101.2,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -721,44 +721,44 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 41.1,
+    "cm": 41.4,
     "truth": 41.0,
-    "err": 0.1,
+    "err": 0.4,
     "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 75.8,
+    "cm": 74.8,
     "truth": 76.0,
-    "err": -0.2,
+    "err": -1.2,
     "tol": 1.0
    },
    {
     "name": "hip_flat",
-    "cm": 52.0,
+    "cm": 52.2,
     "truth": 52.0,
-    "err": 0.0,
+    "err": 0.2,
     "tol": 1.0
    },
    {
     "name": "leg_opening",
-    "cm": 23.5,
+    "cm": 23.7,
     "truth": 23.5,
-    "err": 0.0,
+    "err": 0.2,
     "tol": 1.5
    },
    {
     "name": "thigh",
-    "cm": 25.5,
+    "cm": 25.8,
     "truth": 25.9,
-    "err": -0.4,
+    "err": -0.1,
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.4,
-  "within": 5,
+  "max_abs_err": 1.2,
+  "within": 4,
   "n": 5,
-  "engine_s": 3.1
+  "engine_s": 2.8
  },
  {
   "group": "tilt",
@@ -774,7 +774,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 114.6,
+  "contrast": 95.6,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -782,30 +782,30 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 39.0,
+    "cm": 39.1,
     "truth": 38.5,
-    "err": 0.5,
+    "err": 0.6,
     "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 78.8,
+    "cm": 76.3,
     "truth": 79.0,
-    "err": -0.2,
+    "err": -2.7,
     "tol": 1.0
    },
    {
     "name": "hip_flat",
-    "cm": 49.3,
+    "cm": 49.6,
     "truth": 49.0,
-    "err": 0.3,
+    "err": 0.6,
     "tol": 1.0
    },
    {
     "name": "leg_opening",
-    "cm": 20.6,
+    "cm": 20.7,
     "truth": 20.5,
-    "err": 0.1,
+    "err": 0.2,
     "tol": 1.5
    },
    {
@@ -816,10 +816,10 @@
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.5,
-  "within": 5,
+  "max_abs_err": 2.7,
+  "within": 4,
   "n": 5,
-  "engine_s": 3.0
+  "engine_s": 2.8
  },
  {
   "group": "tilt",
@@ -834,7 +834,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 139.9,
+  "contrast": 122.4,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -842,37 +842,37 @@
   "errors": [
    {
     "name": "length",
-    "cm": 72.2,
+    "cm": 72.9,
     "truth": 72.0,
-    "err": 0.2,
+    "err": 0.9,
     "tol": 1.0
    },
    {
     "name": "pit_to_pit",
-    "cm": 54.3,
+    "cm": 54.2,
     "truth": 54.0,
-    "err": 0.3,
+    "err": 0.2,
     "tol": 1.0
    },
    {
     "name": "sleeve_length",
-    "cm": 19.1,
+    "cm": 19.2,
     "truth": 19.0,
-    "err": 0.1,
+    "err": 0.2,
     "tol": 1.5
    },
    {
     "name": "hem_width",
-    "cm": 53.2,
+    "cm": 53.0,
     "truth": 52.8,
-    "err": 0.4,
+    "err": 0.2,
     "tol": 1.0
    }
   ],
-  "max_abs_err": 0.4,
+  "max_abs_err": 0.9,
   "within": 4,
   "n": 4,
-  "engine_s": 2.8
+  "engine_s": 11.6
  },
  {
   "group": "tilt",
@@ -888,7 +888,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 126.2,
+  "contrast": 104.2,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -896,44 +896,44 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 41.1,
+    "cm": 41.4,
     "truth": 41.0,
-    "err": 0.1,
+    "err": 0.4,
     "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 75.7,
+    "cm": 75.4,
     "truth": 76.0,
-    "err": -0.3,
+    "err": -0.6,
     "tol": 1.0
    },
    {
     "name": "hip_flat",
-    "cm": 51.9,
+    "cm": 52.1,
     "truth": 52.0,
-    "err": -0.1,
+    "err": 0.1,
     "tol": 1.0
    },
    {
     "name": "leg_opening",
-    "cm": 23.5,
+    "cm": 23.8,
     "truth": 23.5,
-    "err": 0.0,
+    "err": 0.3,
     "tol": 1.5
    },
    {
     "name": "thigh",
-    "cm": 25.5,
+    "cm": 25.6,
     "truth": 25.9,
-    "err": -0.4,
+    "err": -0.3,
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.4,
+  "max_abs_err": 0.6,
   "within": 5,
   "n": 5,
-  "engine_s": 2.8
+  "engine_s": 2.9
  },
  {
   "group": "tilt",
@@ -949,7 +949,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 115.3,
+  "contrast": 91.4,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -957,16 +957,16 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 39.0,
+    "cm": 38.9,
     "truth": 38.5,
-    "err": 0.5,
+    "err": 0.4,
     "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 77.7,
+    "cm": 78.5,
     "truth": 79.0,
-    "err": -1.3,
+    "err": -0.5,
     "tol": 1.0
    },
    {
@@ -978,23 +978,23 @@
    },
    {
     "name": "leg_opening",
-    "cm": 20.8,
+    "cm": 20.7,
     "truth": 20.5,
-    "err": 0.3,
+    "err": 0.2,
     "tol": 1.5
    },
    {
     "name": "thigh",
-    "cm": 24.1,
+    "cm": 24.2,
     "truth": 24.4,
-    "err": -0.3,
+    "err": -0.2,
     "tol": 1.5
    }
   ],
-  "max_abs_err": 1.3,
-  "within": 4,
+  "max_abs_err": 0.5,
+  "within": 5,
   "n": 5,
-  "engine_s": 2.8
+  "engine_s": 3.2
  },
  {
   "group": "tilt",
@@ -1009,7 +1009,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 143.8,
+  "contrast": 119.5,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -1017,16 +1017,16 @@
   "errors": [
    {
     "name": "length",
-    "cm": 72.5,
+    "cm": 72.4,
     "truth": 72.0,
-    "err": 0.5,
+    "err": 0.4,
     "tol": 1.0
    },
    {
     "name": "pit_to_pit",
-    "cm": 54.2,
+    "cm": 54.7,
     "truth": 54.0,
-    "err": 0.2,
+    "err": 0.7,
     "tol": 1.0
    },
    {
@@ -1044,10 +1044,10 @@
     "tol": 1.0
    }
   ],
-  "max_abs_err": 0.5,
+  "max_abs_err": 0.7,
   "within": 4,
   "n": 4,
-  "engine_s": 2.9
+  "engine_s": 3.2
  },
  {
   "group": "placement",
@@ -1063,7 +1063,7 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 127.2,
+  "contrast": 102.2,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -1085,9 +1085,192 @@
    },
    {
     "name": "hip_flat",
-    "cm": 52.0,
+    "cm": 52.2,
     "truth": 52.0,
-    "err": 0.0,
+    "err": 0.2,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.7,
+    "truth": 23.5,
+    "err": 0.2,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 25.4,
+    "truth": 25.9,
+    "err": -0.5,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 0.5,
+  "within": 5,
+  "n": 5,
+  "engine_s": 2.8
+ },
+ {
+  "group": "placement",
+  "label": "\u00b15 mm",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/19.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 100.2,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 41.4,
+    "truth": 41.0,
+    "err": 0.4,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 74.1,
+    "truth": 76.0,
+    "err": -1.9,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 52.2,
+    "truth": 52.0,
+    "err": 0.2,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.8,
+    "truth": 23.5,
+    "err": 0.3,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 25.8,
+    "truth": 25.9,
+    "err": -0.1,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 1.9,
+  "within": 4,
+  "n": 5,
+  "engine_s": 5.0
+ },
+ {
+  "group": "placement",
+  "label": "\u00b110 mm",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/20.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 102.2,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 41.7,
+    "truth": 41.0,
+    "err": 0.7,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 76.3,
+    "truth": 76.0,
+    "err": 0.3,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 52.5,
+    "truth": 52.0,
+    "err": 0.5,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.4,
+    "truth": 23.5,
+    "err": -0.1,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 25.4,
+    "truth": 25.9,
+    "err": -0.5,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 0.7,
+  "within": 5,
+  "n": 5,
+  "engine_s": 2.7
+ },
+ {
+  "group": "placement",
+  "label": "\u00b120 mm",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/21.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 101.2,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 40.9,
+    "truth": 41.0,
+    "err": -0.1,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 77.5,
+    "truth": 76.0,
+    "err": 1.5,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 51.7,
+    "truth": 52.0,
+    "err": -0.3,
     "tol": 1.0
    },
    {
@@ -1105,193 +1288,10 @@
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.5,
-  "within": 5,
-  "n": 5,
-  "engine_s": 2.9
- },
- {
-  "group": "placement",
-  "label": "\u00b15 mm",
-  "garment": "jeans-charcoal",
-  "thumb": "img/sweep/19.jpg",
-  "truth": {
-   "waist_flat": 41.0,
-   "hip_flat": 52.0,
-   "inseam": 76.0,
-   "leg_opening": 23.5,
-   "thigh": 25.9
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 127.2,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 41.5,
-    "truth": 41.0,
-    "err": 0.5,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 75.5,
-    "truth": 76.0,
-    "err": -0.5,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 52.4,
-    "truth": 52.0,
-    "err": 0.4,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 23.8,
-    "truth": 23.5,
-    "err": 0.3,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 25.7,
-    "truth": 25.9,
-    "err": -0.2,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 0.5,
-  "within": 5,
-  "n": 5,
-  "engine_s": 2.7
- },
- {
-  "group": "placement",
-  "label": "\u00b110 mm",
-  "garment": "jeans-charcoal",
-  "thumb": "img/sweep/20.jpg",
-  "truth": {
-   "waist_flat": 41.0,
-   "hip_flat": 52.0,
-   "inseam": 76.0,
-   "leg_opening": 23.5,
-   "thigh": 25.9
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 126.2,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 41.2,
-    "truth": 41.0,
-    "err": 0.2,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 75.7,
-    "truth": 76.0,
-    "err": -0.3,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 52.1,
-    "truth": 52.0,
-    "err": 0.1,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 23.6,
-    "truth": 23.5,
-    "err": 0.1,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 25.7,
-    "truth": 25.9,
-    "err": -0.2,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 0.3,
-  "within": 5,
-  "n": 5,
-  "engine_s": 3.3
- },
- {
-  "group": "placement",
-  "label": "\u00b120 mm",
-  "garment": "jeans-charcoal",
-  "thumb": "img/sweep/21.jpg",
-  "truth": {
-   "waist_flat": 41.0,
-   "hip_flat": 52.0,
-   "inseam": 76.0,
-   "leg_opening": 23.5,
-   "thigh": 25.9
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 126.2,
-  "contrast_status": "ok",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 42.2,
-    "truth": 41.0,
-    "err": 1.2,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 75.0,
-    "truth": 76.0,
-    "err": -1.0,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 53.0,
-    "truth": 52.0,
-    "err": 1.0,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 23.5,
-    "truth": 23.5,
-    "err": 0.0,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 25.9,
-    "truth": 25.9,
-    "err": 0.0,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 1.2,
+  "max_abs_err": 1.5,
   "within": 4,
   "n": 5,
-  "engine_s": 2.8
+  "engine_s": 3.1
  },
  {
   "group": "sheets",
@@ -1307,7 +1307,7 @@
   },
   "mode": "mat",
   "markers": 3,
-  "contrast": 112.4,
+  "contrast": 89.5,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -1322,16 +1322,16 @@
    },
    {
     "name": "inseam",
-    "cm": 78.6,
+    "cm": 78.5,
     "truth": 79.0,
-    "err": -0.4,
+    "err": -0.5,
     "tol": 1.0
    },
    {
     "name": "hip_flat",
-    "cm": 49.4,
+    "cm": 49.2,
     "truth": 49.0,
-    "err": 0.4,
+    "err": 0.2,
     "tol": 1.0
    },
    {
@@ -1349,7 +1349,7 @@
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.4,
+  "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
   "engine_s": 3.0
@@ -1368,7 +1368,7 @@
   },
   "mode": "mat",
   "markers": 2,
-  "contrast": 112.4,
+  "contrast": 92.4,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -1376,44 +1376,44 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 38.9,
+    "cm": 39.0,
     "truth": 38.5,
-    "err": 0.4,
+    "err": 0.5,
     "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 78.6,
+    "cm": 79.2,
     "truth": 79.0,
-    "err": -0.4,
+    "err": 0.2,
     "tol": 1.0
    },
    {
     "name": "hip_flat",
-    "cm": 49.4,
+    "cm": 49.3,
     "truth": 49.0,
-    "err": 0.4,
+    "err": 0.3,
     "tol": 1.0
    },
    {
     "name": "leg_opening",
-    "cm": 20.8,
+    "cm": 21.0,
     "truth": 20.5,
-    "err": 0.3,
+    "err": 0.5,
     "tol": 1.5
    },
    {
     "name": "thigh",
-    "cm": 24.1,
+    "cm": 24.2,
     "truth": 24.4,
-    "err": -0.3,
+    "err": -0.2,
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.4,
+  "max_abs_err": 0.5,
   "within": 5,
   "n": 5,
-  "engine_s": 2.7
+  "engine_s": 3.8
  },
  {
   "group": "sheets",
@@ -1429,7 +1429,7 @@
   },
   "mode": "single-sheet",
   "markers": 1,
-  "contrast": 112.4,
+  "contrast": 89.5,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -1437,48 +1437,48 @@
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 39.3,
+    "cm": 38.8,
     "truth": 38.5,
-    "err": 0.8,
+    "err": 0.3,
     "tol": 4.0
    },
    {
     "name": "inseam",
-    "cm": 82.0,
+    "cm": 80.2,
     "truth": 79.0,
-    "err": 3.0,
+    "err": 1.2,
     "tol": 4.0
    },
    {
     "name": "hip_flat",
-    "cm": 50.8,
+    "cm": 49.3,
     "truth": 49.0,
-    "err": 1.8,
+    "err": 0.3,
     "tol": 4.0
    },
    {
     "name": "leg_opening",
-    "cm": 23.5,
+    "cm": 21.4,
     "truth": 20.5,
-    "err": 3.0,
+    "err": 0.9,
     "tol": 6.0
    },
    {
     "name": "thigh",
-    "cm": 24.4,
+    "cm": 24.2,
     "truth": 24.4,
-    "err": 0.0,
+    "err": -0.2,
     "tol": 6.0
    }
   ],
-  "max_abs_err": 3.0,
+  "max_abs_err": 1.2,
   "within": 5,
   "n": 5,
-  "engine_s": 7.0
+  "engine_s": 2.7
  },
  {
-  "group": "backdrop",
-  "label": "light grey sheet",
+  "group": "card",
+  "label": "bank card only, 8\u00b0 tilt",
   "garment": "jeans-charcoal",
   "thumb": "img/sweep/25.jpg",
   "truth": {
@@ -1488,9 +1488,253 @@
    "leg_opening": 23.5,
    "thigh": 25.9
   },
+  "mode": "card",
+  "markers": 0,
+  "contrast": 114.2,
+  "contrast_status": "ok",
+  "type_guess_ok": false,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 34.4,
+    "truth": 41.0,
+    "err": -6.6,
+    "tol": 3.0
+   },
+   {
+    "name": "inseam",
+    "cm": 8.1,
+    "truth": 76.0,
+    "err": -67.9,
+    "tol": 3.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 61.8,
+    "truth": 52.0,
+    "err": 9.8,
+    "tol": 3.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 20.5,
+    "truth": 23.5,
+    "err": -3.0,
+    "tol": 4.5
+   },
+   {
+    "name": "thigh",
+    "cm": 9.3,
+    "truth": 25.9,
+    "err": -16.6,
+    "tol": 4.5
+   }
+  ],
+  "max_abs_err": 67.9,
+  "within": 1,
+  "n": 5,
+  "engine_s": 22.7
+ },
+ {
+  "group": "card",
+  "label": "bank card only, 22\u00b0 tilt",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/26.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "card",
+  "markers": 0,
+  "contrast": 117.2,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 33.4,
+    "truth": 41.0,
+    "err": -7.6,
+    "tol": 3.0
+   },
+   {
+    "name": "inseam",
+    "cm": 11.2,
+    "truth": 76.0,
+    "err": -64.8,
+    "tol": 3.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 65.4,
+    "truth": 52.0,
+    "err": 13.4,
+    "tol": 3.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 20.2,
+    "truth": 23.5,
+    "err": -3.3,
+    "tol": 4.5
+   },
+   {
+    "name": "thigh",
+    "cm": 24.1,
+    "truth": 25.9,
+    "err": -1.8,
+    "tol": 4.5
+   }
+  ],
+  "max_abs_err": 64.8,
+  "within": 2,
+  "n": 5,
+  "engine_s": 26.2
+ },
+ {
+  "group": "lens",
+  "label": "phone lens left uncorrected",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/27.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
   "mode": "mat",
   "markers": 4,
-  "contrast": 126.2,
+  "contrast": 100.2,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 41.7,
+    "truth": 41.0,
+    "err": 0.7,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 77.7,
+    "truth": 76.0,
+    "err": 1.7,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 53.0,
+    "truth": 52.0,
+    "err": 1.0,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.9,
+    "truth": 23.5,
+    "err": 0.4,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 26.2,
+    "truth": 25.9,
+    "err": 0.3,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 1.7,
+  "within": 4,
+  "n": 5,
+  "engine_s": 2.9
+ },
+ {
+  "group": "lens",
+  "label": "strong barrel distortion",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/28.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 103.2,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 42.8,
+    "truth": 41.0,
+    "err": 1.8,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 79.4,
+    "truth": 76.0,
+    "err": 3.4,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 54.8,
+    "truth": 52.0,
+    "err": 2.8,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 24.1,
+    "truth": 23.5,
+    "err": 0.6,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 27.2,
+    "truth": 25.9,
+    "err": 1.3,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 3.4,
+  "within": 2,
+  "n": 5,
+  "engine_s": 2.8
+ },
+ {
+  "group": "backdrop",
+  "label": "light grey sheet",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/29.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 100.2,
   "contrast_status": "ok",
   "type_guess_ok": true,
   "ok": true,
@@ -1505,16 +1749,138 @@
    },
    {
     "name": "inseam",
-    "cm": 75.7,
+    "cm": 76.4,
     "truth": 76.0,
-    "err": -0.3,
+    "err": 0.4,
     "tol": 1.0
    },
    {
     "name": "hip_flat",
-    "cm": 52.0,
+    "cm": 51.8,
     "truth": 52.0,
+    "err": -0.2,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.5,
+    "truth": 23.5,
     "err": 0.0,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 25.5,
+    "truth": 25.9,
+    "err": -0.4,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 0.4,
+  "within": 5,
+  "n": 5,
+  "engine_s": 3.2
+ },
+ {
+  "group": "backdrop",
+  "label": "beige carpet",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/30.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 71.7,
+  "contrast_status": "ok",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 41.4,
+    "truth": 41.0,
+    "err": 0.4,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 74.7,
+    "truth": 76.0,
+    "err": -1.3,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 52.1,
+    "truth": 52.0,
+    "err": 0.1,
+    "tol": 1.0
+   },
+   {
+    "name": "leg_opening",
+    "cm": 23.5,
+    "truth": 23.5,
+    "err": 0.0,
+    "tol": 1.5
+   },
+   {
+    "name": "thigh",
+    "cm": 25.7,
+    "truth": 25.9,
+    "err": -0.2,
+    "tol": 1.5
+   }
+  ],
+  "max_abs_err": 1.3,
+  "within": 4,
+  "n": 5,
+  "engine_s": 5.9
+ },
+ {
+  "group": "backdrop",
+  "label": "mid-grey floor",
+  "garment": "jeans-charcoal",
+  "thumb": "img/sweep/31.jpg",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "mode": "mat",
+  "markers": 4,
+  "contrast": 28.2,
+  "contrast_status": "warn",
+  "type_guess_ok": true,
+  "ok": true,
+  "type": "jeans",
+  "errors": [
+   {
+    "name": "waist_flat",
+    "cm": 40.9,
+    "truth": 41.0,
+    "err": -0.1,
+    "tol": 1.0
+   },
+   {
+    "name": "inseam",
+    "cm": 66.8,
+    "truth": 76.0,
+    "err": -9.2,
+    "tol": 1.0
+   },
+   {
+    "name": "hip_flat",
+    "cm": 52.2,
+    "truth": 52.0,
+    "err": 0.2,
     "tol": 1.0
    },
    {
@@ -1526,22 +1892,22 @@
    },
    {
     "name": "thigh",
-    "cm": 25.6,
+    "cm": 25.3,
     "truth": 25.9,
-    "err": -0.3,
+    "err": -0.6,
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.3,
-  "within": 5,
+  "max_abs_err": 9.2,
+  "within": 4,
   "n": 5,
-  "engine_s": 2.6
+  "engine_s": 7.5
  },
  {
   "group": "backdrop",
-  "label": "beige carpet",
+  "label": "dark floor",
   "garment": "jeans-charcoal",
-  "thumb": "img/sweep/26.jpg",
+  "thumb": "img/sweep/32.jpg",
   "truth": {
    "waist_flat": 41.0,
    "hip_flat": 52.0,
@@ -1551,24 +1917,24 @@
   },
   "mode": "mat",
   "markers": 4,
-  "contrast": 91.7,
-  "contrast_status": "ok",
+  "contrast": 17.1,
+  "contrast_status": "refuse",
   "type_guess_ok": true,
   "ok": true,
   "type": "jeans",
   "errors": [
    {
     "name": "waist_flat",
-    "cm": 41.2,
+    "cm": 41.0,
     "truth": 41.0,
-    "err": 0.2,
+    "err": 0.0,
     "tol": 1.0
    },
    {
     "name": "inseam",
-    "cm": 75.7,
+    "cm": 69.5,
     "truth": 76.0,
-    "err": -0.3,
+    "err": -6.5,
     "tol": 1.0
    },
    {
@@ -1593,131 +1959,9 @@
     "tol": 1.5
    }
   ],
-  "max_abs_err": 0.5,
-  "within": 5,
-  "n": 5,
-  "engine_s": 15.8
- },
- {
-  "group": "backdrop",
-  "label": "mid-grey floor",
-  "garment": "jeans-charcoal",
-  "thumb": "img/sweep/27.jpg",
-  "truth": {
-   "waist_flat": 41.0,
-   "hip_flat": 52.0,
-   "inseam": 76.0,
-   "leg_opening": 23.5,
-   "thigh": 25.9
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 39.1,
-  "contrast_status": "warn",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 41.2,
-    "truth": 41.0,
-    "err": 0.2,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 73.2,
-    "truth": 76.0,
-    "err": -2.8,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 52.0,
-    "truth": 52.0,
-    "err": 0.0,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 23.6,
-    "truth": 23.5,
-    "err": 0.1,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 25.5,
-    "truth": 25.9,
-    "err": -0.4,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 2.8,
+  "max_abs_err": 6.5,
   "within": 4,
   "n": 5,
-  "engine_s": 3.7
- },
- {
-  "group": "backdrop",
-  "label": "dark floor",
-  "garment": "jeans-charcoal",
-  "thumb": "img/sweep/28.jpg",
-  "truth": {
-   "waist_flat": 41.0,
-   "hip_flat": 52.0,
-   "inseam": 76.0,
-   "leg_opening": 23.5,
-   "thigh": 25.9
-  },
-  "mode": "mat",
-  "markers": 4,
-  "contrast": 11.2,
-  "contrast_status": "refuse",
-  "type_guess_ok": true,
-  "ok": true,
-  "type": "jeans",
-  "errors": [
-   {
-    "name": "waist_flat",
-    "cm": 39.1,
-    "truth": 41.0,
-    "err": -1.9,
-    "tol": 1.0
-   },
-   {
-    "name": "inseam",
-    "cm": 55.8,
-    "truth": 76.0,
-    "err": -20.2,
-    "tol": 1.0
-   },
-   {
-    "name": "hip_flat",
-    "cm": 51.1,
-    "truth": 52.0,
-    "err": -0.9,
-    "tol": 1.0
-   },
-   {
-    "name": "leg_opening",
-    "cm": 23.5,
-    "truth": 23.5,
-    "err": 0.0,
-    "tol": 1.5
-   },
-   {
-    "name": "thigh",
-    "cm": 24.6,
-    "truth": 25.9,
-    "err": -1.3,
-    "tol": 1.5
-   }
-  ],
-  "max_abs_err": 20.2,
-  "within": 3,
-  "n": 5,
-  "engine_s": 4.8
+  "engine_s": 3.4
  }
 ]
