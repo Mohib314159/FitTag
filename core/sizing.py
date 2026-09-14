@@ -33,9 +33,9 @@ def estimate_size(garment_type: str, measurements: dict) -> dict | None:
         waist_in = round(circ / 2.54)
         uk = min(_UK_WAIST, key=lambda t: abs(t[0] - circ))[1]
         return {"system": "waist", "label": f'~{waist_in}" waist',
-                "caveat": f"about a UK women's {uk} · approximate, vintage often runs small"}
+                "caveat": f"≈ UK women's {uk}"}
     ptp = measurements.get("pit_to_pit")
     if ptp is None:
         return None
     return {"system": "alpha", "label": f"~{_top_label(ptp)}",
-            "caveat": "approximate — vintage often runs a size small"}
+            "caveat": "vintage often runs small"}

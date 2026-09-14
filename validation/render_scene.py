@@ -255,6 +255,25 @@ def place_card(alb, hgt, rng, centre_mm, angle_deg=None, card_mm=(85.60, 53.98))
     return wm
 
 
+def place_paper(alb, hgt, rng, centre_mm, angle_deg=None, paper_mm=A4):
+    """A blank sheet of A4 lying beside the garment — the no-printing scale reference."""
+    H, W = alb.shape[:2]
+    ang = rng.uniform(-25, 25) if angle_deg is None else angle_deg
+    pw, ph = int(px(paper_mm[0])), int(px(paper_mm[1]))
+    sheet = np.full((ph, pw, 3), 244.0, np.float32)
+    sheet *= (1 + 0.01 * np.random.default_rng(int(rng.integers(1e6))).standard_normal((ph, pw, 1)).astype(np.float32))
+    M = cv2.getRotationMatrix2D((pw / 2, ph / 2), ang, 1.0)
+    sx, sy = mat_to_scene(*centre_mm)
+    M[0, 2] += sx - pw / 2
+    M[1, 2] += sy - ph / 2
+    warped = cv2.warpAffine(sheet, M, (W, H), flags=cv2.INTER_LINEAR)
+    m = cv2.warpAffine(np.ones((ph, pw), np.float32), M, (W, H), flags=cv2.INTER_LINEAR)
+    alb[:] = alb * (1 - m[..., None]) + warped * m[..., None]
+    d = cv2.distanceTransform((m > 0.5).astype(np.uint8), cv2.DIST_L2, 5) * PX
+    hgt += m * (0.12 + np.clip(1 - d / 25.0, 0, 1) ** 2 * 0.8)      # paper curls at the edges
+    return m
+
+
 # ---------------------------------------------------------------------------- garments
 
 def _densify(pts, step=12.0):
@@ -479,6 +498,10 @@ def render(spec):
     alb = alb * (1 - c3) + g_alb * c3
     hgt = hgt * (1 - cover) + (hgt * 0.25 + g_hgt) * cover     # cloth follows the surface under it
 
+    paper = None
+    if spec.get("paper"):
+        paper = place_paper(alb, hgt, rng, spec.get("paper_at", (cx - 430, top + 430)),
+                            spec.get("paper_angle"))
     card = None
     if spec.get("card"):
         cxy = spec.get("card_at", (cx + 60, top + 260))
@@ -492,6 +515,8 @@ def render(spec):
     occl = ambient_occlusion(cover, px(6.0), 0.40) * cast_shadow(cover, 1.6, PX, strength=0.45)
     if card is not None:
         occl *= ambient_occlusion(card, px(2.5), 0.30) * cast_shadow(card, 0.8, PX, softness_px=3, strength=0.40)
+    if paper is not None:
+        occl *= ambient_occlusion(paper, px(3.0), 0.22) * cast_shadow(paper, 0.6, PX, softness_px=4, strength=0.30)
     occl *= ambient_occlusion(paper, px(3.0), 0.22) * cast_shadow(paper, 0.6, PX, softness_px=4, strength=0.30)
     lit *= occl[..., None]
 

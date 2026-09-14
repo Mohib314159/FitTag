@@ -221,7 +221,7 @@
   "size": {
    "system": "waist",
    "label": "~33\" waist",
-   "caveat": "about a UK women's 16 \u00b7 approximate, vintage often runs small"
+   "caveat": "\u2248 UK women's 16"
   },
   "camera": {
    "pitch_deg": 17,
@@ -455,7 +455,7 @@
   "size": {
    "system": "waist",
    "label": "~30\" waist",
-   "caveat": "about a UK women's 14 \u00b7 approximate, vintage often runs small"
+   "caveat": "\u2248 UK women's 14"
   },
   "camera": {
    "pitch_deg": 12,
@@ -701,7 +701,7 @@
   "size": {
    "system": "alpha",
    "label": "~L",
-   "caveat": "approximate \u2014 vintage often runs a size small"
+   "caveat": "vintage often runs small"
   },
   "camera": {
    "pitch_deg": 14,

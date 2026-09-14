@@ -173,36 +173,66 @@ section.log h2{font-size:22px;margin-bottom:10px}
 @media (max-width:980px){.stage{grid-template-columns:1fr 1fr}.stage .panel.spec-p{grid-column:1/-1}section.fit{grid-template-columns:1fr}section.how{grid-template-columns:1fr 1fr}}
 @media (max-width:620px){.samples{grid-template-columns:1fr}.stage{grid-template-columns:1fr}section.how,section.honest{grid-template-columns:1fr}.brand h1{font-size:36px}header.top{grid-template-columns:1fr}.zone{grid-template-columns:90px 1fr auto}}
 @media (prefers-reduced-motion:no-preference){.bar i{transition:left .25s ease}}
+
+.lede{grid-column:1/-1;max-width:26ch;font-family:var(--display);font-stretch:82%;font-weight:800;font-size:clamp(28px,3.6vw,42px);line-height:1.02;letter-spacing:-.02em;margin:0}
+.sub2{grid-column:1/-1;max-width:60ch;color:var(--ink-2);margin:-2px 0 0;font-size:15px}
+.btn.primary{background:var(--tape);border-color:var(--tape);color:var(--tape-ink);font-weight:600}
+.btn.primary:hover{background:var(--ink);border-color:var(--ink);color:var(--tape)}
+section.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-block:26px 10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:2px}
+.tile b{font-family:var(--display);font-stretch:80%;font-size:30px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.tile span{font-size:13px;color:var(--ink-2)}
+.tile i{font-style:normal;color:var(--ink)}
+.tile.warn b{color:var(--warn)}
+.sec-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.sec-h h2{font-size:26px;font-weight:800}
+.sec-h .sub{margin:0;color:var(--ink-2)}
+.hidden-count{font-size:12px;color:var(--ink-2);margin:8px 0 0;font-family:var(--mono)}
+details.notes{margin-block:26px 8px;border-top:1px solid var(--line);padding-top:14px}
+details.notes>summary{cursor:pointer;font-family:var(--display);font-stretch:80%;font-weight:700;font-size:19px;list-style:none;display:flex;align-items:center;gap:10px}
+details.notes>summary::-webkit-details-marker{display:none}
+details.notes>summary::before{content:"+";display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid var(--line);border-radius:6px;font:600 15px var(--mono);color:var(--ink-2)}
+details.notes[open]>summary::before{content:"−"}
+.notes-in{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 34px;padding-top:16px;font-size:14px;color:var(--ink-2)}
+.notes-in h3{font-size:16px;color:var(--ink);margin-bottom:6px}
+.notes-in ul,.notes-in ol.steps{margin:0;padding-left:18px;display:grid;gap:6px}
+.notes-in b{color:var(--ink);font-weight:600}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tl li{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:baseline}
+.tl .when{font:500 11px var(--mono);color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+@media (max-width:860px){section.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.notes-in{grid-template-columns:1fr}}
 </style>
 
 <div class="tape" aria-hidden="true"></div>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>FitTag</h1><span class="tag">measure secondhand clothes from one photo</span></div>
+    <div class="brand"><h1>FitTag</h1><span class="tag">v0.3 · simulated photos</span></div>
     <div class="links">
-      <a class="btn" href="https://github.com/Mohib314159/FitTag">Code on GitHub</a>
+      <a class="btn primary" href="#fit">Check the fit</a>
+      <a class="btn" href="https://github.com/Mohib314159/FitTag">Code</a>
     </div>
-    <p class="lede">Vintage labels say <b>“M”</b> or <b>“W32”</b>, which tells you very little about how a one-off piece actually fits, and you can't try it on. FitTag measures the garment itself. The seller lays it on four printed sheets and takes one photo from roughly above. FitTag gives back real measurements with honest error bars, then tells the buyer where it will be tight or loose on them.</p>
+    <p class="lede">One photo. Real centimetres, with error bars.</p>
+    <p class="sub2">Vintage labels lie and you can't try it on. Lay it on four printed sheets, shoot from above, and FitTag measures the garment itself — then tells you where it'll be tight on you.</p>
   </header>
 
-  <div class="guide" aria-hidden="true"><span><b>Pick a garment</b></span><span class="g2">hover or tap a measurement to see where it came from</span><span class="g2">then set your size under “Will it fit you?”</span><span class="unit" role="group" aria-label="Units"><button class="chip" id="uCm" aria-pressed="true">cm</button><button class="chip" id="uIn" aria-pressed="false">inches</button></span></div>
+  <div class="guide" aria-hidden="true"><span><b>Pick a garment</b></span><span class="g2">hover a measurement to see where it came from</span><span class="unit" role="group" aria-label="Units"><button class="chip" id="uCm" aria-pressed="true">cm</button><button class="chip" id="uIn" aria-pressed="false">inches</button></span></div>
   <div class="samples" id="samples" role="group" aria-label="Sample photos"></div>
 
   <div class="stage">
     <div class="panel">
-      <div class="panel-h"><h2><span class="n">1</span>The photo</h2><span id="camNote">handheld, tilted</span></div>
+      <div class="panel-h"><h2><span class="n">1</span>Photo</h2><span id="camNote">handheld</span></div>
       <div class="fig"><img id="photo" alt="Phone photo of the garment on the calibration sheets"><svg id="photoOverlay" aria-hidden="true"></svg></div>
     </div>
     <div class="panel">
-      <div class="panel-h"><h2><span class="n">2</span>Flattened to scale</h2><span>1 px = 0.5 mm</span></div>
+      <div class="panel-h"><h2><span class="n">2</span>Flattened</h2><span>1 px = 0.5 mm</span></div>
       <div class="fig" id="flatFig"><img id="flat" alt="The same photo flattened to a top-down view, with measurement lines"><svg id="overlay" aria-hidden="true"></svg></div>
       <div class="toggles" role="group" aria-label="Overlay layers">
-        <button class="chip" id="tgOutline" aria-pressed="true">Detected outline</button>
-        <button class="chip" id="tgLines" aria-pressed="true">Measurement lines</button>
+        <button class="chip" id="tgOutline" aria-pressed="true">Outline</button>
+        <button class="chip" id="tgLines" aria-pressed="true">Measurements</button>
       </div>
     </div>
     <div class="panel spec-p">
-      <div class="panel-h"><h2><span class="n">3</span>Measurements</h2><span>engine vs true size</span></div>
+      <div class="panel-h"><h2><span class="n">3</span>Measured</h2><span>vs true size</span></div>
       <table class="spec">
         <thead><tr><th>Point</th><th>Measured <span id="uLbl">cm</span></th><th>True</th><th>Off by</th></tr></thead>
         <tbody id="spec"></tbody>
@@ -211,10 +241,10 @@ section.log h2{font-size:22px;margin-bottom:10px}
     </div>
   </div>
 
-  <section class="fit" aria-labelledby="fitH">
+  <section class="fit" id="fit" aria-labelledby="fitH">
     <div class="panel">
       <h2 id="fitH">Will it fit you?</h2>
-      <p class="sub" id="fitSub">Enter your body measurements. The garment is laid flat, so FitTag doubles its flat widths to get circumference and compares the difference against ease bands.</p>
+      <p class="sub" id="fitSub"></p>
       <div class="presets" id="presets"></div>
       <div id="controls"></div>
       <div class="pref" role="group" aria-label="How you like it to fit">
@@ -229,68 +259,71 @@ section.log h2{font-size:22px;margin-bottom:10px}
     </div>
   </section>
 
+  <section class="tiles" aria-label="Where it stands">
+    <div class="tile"><b id="t1">—</b><span>measurements inside their error bars, across <i id="t1b">—</i> simulated photos</span></div>
+    <div class="tile"><b>50°</b><span>of camera tilt tested; accuracy holds to about 30°</span></div>
+    <div class="tile"><b>~3 s</b><span>to measure one photo on a laptop</span></div>
+    <div class="tile warn"><b>0</b><span>real garments measured yet — that test is next</span></div>
+  </section>
 
   <section class="stress" aria-labelledby="stressH" id="stressSec">
-    <h2 id="stressH">How hard can you push it?</h2>
-    <p class="sub">The same engine on <span id="nPhotos"></span> more simulated photos, changing one thing at a time. A measurement passes if it lands inside its own error bar. <b id="stressSum"></b></p>
+    <div class="sec-h"><h2 id="stressH">Where it breaks</h2><p class="sub" id="stressSum"></p></div>
     <div class="stress-grid">
       <div class="panel">
-        <div class="chart-h"><h3>Worst error per photo vs camera tilt</h3>
+        <div class="chart-h"><h3>Worst error per photo vs tilt</h3>
           <div class="lg"><span><i style="background:var(--s1)"></i>charcoal jeans</span><span><i style="background:var(--s2)"></i>mid-wash jeans</span><span><i style="background:var(--s3)"></i>tee</span></div></div>
         <svg id="tiltChart" viewBox="0 0 560 250" role="img" aria-label="Worst measurement error in centimetres for each photo, by camera tilt"></svg>
         <div class="peek" id="peek"><img id="peekImg" alt="The simulated photo for the selected point"><div id="peekTxt"></div></div>
       </div>
       <div class="panel"><table class="cases"><tbody id="cases"></tbody></table></div>
     </div>
-  </section>
-  <section class="how" aria-label="How it works">
-    <div><span class="step">step 1</span><h3>Find the sheets</h3><p>OpenCV finds the four printed markers. Their positions are known to the millimetre, so the corners give 16 reference points — and, just as usefully, they tell the code where the garment is and which way up it lies.</p></div>
-    <div><span class="step">step 2</span><h3>Flatten the photo</h3><p>A homography fitted to those 16 points undoes the camera tilt and turns the photo into a top-down image where every pixel is 0.5 mm.</p></div>
-    <div><span class="step">step 3</span><h3>Cut out the garment</h3><p>It measures the backdrop colour at the edges, marks everything clearly different as garment, then refines the edge with GrabCut.</p></div>
-    <div><span class="step">step 4</span><h3>Measure like a tailor</h3><p>It scans the outline row by row: the waistband, the row where two legs split (crotch), armpits where the width steps down, hems. No ML model outputs a number.</p></div>
+    <p class="hidden-count">Hover a point or a row to see that photo. <span id="nPhotos" hidden></span></p>
   </section>
 
-  <section class="log" aria-labelledby="logH">
-    <h2 id="logH">Build log</h2>
-    <ol class="tl">
-      <li><span class="when">Jul 2026</span><span class="st done">shipped</span><div><b>First version at the Fleek × a16z hackathon.</b> Printable marker sheets, photo flattening, the measuring engine, fit verdicts and a FastAPI app.</div></li>
-      <li><span class="when">Sep 2026</span><span class="st done">shipped</span><div><b>Made the test photos realistic, then fixed what broke.</b> Six bugs the flat test shapes never triggered, 8× faster measuring, a refusal when the garment blends into the floor, and this page.</div></li>
-      <li><span class="when">next</span><span class="st next">next</span><div><b>A real photo against a tape measure.</b> Print the sheets, measure five garments by hand, and publish the comparison here whatever it shows.</div></li>
-      <li><span class="when">next</span><span class="st next">next</span><div><b>Measure shoulders properly.</b> Find the shoulder seam points on the outline instead of reusing chest width.</div></li>
-      <li><span class="when">Sep 2026</span><span class="st idea">experimental</span><div><b>Measuring with a bank card instead of the sheets.</b> A card is 85.60 × 53.98 mm everywhere in the world, so it can be the ruler and nothing needs printing: rectified through a detected card, the card measures back at 85.2 mm. What doesn't survive is the framing — the sheets also fix which way up the garment lies and where to crop — so the segmentation grabs shadow instead of denim. It's in the repo as <span class="mono">calibrate_by_card</span>, off by default. The fix isn't cleverer image processing, it's a phone app where you tap the card's corners and drag a box round the garment.</div></li>
-      <li><span class="when">exploring</span><span class="st idea">exploring</span><div><b>No printed sheets, on phones with AR.</b> ARKit knows where the floor is relative to the camera, which is the same flattening the sheets provide. Photos with the sheets still in frame would show exactly how accurate the AR version is.</div></li>
-    </ol>
-  </section>
-  <section class="honest">
-    <div>
-      <h2>What’s real here</h2>
-      <ul>
-        <li>The measuring code is the code in the repo, unchanged for the web. This page shows its output; <span class="mono">tools/build_site_data.py</span> and <span class="mono">validation/sweep.py</span> regenerate it.</li>
-        <li>The photos are <b>simulated</b>. They're rendered from garments with known dimensions, then shot by a virtual phone camera with tilt, rotation, lens falloff, noise and JPEG compression. The sheets are the real printable ones, each deliberately placed a few mm off.</li>
-        <li>Testing on these photos found bugs the old flat-red test images never hit, all now fixed:
-          <ul>
-            <li>crashing on any background that wasn't white paper</li>
-            <li>finding the crotch at a stitching gap</li>
-            <li>finding armpits at the neckline</li>
-            <li>calling jeans a top when one hem sat lower than the other</li>
-            <li>measuring one-sheet photos about a third too small</li>
-          </ul>
-          It now also refuses to measure when the garment blends into the floor, instead of returning a confident wrong answer.</li>
-        <li>Each photo takes about 3 seconds to measure, down from 25. The slow edge-finding step now runs at lower resolution, which changes results by at most 0.2 cm.</li>
-      </ul>
+  <details class="notes">
+    <summary>How it works, what's real, and what's next</summary>
+    <div class="notes-in">
+      <div>
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li><b>Find the sheets.</b> OpenCV finds four printed markers whose positions are known to the millimetre — they give both the scale and where the garment is.</li>
+          <li><b>Flatten.</b> A homography from those 16 corners removes the camera tilt: every pixel becomes 0.5 mm.</li>
+          <li><b>Cut out the garment.</b> The backdrop colour is measured at the edges; GrabCut refines the outline.</li>
+          <li><b>Measure like a tailor.</b> Row by row along the outline: waistband, the row where the legs split, armpits, hems. No model outputs a number.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>What's real, what isn't</h3>
+        <ul>
+          <li>Every number here is this repo's Python running on these photos.</li>
+          <li>The photos are rendered, not shot: cloth albedo plus a height map in millimetres, lit by one light, then a virtual phone camera with tilt, vignette, noise and JPEG.</li>
+          <li>Rendering them properly exposed six bugs the old flat test shapes never hit — a crash on any non-white background, the crotch found at a stitching gap, armpits at the neckline, jeans called a top, one-sheet photos a third too small.</li>
+          <li>It refuses to measure when the garment blends into the floor instead of guessing.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Limits</h3>
+        <ul>
+          <li>Never yet run on a real photo of a real garment against a tape measure.</li>
+          <li>Shoulder width reuses chest width, so it's left out of fit checks.</li>
+          <li>Low contrast between garment and floor shortens the inseam; the app warns.</li>
+          <li>Card mode (no printing) gets scale right but not framing — below.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Build log</h3>
+        <ol class="tl">
+          <li><span class="when">Jul 2026</span><div><b>Built at the Fleek × a16z hackathon.</b> Printable sheets, flattening, measuring, fit verdicts, API.</div></li>
+          <li><span class="when">Sep 2026</span><div><b>Photoreal test photos, six bugs fixed, 8× faster</b> (25 s → 3 s per photo), refuses low-contrast shots.</div></li>
+          <li><span class="when">Sep 2026</span><div><b>Card mode, experimental.</b> A bank card is 85.60 × 53.98 mm worldwide, so scale works — rectified through a detected card, the card measures back at 85.2 mm. Framing doesn't: the sheets also fix orientation and crop, so segmentation grabs shadow. In the repo, off by default.</div></li>
+          <li><span class="when">next</span><div><b>A real photo against a tape measure</b>, published whatever it shows.</div></li>
+          <li><span class="when">next</span><div><b>Tap-the-corners on a phone.</b> Mark a card or a blank A4, drag a box round the garment: no printing, and the geometry is already exact.</div></li>
+        </ol>
+      </div>
     </div>
-    <div>
-      <h2>Known limits</h2>
-      <ul>
-        <li>Not yet tested on a real photo of a real garment against a tape measure. That's the next test.</li>
-        <li>Shoulder width isn't measured separately yet (it reuses chest width), so it's left out of fit checks.</li>
-        <li>On a floor close in colour to the garment, the gap between the legs closes up and inseam reads short; the app warns about this.</li>
-        <li>Card mode (measure with no printing) gets the scale right but not the framing yet — see the build log.</li>
-      </ul>
-      <p style="margin-top:12px"><a class="btn" href="https://github.com/Mohib314159/FitTag/tree/main/print">Print the sheets</a> <a class="btn" href="https://github.com/Mohib314159/FitTag#run">Run it on your own photos</a></p>
-    </div>
-  </section>
-  <footer><span>Built by Mohib Murtaza, maths student at Warwick · <a href="https://www.linkedin.com/in/mohib-ullah-murtaza-4ba2a1389">LinkedIn</a></span><a href="https://github.com/Mohib314159/FitTag">github.com/Mohib314159/FitTag</a></footer>
+  </details>
+
+  <footer><span>Mohib Murtaza · Warwick maths · <a href="https://www.linkedin.com/in/mohib-ullah-murtaza-4ba2a1389">LinkedIn</a></span><a href="https://github.com/Mohib314159/FitTag">github.com/Mohib314159/FitTag</a></footer>
 </div>
 
 <script id="data" type="application/json">/*DATA*/</script>
@@ -371,9 +404,9 @@ function renderSpec(s){
   const ok=s.measurements.filter(m=>m.err!==null&&Math.abs(m.err)<=m.tol).length, n=s.measurements.filter(m=>m.err!==null).length;
   const bottom=BOTTOMS.has(s.type), key=bottom?'waist_flat':'pit_to_pit', km=s.measurements.find(m=>m.name===key);
   const around=km?`<div class="around">Around the ${bottom?'waist':'chest'}: <b>${(km.cm*2).toFixed(0)} cm</b> · <b>${(km.cm*2/IN).toFixed(1)} in</b> <span title="Laid flat, the garment shows half its circumference">flat × 2</span></div>`:'';
-  $('meta').innerHTML=around+`<div><b>${ok} of ${n}</b> measurements within their error bar.</div>`+
-    (s.size?`<div>Size estimate <span class="sizebadge">${s.size.label}</span> <span>${s.size.caveat}</span></div>`:'')+
-    `<div>Garment type: <b>${s.type}</b> (from outline shape) · calibration: <b>${s.markers} markers</b></div>`;
+  $('meta').innerHTML=around+`<div><b>${ok} of ${n}</b> inside their error bar</div>`+
+    (s.size?`<div><span class="sizebadge">${s.size.label}</span> <span>${s.size.caveat}</span></div>`:'')+
+    `<div><b>${s.type}</b> from the outline · <b>${s.markers}/4</b> markers found</div>`;
 }
 function renderControls(s){
   const kind=BOTTOMS.has(s.type)?'bottom':'top', box=$('controls'), P=PRESET[kind];
@@ -419,7 +452,10 @@ function renderStress(){
   if(!SW.length){ $('stressSec').hidden=true; return; }
   $('nPhotos').textContent=SW.length;
   const used=SW.filter(r=>r.ok&&r.contrast_status!=='refuse'), inside=used.reduce((a,r)=>a+r.within,0), tot=used.reduce((a,r)=>a+r.n,0), ref=SW.filter(r=>r.contrast_status==='refuse').length;
-  $('stressSum').textContent=`${inside} of ${tot} measurements inside their error bars${ref?`; ${ref} photo correctly refused.`:'.'}`;
+  $('stressSum').textContent=`${SW.length} photos, one thing changed at a time${ref?`; ${ref} refused as unmeasurable`:''}`;
+  const sTot=S.reduce((a,x)=>a+x.measurements.filter(m=>m.err!==null).length,0);
+  const sIn=S.reduce((a,x)=>a+x.measurements.filter(m=>m.err!==null&&Math.abs(m.err)<=m.tol).length,0);
+  $('t1').textContent=`${sIn+inside}/${sTot+tot}`; $('t1b').textContent=S.length+used.length;
   const xs=[...new Set(tilt.map(r=>parseFloat(r.label)))].sort((a,b)=>a-b), XM=Math.max(...xs);
   const W=560,H=250,L=44,R=16,T=14,B=34;
   const ymax=Math.max(2,Math.ceil(Math.max(...tilt.filter(r=>r.ok).map(r=>r.max_abs_err))*2)/2);
@@ -475,8 +511,8 @@ function render(keep){
   $('photo').src=s.photo; $('flat').src=s.flat;
   $('camNote').textContent=`tilted ${s.camera.pitch_deg}°, rotated ${s.camera.roll_deg}°`;
   $('fitSub').textContent=BOTTOMS.has(s.type)
-    ?'Enter your measurements. Flat waist and hip widths are doubled to get circumference, then compared with your body. Inseam is compared with the leg length you like.'
-    :'Enter your measurements. Flat chest width is doubled to get circumference and compared with your body. Length is compared with the length you like.';
+    ? 'Flat widths are doubled to get circumference, then compared with you.'
+    : 'Flat chest width is doubled to get circumference, then compared with you.';
   drawOverlay(s); drawMarkers(s); renderSpec(s); renderControls(s); renderFit(s);
 }
 document.querySelectorAll('[data-pref]').forEach(b=>b.onclick=()=>{pref=b.dataset.pref;document.querySelectorAll('[data-pref]').forEach(x=>x.setAttribute('aria-pressed',x===b));renderFit(S[cur]);});
