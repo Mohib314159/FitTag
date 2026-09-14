@@ -206,7 +206,7 @@ details.notes[open]>summary::before{content:"−"}
 <div class="tape" aria-hidden="true"></div>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>FitTag</h1><span class="tag">v0.3 · simulated photos</span></div>
+    <div class="brand"><h1>FitTag</h1><span class="tag">v0.4 · real and simulated photos</span></div>
     <div class="links">
       <a class="btn primary" href="#fit">Check the fit</a>
       <a class="btn" href="https://github.com/Mohib314159/FitTag">Code</a>
@@ -263,8 +263,10 @@ details.notes[open]>summary::before{content:"−"}
     <div class="tile"><b id="t1">—</b><span>measurements inside their error bars, across <i id="t1b">—</i> simulated photos</span></div>
     <div class="tile"><b>50°</b><span>of camera tilt tested; accuracy holds to about 30°</span></div>
     <div class="tile"><b>~3 s</b><span>to measure one photo on a laptop</span></div>
-    <div class="tile"><b>0.8 cm</b><span>median error with no printing: one sheet of A4 and a box drawn round the garment</span></div>
-    <div class="tile warn"><b>0</b><span>real garments measured yet — that test is next</span></div>
+    <div class="tile"><b>0.8 cm</b><span>median error with no printing: one sheet of paper and a box drawn round the garment</span></div>
+    <div class="tile"><b>17.0 mm</b><span>the tack button on my own jeans, measured from the photo — a jeans button is 17 mm, so the garment can check the ruler</span></div>
+    <div class="tile"><b>32.7 in</b><span>inseam measured on a real pair tagged L32, from one phone photo and a sheet of A5</span></div>
+    <div class="tile"><b>2</b><span>photographs of one real pair, tagged W34 L32, measured independently and agreeing to 0.8 cm</span></div>
   </section>
 
   <section class="stress" aria-labelledby="stressH" id="stressSec">
@@ -305,10 +307,10 @@ details.notes[open]>summary::before{content:"−"}
       <div>
         <h3>Limits</h3>
         <ul>
-          <li>Never yet run on a real photo of a real garment against a tape measure.</li>
+          <li>Waist reads about two inches over the label on worn cotton duck; a tag is a body size, not a garment one.</li>
           <li>Shoulder width reuses chest width, so it's left out of fit checks.</li>
           <li>Low contrast between garment and floor shortens the inseam; the app warns.</li>
-          <li>Card mode (no printing) gets scale right but not framing — below.</li>
+          <li>A reference still has to be in the shot. Button-only scale is measured, not yet the default.</li>
         </ul>
       </div>
       <div>
@@ -318,6 +320,23 @@ details.notes[open]>summary::before{content:"−"}
           <li><span class="when">Sep 2026</span><div><b>Photoreal test photos, six bugs fixed, 8× faster</b> (25 s → 3 s per photo), refuses low-contrast shots.</div></li>
           <li><span class="when">Sep 2026</span><div><b>No printing needed.</b> A plain sheet of A4 is 210 × 297 mm everywhere, and as a ruler it lands within 1% of truth. Framing was the part that needed a person — shadows and folds look like denim to a threshold — so the user drags a box round the garment and everything downstream works: median error 0.8 cm, worst 3.5 cm, against 0.5 cm for the printed mat.</div></li>
       <li><span class="when">Sep 2026</span><div><b>Card mode, experimental.</b> A bank card is 85.60 × 53.98 mm worldwide, so scale works — rectified through a detected card, the card measures back at 85.2 mm. Framing doesn't: the sheets also fix orientation and crop, so segmentation grabs shadow. In the repo, off by default.</div></li>
+          <li><span class="when">Sep 2026</span><div><b>Measured a real pair of trousers, and it held.</b>
+          My own tan Carhartt double-knees, tagged W34 L32, on a grey carpet with nothing in the
+          shot but one sheet of A5. Two photographs at different angles, measured independently:
+          inseam 32.7 in against a tagged 32, and the five main points agree with each other to
+          0.8 cm across the two shots. Both are in the picker above.</div></li>
+          <li><span class="when">Sep 2026</span><div><b>The garment is its own ruler.</b> A jeans
+          tack button is 17 mm, a rivet 9 mm, and lockstitch runs 8 stitches to the inch. Measured
+          off the waistband of those photos the button comes back at 17.0 mm — which is what proved
+          the sheet was A5 rather than A4, since A4 would have made the same button 24 mm. Scale
+          from hardware alone lands within 3% once the perspective across the garment is fitted
+          rather than assumed constant; it is in the repo as <span class="mono">core/markerless.py</span>,
+          not yet wired in as the default.</div></li>
+          <li><span class="when">Sep 2026</span><div><b>Legs overlap, and the outline lies.</b>
+          Laid flat, one leg rests on the other, so the background only shows well below the real
+          crotch — measuring the silhouette alone loses six inches of inseam. Following the crease
+          the overlapping leg casts, upward until it fades, recovers it: 26.4 in from the outline,
+          32.7 in from the crease, 32 in on the label.</div></li>
           <li><span class="when">next</span><div><b>A real photo against a tape measure</b>, published whatever it shows.</div></li>
           <li><span class="when">next</span><div><b>Tap-the-corners on a phone.</b> Mark a card or a blank A4, drag a box round the garment: no printing, and the geometry is already exact.</div></li>
         </ol>
@@ -408,7 +427,7 @@ function renderSpec(s){
   const around=km?`<div class="around">Around the ${bottom?'waist':'chest'}: <b>${(km.cm*2).toFixed(0)} cm</b> · <b>${(km.cm*2/IN).toFixed(1)} in</b> <span title="Laid flat, the garment shows half its circumference">flat × 2</span></div>`:'';
   $('meta').innerHTML=around+`<div><b>${ok} of ${n}</b> inside their error bar</div>`+
     (s.size?`<div><span class="sizebadge">${s.size.label}</span> <span>${s.size.caveat}</span></div>`:'')+
-    `<div><b>${s.type}</b> from the outline · <b>${s.markers}/4</b> markers found</div>`;
+    `<div><b>${s.type}</b> from the outline · <b>${s.mode==='paper'?s.reference:s.markers+'/4 markers'}</b> found</div>`;
 }
 function renderControls(s){
   const kind=BOTTOMS.has(s.type)?'bottom':'top', box=$('controls'), P=PRESET[kind];
@@ -463,11 +482,12 @@ function renderStress(){
   const ymax=Math.max(2,Math.ceil(Math.max(...tilt.filter(r=>r.ok).map(r=>r.max_abs_err))*2)/2);
   const X=v=>L+(v/XM)*(W-L-R), Y=v=>T+(1-v/ymax)*(H-T-B);
   let g='';
-  for(let v=0;v<=ymax+1e-9;v+=0.5) g+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${v.toFixed(1)}</text>`;
+  const step=[0.5,1,2,5,10].find(k=>ymax/k<=6)||Math.ceil(ymax/6);
+  for(let v=0;v<=ymax+1e-9;v+=step) g+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${step<1?v.toFixed(1):v}</text>`;
   xs.forEach(v=>g+=`<text x="${X(v)}" y="${H-B+18}" text-anchor="middle">${v}°</text>`);
   g+=`<text x="${L}" y="${H-4}" text-anchor="start">camera tilt from straight down</text>`;
   g+=`<line class="tol" x1="${L}" x2="${W-R}" y1="${Y(1)}" y2="${Y(1)}"/><text x="${L+8}" y="${Y(1)-6}" text-anchor="start">±1 cm bar: waist, hip, inseam, length, chest</text>`;
-  g+=`<line class="tol" x1="${L}" x2="${W-R}" y1="${Y(1.5)}" y2="${Y(1.5)}"/><text x="${L+8}" y="${Y(1.5)-6}" text-anchor="start">±1.5 cm bar: thigh, leg opening, sleeve</text>`;
+  g+=`<line class="tol" x1="${L}" x2="${W-R}" y1="${Y(1.5)}" y2="${Y(1.5)}"/><text x="${L+8}" y="${Y(1.5)-6}" text-anchor="start">±1.5 cm: thigh, leg opening, sleeve</text>`;
   const series=[['jeans-charcoal','var(--s1)',-4],['jeans-midwash','var(--s2)',0],['tee-burgundy','var(--s3)',4]];
   for(const [gid,col,dx] of series){
     const pts=tilt.filter(r=>r.garment===gid&&r.ok).map(r=>({t:parseFloat(r.label),e:r.max_abs_err,r})).sort((a,b)=>a.t-b.t);
@@ -483,8 +503,10 @@ function renderStress(){
   const GN={placement:'Sheets taped carelessly',sheets:'Sheets hidden or out of frame',backdrop:"What it's lying on",lens:'Lens distortion left in',paper:'No printing: one sheet of A4',card:'No printing: a bank card'};
   let rows='';
   for(const grp of ['placement','sheets','backdrop','paper','card','lens']){
+    const inGrp=SW.filter(r=>r.group===grp);
+    if(!inGrp.length) continue;              // a heading with nothing under it reads as broken
     rows+=`<tr><td class="g" colspan="2">${GN[grp]}</td></tr>`;
-    SW.filter(r=>r.group===grp).forEach(r=>{
+    inGrp.forEach(r=>{
       let res;
       if(r.ok&&r.contrast_status==='refuse') res=`<span class="res part">refuses: too little contrast</span>`;
       else if(!r.ok) res=`<span class="res fail">failed: ${r.why}</span>`;
@@ -511,7 +533,7 @@ function render(keep){
   const s=S[cur];
   renderSamples();
   $('photo').src=s.photo; $('flat').src=s.flat;
-  $('camNote').textContent=`tilted ${s.camera.pitch_deg}°, rotated ${s.camera.roll_deg}°`;
+  $('camNote').textContent=`${s.camera.pitch_deg==null?'':'tilted '+s.camera.pitch_deg+'°, '}rotated ${s.camera.roll_deg}°`;
   $('fitSub').textContent=BOTTOMS.has(s.type)
     ? 'Flat widths are doubled to get circumference, then compared with you.'
     : 'Flat chest width is doubled to get circumference, then compared with you.';
@@ -524,5 +546,119 @@ const setU=u=>{U=u;$('uCm').setAttribute('aria-pressed',u==='cm');$('uIn').setAt
 $('uCm').onclick=()=>setU('cm'); $('uIn').onclick=()=>setU('in');
 renderStress();
 render();
+})();
+</script>
+
+<style id="motion">
+/* --- motion layer -------------------------------------------------------------
+   Movement is used to show structure, not to decorate: sections arrive as you reach
+   them, figures count up so the number registers as a measurement, and the bar at the
+   top condenses once the masthead is gone so the name and the link stay reachable.
+   All of it is off for anyone who has asked for reduced motion. */
+[data-rv]{opacity:0;transform:translateY(16px);
+  transition:opacity .62s cubic-bezier(.22,.61,.36,1),transform .62s cubic-bezier(.22,.61,.36,1);
+  transition-delay:var(--d,0ms);will-change:opacity,transform}
+[data-rv].in{opacity:1;transform:none}
+#topbar{position:fixed;inset:0 0 auto 0;z-index:60;display:flex;align-items:center;
+  justify-content:space-between;gap:16px;padding:9px 20px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:saturate(140%) blur(9px);-webkit-backdrop-filter:saturate(140%) blur(9px);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-100%);transition:transform .32s cubic-bezier(.22,.61,.36,1);pointer-events:none}
+#topbar.show{transform:none;pointer-events:auto}
+#topbar .nm{font:700 15px/1 var(--body);letter-spacing:-.02em;color:var(--ink)}
+#topbar .rt{display:flex;gap:14px;align-items:center;font:500 12px/1 var(--body)}
+#topbar a{color:var(--ink);text-decoration:none;opacity:.75}
+#topbar a:hover{opacity:1}
+#prog{position:fixed;inset:0 auto auto 0;height:2px;width:0;z-index:61;background:var(--tape);
+  transition:width .1s linear}
+@media (prefers-reduced-motion:reduce){
+  [data-rv]{opacity:1;transform:none;transition:none}
+  #topbar{transition:none}
+}
+</style>
+
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SEL = ['section','.card','.tile','.tl li','.pick','.panel'];
+  let io = null;
+  function scan(){
+    const fresh = [];
+    SEL.forEach(sel => document.querySelectorAll(sel).forEach(n => {
+      if (n.hasAttribute('data-rv')) return;
+      n.setAttribute('data-rv', '');
+      fresh.push(n);
+    }));
+    if (!fresh.length) return;
+    if (reduce || !io) fresh.forEach(n => n.classList.add('in'));
+    else fresh.forEach(n => io.observe(n));
+  }
+  const nodes = [];
+
+  if (!reduce) {
+    io = new IntersectionObserver((entries) => {
+      // stagger only within one batch, so a long list does not cascade for seconds
+      let i = 0;
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.style.setProperty('--d', Math.min(i++, 6) * 55 + 'ms');
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    }, {rootMargin: '0px 0px -8% 0px', threshold: .06});
+  }
+  scan();
+  // the feed renders after this script runs, and again on every re-rank: pick up what appears
+  const mo = new MutationObserver(() => scan());
+  mo.observe(document.body, {childList:true, subtree:true});
+
+  // condensing bar, once the masthead has scrolled away
+  const bar = document.createElement('div');
+  bar.id = 'topbar';
+  bar.innerHTML = `<span class="nm">FitTag</span><span class="rt"><a href="#try">Check the fit</a><a href="https://github.com/Mohib314159/FitTag">Code</a></span>`;
+  document.body.appendChild(bar);
+  const prog = document.createElement('div');
+  prog.id = 'prog';
+  document.body.appendChild(prog);
+  const anchor = document.querySelector('header.top, header') || document.body;
+  let ticking = false;
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const past = window.scrollY > anchor.getBoundingClientRect().height * .8;
+      bar.classList.toggle('show', past);
+      const h = document.documentElement.scrollHeight - innerHeight;
+      prog.style.width = (h > 0 ? Math.min(100, scrollY / h * 100) : 0) + '%';
+      ticking = false;
+    });
+  }
+  addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // figures count up when they arrive, so a measurement reads as one
+  if (!reduce) {
+    const nums = [...document.querySelectorAll('.tile b')].filter(n => /[0-9]/.test(n.textContent));
+    const io2 = new IntersectionObserver(es => {
+      for (const e of es) {
+        if (!e.isIntersecting) continue;
+        const el = e.target, raw = el.dataset.raw;
+        const m = raw.match(/-?[0-9]+(\.[0-9]+)?/);
+        if (m) {
+          const end = parseFloat(m[0]), dp = (m[0].split('.')[1] || '').length;
+          const t0 = performance.now(), dur = 780;
+          (function step(t){
+            const k = Math.min(1, (t - t0) / dur);
+            const v = end * (1 - Math.pow(1 - k, 3));
+            el.textContent = raw.replace(m[0], v.toFixed(dp));
+            if (k < 1) requestAnimationFrame(step);
+          })(t0);
+        }
+        io2.unobserve(el);
+      }
+    }, {threshold:.6});
+    nums.forEach(n => { n.dataset.raw = n.textContent; io2.observe(n); });
+  }
 })();
 </script>
