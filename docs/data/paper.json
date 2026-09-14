@@ -1,0 +1,158 @@
+[
+ {
+  "tilt": 5,
+  "ok": true,
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "rows": [
+   {
+    "name": "waist_flat",
+    "truth": 41.0,
+    "markers": 41.3,
+    "paper": 42.5,
+    "err_cm": 1.5
+   },
+   {
+    "name": "hip_flat",
+    "truth": 52.0,
+    "markers": 52.0,
+    "paper": 54.0,
+    "err_cm": 2.0
+   },
+   {
+    "name": "inseam",
+    "truth": 76.0,
+    "markers": 76.0,
+    "paper": 73.3,
+    "err_cm": -2.7
+   },
+   {
+    "name": "leg_opening",
+    "truth": 23.5,
+    "markers": 23.4,
+    "paper": 22.5,
+    "err_cm": -1.0
+   },
+   {
+    "name": "thigh",
+    "truth": 25.9,
+    "markers": 25.7,
+    "paper": 27.2,
+    "err_cm": 1.3
+   }
+  ]
+ },
+ {
+  "tilt": 12,
+  "ok": true,
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "rows": [
+   {
+    "name": "waist_flat",
+    "truth": 41.0,
+    "markers": 41.3,
+    "paper": 39.5,
+    "err_cm": -1.5
+   },
+   {
+    "name": "hip_flat",
+    "truth": 52.0,
+    "markers": 52.4,
+    "paper": 51.2,
+    "err_cm": -0.8
+   },
+   {
+    "name": "inseam",
+    "truth": 76.0,
+    "markers": 75.2,
+    "paper": 59.2,
+    "err_cm": -16.8
+   },
+   {
+    "name": "leg_opening",
+    "truth": 23.5,
+    "markers": 23.9,
+    "paper": 23.9,
+    "err_cm": 0.4
+   },
+   {
+    "name": "thigh",
+    "truth": 25.9,
+    "markers": 25.7,
+    "paper": 25.4,
+    "err_cm": -0.5
+   }
+  ]
+ },
+ {
+  "tilt": 20,
+  "ok": false,
+  "why": "sheet of A4 not found",
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  }
+ },
+ {
+  "tilt": 28,
+  "ok": true,
+  "truth": {
+   "waist_flat": 41.0,
+   "hip_flat": 52.0,
+   "inseam": 76.0,
+   "leg_opening": 23.5,
+   "thigh": 25.9
+  },
+  "rows": [
+   {
+    "name": "waist_flat",
+    "truth": 41.0,
+    "markers": 41.2,
+    "paper": 38.3,
+    "err_cm": -2.7
+   },
+   {
+    "name": "hip_flat",
+    "truth": 52.0,
+    "markers": 51.8,
+    "paper": 51.5,
+    "err_cm": -0.5
+   },
+   {
+    "name": "inseam",
+    "truth": 76.0,
+    "markers": 76.0,
+    "paper": 75.0,
+    "err_cm": -1.0
+   },
+   {
+    "name": "leg_opening",
+    "truth": 23.5,
+    "markers": 23.7,
+    "paper": 21.9,
+    "err_cm": -1.6
+   },
+   {
+    "name": "thigh",
+    "truth": 25.9,
+    "markers": 25.4,
+    "paper": 26.2,
+    "err_cm": 0.3
+   }
+  ]
+ }
+]

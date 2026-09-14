@@ -45,11 +45,8 @@ def cases():
     out.append(case("sheets", "3 of 4 sheets", "jeans-midwash", 301, missing=(2,)))
     out.append(case("sheets", "2 of 4 sheets", "jeans-midwash", 302, missing=(1, 3)))
     out.append(case("sheets", "1 of 4 sheets", "jeans-midwash", 303, missing=(1, 2, 3)))
-    # markerless: one blank sheet of A4 and a box drawn round the garment (the user's drag)
-    for pitch in (5, 12, 20, 28):
-        out.append(case("paper", f"one sheet of A4, {pitch}° tilt", "jeans-charcoal", 700 + pitch,
-                        paper=True, missing=(0, 1, 2, 3),
-                        camera={"pitch_deg": pitch, "height_mm": 1700.0, "out_size": (2268, 3024)}))
+    # (paper mode has its own harness — validation/paper_mode.py — because it needs the box
+    # the user would drag, and faking that with a threshold tests the threshold, not the method)
     # markerless: a bank card is the only thing of known size in the picture
     for pitch in (8, 22):
         out.append(case("card", f"bank card only, {pitch}° tilt", "jeans-charcoal", 600 + pitch,

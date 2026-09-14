@@ -496,6 +496,10 @@ SCENES = [
 def render(spec):
     """Build albedo + height for the whole scene, light it once, then photograph it."""
     rng = np.random.default_rng(spec["seed"])
+    # the garment gets its own stream so that adding or removing scene furniture (sheets,
+    # a card, a sheet of paper) doesn't change where the garment lies or how it's creased.
+    # Paired renders of the same garment are what lets one grade the other.
+    rng_g = np.random.default_rng(spec["seed"] * 7919 + 13)
     shape = (int(px(SCENE_MM[1])), int(px(SCENE_MM[0])))
     alb, hgt = backdrop(shape, rng, base=spec.get("backdrop", (214, 216, 219)))
     placed, paper = paste_sheets(alb, hgt, rng, jitter_mm=spec.get("jitter", 2.5),
@@ -508,12 +512,12 @@ def render(spec):
         fades = [(cx - d["hip"] / 4, crotch_y + 120, 90), (cx + d["hip"] / 4, crotch_y + 120, 90),
                  (cx - d["hip"] / 4 - 15, crotch_y + d["inseam"] * 0.45, 70),
                  (cx + d["hip"] / 4 + 15, crotch_y + d["inseam"] * 0.45, 70)]
-        g_alb, g_hgt, cover = garment_layers(shape, outline, details, rng, spec["colour"], "denim", fades, patches)
+        g_alb, g_hgt, cover = garment_layers(shape, outline, details, rng_g, spec["colour"], "denim", fades, patches)
         spec_str, shine = 0.020, 26.0
     else:
         top = (MAT_MM[1] - d["length"]) / 2
         outline, details, patches, gt, _ = tee_shape(cx, top, **d)
-        g_alb, g_hgt, cover = garment_layers(shape, outline, details, rng, spec["colour"], "jersey", None, patches)
+        g_alb, g_hgt, cover = garment_layers(shape, outline, details, rng_g, spec["colour"], "jersey", None, patches)
         spec_str, shine = 0.010, 18.0
 
     c3 = cover[..., None]
@@ -531,10 +535,10 @@ def render(spec):
 
     if spec["kind"] == "jeans" and spec.get("hardware", True):
         band_y = top + 40.0
-        place_hardware(alb, hgt, rng, (cx - 6, top + 22), 17.0, "button")
+        place_hardware(alb, hgt, rng_g, (cx - 6, top + 22), 17.0, "button")
         for rx, ry in ((-d["waist"] / 2 + 18, band_y + 8), (d["waist"] / 2 - 18, band_y + 8),
                        (-d["waist"] / 2 + 120, band_y + 105), (d["waist"] / 2 - 120, band_y + 105)):
-            place_hardware(alb, hgt, rng, (cx + rx, ry), 9.0, "rivet")
+            place_hardware(alb, hgt, rng_g, (cx + rx, ry), 9.0, "rivet")
 
     lit = shade(alb, hgt, PX, spec=spec_str, shine=shine)
     if card is not None:                      # plastic catches the light more than cloth

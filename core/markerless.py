@@ -287,6 +287,33 @@ def anchor_field(field, anchors):
 
 A4_MM = (210.0, 297.0)
 
+# Anything whose size you know works — that is the whole point of the method. Rectangles are
+# easier to find than discs, and bigger is better: error scales with how much the reference
+# has to be extrapolated to cover the garment.
+REFERENCES = {
+    "a4":            {"kind": "rect", "mm": (210.0, 297.0), "note": "ISO A4 paper"},
+    "a5":            {"kind": "rect", "mm": (148.0, 210.0), "note": "ISO A5 paper"},
+    "us-letter":     {"kind": "rect", "mm": (215.9, 279.4), "note": "US Letter paper"},
+    "bank-card":     {"kind": "rect", "mm": (85.60, 53.98), "note": "ISO/IEC 7810 ID-1"},
+    "dollar-bill":   {"kind": "rect", "mm": (156.0, 66.3), "note": "US banknote"},
+    "dvd-case":      {"kind": "rect", "mm": (135.0, 190.0), "note": "standard DVD case"},
+    "jeans-button":  {"kind": "disc", "mm": 17.0, "note": "common tack button; 14/20/22 exist"},
+    "rivet":         {"kind": "disc", "mm": 9.0, "note": "jeans rivet, varies 6-11"},
+    "uk-1pound":     {"kind": "disc", "mm": 23.43, "note": "UK £1 coin, across corners"},
+    "uk-2p":         {"kind": "disc", "mm": 25.9, "note": "UK 2p coin"},
+    "us-quarter":    {"kind": "disc", "mm": 24.26, "note": "US quarter"},
+    "euro-2":        {"kind": "disc", "mm": 25.75, "note": "2 euro coin"},
+}
+
+
+def reference(name):
+    """Look up a known object by name: REFERENCES lists what's built in, and anything else
+    works by passing its size directly."""
+    key = name.strip().lower().replace(" ", "-")
+    if key not in REFERENCES:
+        raise KeyError(f"unknown reference {name!r}; known: {', '.join(sorted(REFERENCES))}")
+    return REFERENCES[key]
+
 
 def find_rectangle(photo, ref_mm=A4_MM, frac_band=(0.05, 0.55)):
     """Find a plain rectangle of known proportions — a sheet of A4, a card, a book.
