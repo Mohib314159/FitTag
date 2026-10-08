@@ -1,0 +1,10 @@
+{
+  "synthetic": true,
+  "truth_cm": {
+    "waist_flat": 41.0,
+    "hip_flat": 52.0,
+    "inseam": 76.0,
+    "leg_opening": 23.5,
+    "thigh": 25.9
+  }
+}

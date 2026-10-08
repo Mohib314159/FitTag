@@ -1,114 +1,68 @@
 # FitTag
 
-**Live demo: https://mohib314159.github.io/FitTag/** (opens in the browser, nothing to install)
+A phone-first, installable garment-measurement PWA. Take or choose an ordinary flat-lay photo, check the detected reference and measurement lines, and read centimetres or inches with explicit uncertainty. The intended jeans flow uses the garment’s tack button as a scale reference; no printed mat is required.
 
-[![FitTag: a tilted phone photo of jeans on four marker sheets, flattened and measured](docs/og.png)](https://mohib314159.github.io/FitTag/)
+**Hardware scale is experimental.** A common tack button is assumed to be 17 mm unless you enter a measured diameter. Buttons vary. The current phone route requires a clear, near-overhead photo and uses the existing button detector, edge refinement, silhouette separation, waistband alignment and landmark geometry. It returns conservative estimates and refuses missing buttons, excessive apparent tilt, cropped garments and inseparable legs. One circular reference cannot recover a full plane homography; the stitch-based scale-field research in `core/markerless.py` is preserved but is not claimed as validated production rectification.
 
-Secondhand listings say "M" or "W32", which says little about how a one-off vintage piece
-fits. FitTag measures the actual garment from one phone photo: lay it on four printed A4
-sheets, shoot from roughly above, and it returns centimetres with error bars, then checks
-them against your size. Started at the Fleek × a16z hackathon.
+## Run locally
 
-- The four sheets carry ArUco markers at known positions. OpenCV finds them and a homography
-  flattens the tilted photo into a top-down image at 0.5 mm per pixel.
-- It cuts the garment out of the background, then reads measurements off the outline row by
-  row (waistband, the row where the legs split, armpits, hems). No ML model produces a number.
-- The demo runs on simulated phone photos (`validation/render_scene.py`) with known true
-  dimensions: 14/14 measurements land inside their error bars. A stress test over 33 more
-  photos — tilt up to 50°, sheets taped up to 2 cm out, 1 to 4 sheets visible, four floor
-  colours, uncorrected lens distortion — lands 134/144 inside, refuses the photo it can't
-  measure, and shows card mode failing (3/10). Not yet tested on a real photo.
-
-> **Geometry measures; the model only names.** ArUco markers + homography rectify the photo to
-> a metric top-down plane; silhouette geometry extracts measurements; a vision model is used
-> *only* to classify the garment type. No model ever emits a number.
-
-## Run
-```bash
-pip install -r requirements.txt          # add --break-system-packages if needed
-uvicorn api.server:app --reload          # from the repo root
-# open http://127.0.0.1:8000
+```sh
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# macOS/Linux: source .venv/bin/activate
+pip install -r requirements-render.txt
+uvicorn api.server:app --host 127.0.0.1 --port 8000
 ```
-The front end auto-detects the backend: with it running you can upload a flat-lay (or hit
-*Run a sample*) for a real measurement; without it, the page stays on demo data.
+
+Open http://127.0.0.1:8000. Choose **Try an example** for a quick, explicitly labelled synthetic demonstration; choose a photo to exercise the backend. No account, API key or downloaded vision model is needed. The static [GitHub Pages version](https://mohib314159.github.io/FitTag/) shows the app shell and synthetic example; measuring uploads requires the Python service. See [Render deployment](DEPLOYMENT.md) for the full app.
+
+## Phone flow
+
+1. Lay jeans flat on a contrasting plain surface, waistband at the top and both legs separated. Keep the button sharp and the camera parallel to the floor.
+2. Take a photo with the phone camera or choose an existing JPEG, PNG or WebP. HEIC needs a JPEG export. Upload happens only after **Measure this garment**.
+3. Check the detected button and measurement lines. Tap a result row to highlight its line. Numbers stay provisional until you confirm the overlay.
+4. Switch units, compare flat waist with a favourite pair, or save measurements on this device. Photos are not saved locally. Differences within the scale uncertainty do not produce a confident fit claim.
+
+The install control explains Safari/Android installation and uses the native install prompt when available. The offline shell, capture guide and synthetic example work after the first online visit. New measurements require connectivity. The service worker explicitly excludes API responses and personal overlays from its cache.
+
+## Calibration fallbacks
+
+**Reference & garment options** progressively exposes blank A4/A5 paper, experimental card mode and the printed ArUco mat. Tops require a known reference. These routes reuse the existing perspective homography and silhouette engine. The reference must lie flat in the same plane, with every corner visible. Small card references and automatic framing can fail: inspect the result and retake rather than trusting a number.
+
+The old printed mat remains useful for controlled development and validation. `python make_mat.py` generates its four A4 sheets and placement guide. The sheets are taped to form a 1000 × 1400 mm rectangle; print at 100% and check the scale bar. This is a fallback/development path, rather than the main phone onboarding.
+
+## What the evidence supports
+
+The earlier build log reports **17.0 mm tack-button recovery** as an independent cross-check of A5-paper calibration on a real garment. This is a reported historical result; the stored evidence does not independently reproduce that recovery or establish every button’s size.
+
+Two independent real-garment photo result records show absolute differences of **0.1–2.7 cm across seven landmarks**, with a median difference of **1.1 cm**. Those were A5-paper captures. The earlier “all agree to 0.8 cm” statement is not supported by the checked-in numbers. Repeatability is not tape-measured accuracy, and neither result is a hardware-only accuracy guarantee. `docs/data/real.json` preserves only differences and provenance, with personal dimensions and tagged sizes omitted. Public personal-garment photos and sample rows have been removed from the current tree; prior Git history is unchanged.
+
+The synthetic suites below check the existing marker-calibrated geometry against known dimensions. New phone tests check the capture contract, hardware refusal and uncertainty handling, overlays, upload limits and installable assets. A successful synthetic test is not a real-world accuracy claim.
 
 ## Architecture
-Two parts: the measured fit (everything below except `tryon.py`), and an optional generated
-try-on image that is labelled as illustrative and never affects a fit verdict.
 
-```
-core/
-  calibrate.py   ArUco detection; MAT mode (>=1 markers -> homography over all corners, accurate)
-                 vs SINGLE mode (1 marker fallback); calibrate_by_rectangle (markerless A4/card,
-                 experimental); capture_guidance (glare/light/marker checks)
-  segment.py     segment_auto = rembg (U^2-Net, optional) -> auto-seeded GrabCut (robust framing)
-  classify.py    garment TYPE only: VLM -> CLIP (JeansFinder) -> deterministic silhouette heuristic
-  measure.py     silhouette geometry via row-by-row width profile (armpit = width step-down;
-                 crotch = first split into two legs); t-shirt + jeans; per-measurement tolerances
-  fit.py         ease arithmetic -> per-zone verdict; manual (body) or reference_garment mode;
-                 fit confidence propagates the measurement tolerance into the verdict
-  sizing.py      approximate size translation (alpha / waist-inches + UK), always caveated
-  feedback.py    records real fit outcomes ("ran small") -> suggested adjustment to the fit bands
-  catalog.py     fit-based search: rank a catalog of measured listings by how well each fits you
-  tryon.py       generative try-on (FASHN / Gemini), gated on an API key; labelled illustrative
-  contracts.py   dataclasses (Measurement, GarmentMeasurement, BodyProfile, FitZone, FitReport)
-api/server.py    FastAPI: /measure, /measure-reference, /fit, /guidance, /search-fit, /feedback,
-                 /tryon, /overlays, serves the UI
-web/index.html   single-file UI: live measurement, interactive fit (tops + bottoms), size badge,
-                 fit confidence, feedback buttons, "items that fit you", reference-photo upload
-viz/overlay.py   draws measurement lines + tolerances on the rectified image
-adapters/        from_vinted.py — JeansFinder reuse (listing ingestion; CLIP classifier path)
-validation/      make_dataset.py + validate.py + ground_truth.csv -> engine-vs-truth error table
-tests/           synth.py (marker mat + known garments under tilt); test_measure, test_jeans
-demo.py          end-to-end: calibrate -> segment -> classify -> measure -> fit (+ overlay)
+- `core/markerless.py`: button/stitch/rivet priors, edge refinement, experimental scale fields.
+- `core/phone.py`: conservative phone orchestration using those helpers and existing flat-lay geometry.
+- `core/calibrate.py`, `core/flatlay.py`, `core/measure.py`: reference rectification, colour segmentation, alignment and landmark measurements.
+- `api/server.py`: FastAPI measurement routes plus same-origin PWA assets; one measurement at a time.
+- `web/`: maintained PWA source. Native file capture, accessible controls, processing/retry states, interactive line overlay, local measurement saving, manifest and offline shell.
+- `tools/build_pwa.py`: rebuilds synthetic demo assets and copies the app into `docs/` for Pages. `tools/build_page.py` remains a compatibility entry point.
+- `core/fit.py`, catalog, feedback and illustrative try-on: preserved engine capabilities; the focused phone UI uses a conservative local flat-width comparison.
+
+Uploads are limited to 12 MB and 25 megapixels and resized to 1800 pixels on the long edge before analysis. Annotated/processed photo outputs have random URLs, expire after an hour, are capped at 40 files and are never service-worker cached. The server needs temporary disk storage; it does not persist uploaded originals. See deployment notes for limits and verification.
+
+## Tests and asset build
+
+```sh
+pip install pytest
+python -m tests.test_measure
+python -m tests.test_jeans
+python -m pytest tests/test_phone_api.py
+node --test tests/client.test.mjs
+node --test tests/service_worker.test.mjs
+python -m tools.build_pwa
 ```
 
-## Markerless card mode (experimental)
-`calibrate_by_card` uses a bank card (85.60 x 53.98 mm, ISO/IEC 7810 ID-1) as the only scale
-reference, so nothing has to be printed. Scale comes out right — rectified through a detected
-card, the card measures back at 85.2 mm — but the four sheets do more than set scale: they also
-fix which way up the garment lies and where to crop it. Without them the framing and the
-segmentation are unreliable, which the stress test shows. The intended fix is a phone app where
-the user taps the card's corners and drags a box around the garment, rather than more guessing
-in the image processing.
+The source-of-truth UI is `web/`; do not edit generated `docs/index.html` or the old `web_src/app.html` placeholder.
 
-## Validation
-```bash
-python -m validation.make_dataset        # synthetic photos + ground_truth.csv (swap in real data)
-python -m validation.validate            # -> per-measurement MAE + within-tolerance table
-```
-Current synthetic result: **MAE 0.14 cm over 30 measurements, 100% within tolerance.** For real
-photos, replace `validation/photos/` + tape-measured numbers in `ground_truth.csv` and re-run.
-
-## Demo site
-`docs/` is a static page served by GitHub Pages. Rebuild it from the engine with:
-```bash
-python -m validation.render_scene     # simulated photos with known dimensions
-python -m tools.build_site_data       # run the engine on them -> docs/data/samples.json
-python -m validation.sweep            # stress test, ~10 min on 2 cores -> docs/data/sweep.json
-python -m tools.make_og               # link-preview image -> docs/og.png
-python -m tools.build_page            # -> docs/index.html
-```
-
-## Tests
-```bash
-python -m tests.test_measure   # tops  4/4
-python -m tests.test_jeans     # bottoms 3/3
-```
-
-## Print the calibration kit
-`python make_mat.py` regenerates `print/`: four A4 corner sheets (tape so the red outer
-corners form a **1000 x 1400 mm** rectangle; both diagonals = 1720 mm), a quick single-marker
-sheet, and a placement guide. Print at 100% and verify the 100 mm bar. The script self-tests
-the kit end-to-end: it composites the real sheet PNGs, tilts the scene like a handheld photo,
-and asserts `calibrate()` -> mat mode with all four markers.
-
-
-## Prior art / reuse
-- ArUco px->cm measurement reuses the approach from my climbing-route optimiser. FitTag's
-  multi-marker mat fits a homography over all marker corners, which avoids the extrapolation
-  error in the published `mkurc1/climbingcrux_model` (single marker + bounding-box centres).
-- `adapters/from_vinted.py` reuses my **JeansFinder** Vinted client + CLIP scorer for listing
-  ingestion and the offline garment-type classifier path.
-
-MIT licensed (see LICENSE).
+Started at the Fleek × a16z hackathon. The original fiducial calibration approach and JeansFinder ingestion/classifier adapters remain in the engine. MIT licensed (see LICENSE).

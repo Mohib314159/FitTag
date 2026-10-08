@@ -1,0 +1,11 @@
+.git
+__pycache__
+**/__pycache__
+*.pyc
+.env
+.venv
+node_modules
+work
+docs
+validation
+tests

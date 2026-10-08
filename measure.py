@@ -52,10 +52,10 @@ def parse_reference(text: str):
                      f"{', '.join(sorted(REFERENCES))}, 'mat', or WIDTHxHEIGHT in mm")
 
 
-def flatten(photo, reference):
+def flatten(photo, reference, mm_per_px_out=0.5):
     """Square-on metric view of the photo, plus the region the reference occupies."""
     if reference == "mat":
-        cal = calibrate(photo, mm_per_px_out=0.5)
+        cal = calibrate(photo, mm_per_px_out=mm_per_px_out)
         if not cal.ok:
             raise SystemExit("no calibration markers found in this photo")
         return cal
@@ -71,9 +71,12 @@ def flatten(photo, reference):
         raise SystemExit("couldn't find the garment in this photo")
     rough = rough.copy()
     cv2.fillPoly(rough, [np.int32(cv2.boxPoints(cv2.minAreaRect(np.asarray(corners, np.float32))))], 0)
-    box = cv2.boxPoints(cv2.minAreaRect(largest_contour(rough)))
+    contour = largest_contour(rough)
+    if contour is None:
+        raise SystemExit("couldn't separate the garment from the reference")
+    box = cv2.boxPoints(cv2.minAreaRect(contour))
     cal = calibrate_by_paper(photo, paper_mm=ref_mm, corners=np.asarray(corners, np.float32),
-                             garment_box_px=box)
+                             garment_box_px=box, mm_per_px_out=mm_per_px_out)
     if not cal.ok:
         raise SystemExit("found the reference but couldn't rectify the plane from it")
     return cal
