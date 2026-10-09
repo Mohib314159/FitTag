@@ -1,5 +1,42 @@
 # Product design decisions
 
+## Button-free branch iteration
+
+The initial experiment reused too much landing-page structure: a slogan, a large
+illustration and several paragraphs before the task. The user rejected that as
+generic. The revised UI opens on clothing capture, with a quieter heading,
+clickable photo area, short labels and thumb-reachable actions. Optional capture
+guidance, a second photo and camera assumptions are disclosed separately.
+
+Otherwise was inspected through its live service, `web/index.html`, shared,
+landing and mobile styles at GitHub commit `b92affd`. It is a benchmark for
+clarity and task feedback, not a layout or brand to copy.
+
+Additional primary reference study:
+
+- [Vinted's published iPhone screens](https://apps.apple.com/gb/app/vinted-shop-sell-pre-loved/id632064380): clothing/photos first, short fields and a clear seller action. Its image presentation was inspected in the browser; no authenticated sale was created.
+- [Depop's seller flow](https://depophelp.zendesk.com/hc/en-gb/articles/360032716413-How-to-list-an-item) and [editable generated listing workflow](https://news.depop.com/depop-launches-ai-powered-listing-from-one-photo/): start with a photo, retain control over generated output, save drafts. The App Store page failed to load, so a current native Depop screen is not claimed as inspected.
+- [Google PhotoScan](https://www.google.com/photos/scan/) and [its scan/edit instructions](https://support.google.com/photos/answer/7177983?hl=en-GB): visual guidance for the next capture action and correction after processing. The published demonstration page was inspected.
+- [Apple Measure](https://support.apple.com/guide/iphone/measure-dimensions-iphd8ac2cfea/27/ios/27): place/check endpoints, attach numbers to the object. Native AR sensing is not a capability we copy into the PWA.
+- [magicplan capture guidance](https://help.magicplan.app/scan-a-room-in-seconds-using-lidar) and [editing](https://help.magicplan.app/magicplan-floor-plan-editor-faq): immediate capture feedback, undo and accessible numeric correction.
+- [Saisun's official garment screenshots](https://shopkoyomi.com/app/saisun/?lang=en): actual capture and measurement screens inspected. Photographic evidence dominates; its QR calibration and accuracy marketing are not adopted as FitTag claims.
+- [Polycam's measurement interaction](https://learn.poly.cam/hc/en-us/articles/29647317758100-How-to-Measure-Your-Captures): select a point/line and read its value, with mode-specific capability boundaries.
+
+FitTag now supports selecting a line on the photo or table, dragging its
+endpoints with a magnified view, keyboard adjustment, restoring original lines,
+and rechecking after an edit. Editing never upgrades an unvalidated scale into
+validated measurement. A supplied anchor is reapplied to corrected geometry.
+Saved clothes are reachable from the header, may have a local name, and never
+contain uploaded photos. Copyable listing text carries scale limitations with it.
+
+The typography, spacing and limited green accent support the controls; there is
+no borrowed marketplace feed, fake stock, brand imitation or invented social
+proof. Research informed task-level changes rather than copying a marketing
+page. The new visual direction is implemented and locally checked, not yet
+user-accepted or physically tested on a phone.
+
+## Earlier hardware build
+
 Before changing the interface, the existing live FitTag demo and recent repository history were inspected. Its useful identity was the warm paper/ink palette, yellow measuring-tape rule, photo-to-lines-to-results relationship and honest error bars. Those remain.
 
 Reference study: [Linear's product hierarchy](https://linear.app/features), [Stripe's product presentation](https://stripe.com/payments), and [Apple's camera flow](https://support.apple.com/en-gb/guide/iphone/iph263472f78/ios). The borrowed principles are restrained typography, stable alignment, a single strong action, immediate preview, progressive disclosure and short recovery instructions. Brand colours and decorative styles were not copied.

@@ -1,40 +1,22 @@
-# Deploy the full app on Render
+# Deploy the isolated FitTag Lab preview
 
-FitTag is one Docker web service: FastAPI serves the PWA and the existing OpenCV engine on the same origin. There is no separate frontend build, database, model download or API key.
+Keep the production hardware service on `main`. For this experiment, create a **separate** Render Blueprint and select `codex/fittag-button-free`, with `render.yaml` at the root. The service name is `fittag-lab`. Do not connect this branch to the existing production Blueprint or merge it into `main` yet.
 
-## Render setup
+One Docker service serves FastAPI and the PWA. Docker installs the headless measurement dependencies and ONNX Runtime, then downloads a pinned 99.8 MB metric-depth model and checks its SHA-256. A model-download failure fails the build rather than silently shipping fake scale. The model is read-only in the image; no user-upload-triggered model download or external inference call occurs. No API key, database or paid inference provider is required.
 
-Push this branch to your GitHub repository, then create a Render Blueprint from `render.yaml`, or create a **Web Service** with **Docker** as the runtime and `Dockerfile` as the Dockerfile path. Leave Docker Command blank; the image starts Uvicorn on `0.0.0.0` and `$PORT` (default `10000`). Set the health check path to `/health`.
+The Blueprint requests the free plan. Confirm current availability/costs in Render. It uses one worker, one model/OpenCV thread and a shared measurement lock. Concurrent photos receive a recoverable 429 response. The service listens on `$PORT` and reports `/health`; `/experiment` reports whether a local model file is configured. It does not imply accuracy or a successful model load.
 
-The Blueprint selects the free plan; a paid instance avoids free-service sleep for demonstrations. Confirm current availability and costs in Render before changing the plan. Render terminates HTTPS for the public service URL, which is necessary for PWA installation and the service worker. No environment secrets are required. `.env.example` lists the port and thread controls.
+New uploads are reviewed before transmission. Each image is limited to 12 MB / 25 megapixels, resized to 1800 pixels, and EXIF orientation is corrected. The client caps the combined two-photo upload at 12 MB; the server also caps aggregate request size. Only the numeric focal-length field is inspected for camera calibration; GPS, serial numbers and full metadata are not stored or returned. Annotated outputs are bounded to 40 files and expire after one hour. Original uploads are not persisted.
 
-Official references: [Docker on Render](https://render.com/docs/docker), [web service ports](https://render.com/docs/web-services), [free-service limitations](https://render.com/docs/free).
-
-## Resource limits
-
-- One Uvicorn worker, one OpenCV thread, and one measurement at a time. Concurrent measurement attempts get a clear 429 response and retry guidance.
-- Uploads: 12 MB / 25 megapixels. EXIF orientation is applied, metadata is discarded, and the analysis image is reduced to a maximum 1800-pixel long edge.
-- Reference fallback rectification uses 1 mm per pixel to reduce its working size. Hardware capture works directly at the reduced photo resolution.
-- Processed photo outputs are capped at 40 files and become inaccessible after one hour. Expired files are cleaned up on subsequent measurements. Render's temporary filesystem is sufficient; restarts remove prior outputs. The original upload is not persisted by the app.
-- Saving stores measurement values in the user's browser, not photos. Clearing saved measurements is available in the app. Browser storage clearing also removes them.
-- No optional rembg, Torch, CLIP or vision-provider packages are installed. The user chooses the garment type.
-
-This configuration targets a small instance, but actual peak memory must still be observed on Render with representative phones and fallback photographs. Container limits and real device capture cannot be proven by a Windows local run alone. Avoid multiple workers on a constrained instance.
-
-## Local container check
+Local Windows live uploads succeeded in all three modes; measured server resident memory was 205.7 MB and peak working set 289.1 MB. This does **not** verify Linux/container memory or free Render response times. Monitor representative phone photos before relying on the preview. A sleeping instance and first model load can delay the first request; the client preserves the selected photo on timeout. Cancelling aborts the browser request, though an admitted server computation may finish.
 
 ```sh
-docker build -t fittag .
-docker run --rm -p 8000:10000 -e PORT=10000 fittag
+docker build -t fittag-lab .
+docker run --rm -p 8000:10000 fittag-lab
 ```
 
-Open http://127.0.0.1:8000. For Python development without Docker, use the README commands. `requirements-render.txt` pins the exercised package versions, using the headless OpenCV variant in deployment.
+Docker is not available here; these container commands have not been exercised. Python/local checks are documented in [BUTTON_FREE.md](BUTTON_FREE.md).
 
-## Check after deployment
+After a preview build succeeds, check `/health`, `/experiment`, capture/upload in every mode, the simulated counterexample, two-photo disagreement, scale correction/undo, saved readouts, Safari/Android installation and offline shell/example behavior. The checked-in `docs/` site is static and cannot run Python or ML uploads. Do not present the preview as validated centimetre measurement or deploy it over the working hardware app.
 
-1. Open `/health`, then the app root on an iPhone/Android. Try the synthetic example; tap a measurement and change units.
-2. Choose a photo, tap Measure, and check the detected button and every measurement line. Confirm the overlay before saving. Verify that missing buttons, a cropped image and offline mode produce useful recovery states.
-3. Install from Safari's Share menu or Android's browser install control. Reopen in standalone mode. After an initial online visit, the capture guide and synthetic example should load offline; a new measurement must request connectivity.
-4. Check memory and response times in Render. A sleeping free instance can delay the first upload; the app allows up to two minutes and preserves the selected photo on timeout. Cancelling stops the browser request, though server-side analysis already started may finish.
-
-The GitHub Pages copy under `docs/` is a static demo. It does not run Python or measure uploads. Use the Render HTTPS URL for the full experience.
+Official references: [Render Docker](https://render.com/docs/docker), [Blueprint specification](https://render.com/docs/blueprint-spec), [free-service limits](https://render.com/docs/free).

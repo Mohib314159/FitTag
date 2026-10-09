@@ -9,6 +9,10 @@ COPY viz ./viz
 COPY adapters ./adapters
 COPY measure.py ./
 COPY web ./web
+COPY tools/download_depth_model.py ./tools/download_depth_model.py
+COPY third_party ./third_party
+RUN python -m tools.download_depth_model models/metric-small.onnx
+ENV FITTAG_DEPTH_MODEL=/app/models/metric-small.onnx
 RUN useradd --create-home fittag
 USER fittag
 EXPOSE 10000

@@ -1,0 +1,54 @@
+{
+  "scope": "Windows localhost, synthetic image; admitted requests on an already running server. Includes multipart decode, processing and overlay creation. Excludes human capture/setup and Internet/Render latency.",
+  "real_users_measured": 0,
+  "records": [
+    {
+      "mode": "shape",
+      "samples": 5,
+      "median_seconds": 1.74,
+      "range_seconds": [
+        1.48,
+        1.85
+      ],
+      "raw_seconds": [
+        1.854,
+        1.574,
+        1.484,
+        1.74,
+        1.752
+      ]
+    },
+    {
+      "mode": "depth",
+      "samples": 5,
+      "median_seconds": 7.9,
+      "range_seconds": [
+        7.39,
+        10.73
+      ],
+      "raw_seconds": [
+        7.896,
+        7.395,
+        7.617,
+        9.693,
+        10.726
+      ]
+    },
+    {
+      "mode": "distance",
+      "samples": 5,
+      "median_seconds": 1.89,
+      "range_seconds": [
+        1.81,
+        1.99
+      ],
+      "raw_seconds": [
+        1.989,
+        1.824,
+        1.814,
+        1.921,
+        1.887
+      ]
+    }
+  ]
+}

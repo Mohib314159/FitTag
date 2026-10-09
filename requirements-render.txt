@@ -1,6 +1,7 @@
 # Versions exercised locally; headless OpenCV removes GUI dependencies.
 opencv-contrib-python-headless==5.0.0.93
 numpy==2.5.3
+onnxruntime==1.23.2
 pillow==12.3.0
 fastapi==0.142.2
 uvicorn==0.54.0

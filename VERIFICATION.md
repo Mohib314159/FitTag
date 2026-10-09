@@ -1,3 +1,9 @@
+# Current branch verification
+
+See [BUTTON_FREE.md](BUTTON_FREE.md) for the new experiment, 61 passing automated checks, live API/resource checks, synthetic model probe and the uncompleted Docker/Render/device checks.
+
+## Earlier hardware build verification
+
 # FitTag PWA verification
 
 Built from upstream commit `8fa4cec` after reviewing README, recent history, markerless calibration helpers, measurement/flat-lay code, FastAPI, both existing UIs and validation data.

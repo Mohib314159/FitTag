@@ -5,3 +5,6 @@ docs/fragment.html
 .env
 .pytest_cache/
 feedback.jsonl
+models/*.onnx
+models/*.download
+node_modules/

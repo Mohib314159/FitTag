@@ -1,0 +1,78 @@
+/* A capture tool: quiet chrome, an uninterrupted image, decisions within reach. */
+.capture-app{--paper:#fafaf7;--ink:#24312c;--muted:#657369;--line:#dfe4dd;--accent:#c8af6a;--white:#fff;--green:#334e40;background:var(--paper)}
+.capture-app:before{display:none}
+.capture-app header{height:70px;padding:12px 28px;border-bottom:0}
+.capture-app .brand{font-size:23px;font-weight:650;letter-spacing:-.8px}
+.capture-app main{padding-top:10px}
+.capture-app h1{font-size:28px;line-height:1.18;letter-spacing:-.8px;font-weight:550;margin-bottom:8px}
+.capture-heading{padding:8px 0 24px}
+.capture-heading p{font-size:14px;color:var(--muted);margin:0}
+.capture-app .workspace{grid-template-columns:1.25fr 1fr;gap:42px}
+.capture-app .viewfinder{height:560px;min-height:0;background:#e9ede7;border:1px solid #e1e6de;border-radius:3px}
+.capture-app .viewfinder #preview{height:560px}
+.capture-app .viewfinder svg{opacity:.8;width:300px;height:390px}
+.capture-app .frame-corner{border-color:#a0aca2;width:13px;height:13px}
+.capture-app .frame-label{font-family:inherit;font-size:12px;letter-spacing:0;color:#59675d;bottom:22px}
+.capture-app .eyebrow{font-family:inherit;font-size:12px;text-transform:none;letter-spacing:0;color:var(--muted)}
+.capture-app .capture-options{gap:0 16px;margin-top:0}
+.capture-app label{font-size:12px;color:#657569;margin-top:0}
+.capture-app select,.capture-app input[type=number]{border-radius:3px;min-height:45px;background:#fff;font-size:13px}
+.capture-app .actions{margin:18px 0 12px;gap:8px}
+.capture-app .actions button{min-height:50px;font-size:14px;font-weight:500;justify-content:center;border-radius:4px}
+.capture-app #take{background:#2d473b;border-color:#2d473b;color:#fff;gap:10px}
+.camera-symbol{display:block;width:17px;height:13px;border:1.5px solid currentColor;border-radius:2px;position:relative}
+.camera-symbol:before{content:"";position:absolute;width:5px;height:5px;border:1px solid currentColor;border-radius:50%;top:2px;left:4px}
+.camera-symbol:after{content:"";position:absolute;width:7px;height:2px;background:currentColor;top:-3px;left:3px}
+.capture-app #measure{background:#2d473b;border-color:#2d473b;color:#fff}
+.capture-app .has-photo .actions{grid-template-columns:1fr 112px}
+.capture-app .has-photo #measure{grid-column:auto;order:1}
+.capture-app .has-photo #take{order:2;background:#fff;color:var(--ink);border-color:var(--line);font-size:12px}
+.capture-app .has-photo #choose,.capture-app .has-photo #clear{display:none}
+.capture-app summary{font-size:12px;font-weight:500;min-height:46px}
+.capture-app .guidance{padding:4px 0 12px;margin:0}
+.capture-app .guidance li{border:0;padding:8px 0}
+.capture-app .guidance b{font-weight:550;font-size:13px}
+.capture-app .guidance li>span{color:#85958a}
+.capture-app .privacy{font-size:11px;text-align:left;line-height:1.5;margin:14px 0;color:#617167}
+.capture-app .demo-link{font-weight:500;justify-content:flex-start;min-height:40px;padding:10px 0;color:#466c56;font-size:12px;border-top:0}
+.capture-app .lower{margin-top:36px}
+.capture-app footer{color:#657369;font-size:10px}
+.capture-app .confidence{background:transparent;border-left:0;padding:0;color:#766344;font-size:13px;line-height:1.5;margin:12px 0 16px}
+.capture-app .notice{background:#f1f2eb;border-left:0;border:1px solid var(--line);padding:12px;font-size:12px;border-radius:2px}
+.capture-app #results h1{font-size:28px}
+.capture-app #resultSubtitle{color:var(--muted);font-size:13px}
+.capture-app .result-layout h2{font-size:19px;font-weight:550}
+.capture-app .measurement-link{font-weight:500;font-size:13px}
+.capture-app .result-layout figure{background:#e9ede7;border-radius:3px;overflow:hidden}
+.capture-app .result-layout figcaption{font-size:11px}
+.capture-app th{letter-spacing:.3px}
+.capture-app .units button{font-weight:500;border-radius:2px}
+.capture-app .units [aria-pressed=true]{background:#2d473b;border-color:#2d473b}
+.capture-app .ruler{height:2px;width:80px;background:#788c7b;animation:breathe 1.6s ease-in-out infinite}
+@media(max-width:680px){
+ .capture-app header{height:61px;padding:12px 20px}
+ .capture-app main{padding-top:0}
+ .capture-heading{padding:7px 0 20px}
+ .capture-app h1{font-size:25px;letter-spacing:-.65px}
+ .capture-heading p{font-size:12px}
+ .capture-app .workspace{gap:20px}
+ .capture-app .viewfinder,.capture-app .viewfinder #preview{height:clamp(295px,44svh,410px)}
+ .capture-app .viewfinder svg{width:220px;height:280px;margin:0}
+ .capture-app .frame-label{font-size:11px;bottom:18px}
+ .capture-app .capture-options{display:grid;grid-template-columns:1fr 1.15fr;gap:0 12px}
+ .capture-app .capture-options label{grid-row:1}
+ .capture-app .actions{bottom:0;position:sticky;padding:10px 0 calc(8px + env(safe-area-inset-bottom));margin:10px 0}
+ .capture-app #results{padding-top:10px}
+ .capture-app #results>.section-top{margin-bottom:16px}
+ .capture-app .result-layout{gap:20px;margin-top:20px}
+ .capture-app .result-layout img{max-height:450px}
+ .capture-app .lower{margin-top:26px}
+ .capture-app .small{font-size:12px;line-height:1.5}
+ .capture-app .check{font-size:12px}
+}
+
+.capture-app .endpoint{cursor:grab;touch-action:none}.capture-app .endpoint:focus-visible{stroke:#fff;stroke-width:2}.capture-app .edit-controls{padding:8px 14px;display:flex;align-items:center;gap:8px;text-align:left;border-top:1px solid var(--line)}.capture-app .edit-controls p{font-size:11px;line-height:1.45;margin:0;flex:1}.capture-app .edit-controls button{flex:none;font-size:11px;padding:8px;min-height:44px}
+
+.capture-app .magnifier{position:absolute;top:12px;left:12px;width:90px;height:90px;border:2px solid #fff;background-repeat:no-repeat;background-color:#e9ede7;border-radius:3px;box-shadow:0 2px 7px #0003;pointer-events:none}.capture-app .magnifier:before,.capture-app .magnifier:after{content:'';position:absolute;background:#e3be4b}.capture-app .magnifier:before{height:1px;width:18px;left:34px;top:44px}.capture-app .magnifier:after{width:1px;height:18px;top:35px;left:43px}
+
+.capture-app header nav{display:flex;gap:0}.capture-app header .quiet{font-size:12px;padding:10px}.capture-app input[type=text]{font:inherit;font-size:14px;width:100%;min-height:46px;padding:10px;border:1px solid var(--line);border-radius:3px;background:#fff}.capture-app .viewfinder[role=button]{cursor:pointer}.capture-app .viewfinder[role=button]:focus-visible{outline:3px solid #335e4b;outline-offset:3px}.capture-app .viewfinder[role=button]:hover{border-color:#a2b1a6}

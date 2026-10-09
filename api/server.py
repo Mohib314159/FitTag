@@ -63,9 +63,9 @@ async def private_responses(request, call_next):
     if length.isdigit() and int(length) > 13 * 1024 * 1024:
         return JSONResponse({"ok": False, "error": "Choose an image smaller than 12 MB."}, 413)
     response = await call_next(request)
-    if request.url.path.startswith(("/measure", "/overlays", "/guidance")):
+    if request.url.path.startswith(("/measure", "/overlays", "/guidance", "/experiment")):
         response.headers["Cache-Control"] = "no-store"
-    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest"):
+    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest", "/free.js", "/free.mjs"):
         response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
@@ -169,6 +169,40 @@ def _phone_measure(img, reference, garment_type, diameter_mm, known_diameter):
 @app.post("/measure-reference")
 async def measure_ref_ep(file: UploadFile = File(...)):
     return await measure_ep(file, "jeans", "hardware", 17.0, False)
+
+
+@app.get("/experiment")
+def experiment_status():
+    from core.depth_model import available
+    return {"button_free":True,"depth_model":available(),"experimental":True}
+
+
+@app.post("/measure-free")
+async def measure_free_ep(file: UploadFile = File(...), garment_type: str = Form("jeans"),
+                          fov_deg: float = Form(0), second: UploadFile | None = File(None),
+                          estimate: bool = Form(True), camera_height_cm: float = Form(0)):
+    if garment_type not in ("jeans","t-shirt") or not np.isfinite(fov_deg) or (fov_deg != 0 and not 40 <= fov_deg <= 110):
+        raise HTTPException(422,"Choose a supported garment and a camera field of view between 40 and 110 degrees.")
+    if not np.isfinite(camera_height_cm) or (camera_height_cm != 0 and not 35 <= camera_height_cm <= 350):
+        raise HTTPException(422,"Camera height must be a known lens-to-floor distance between 35 and 350 cm.")
+    if MEASURE_LOCK.locked():
+        return JSONResponse({"ok":False,"error":"Another photo is processing. Try again shortly."},429,headers={"Retry-After":"5"})
+    async with MEASURE_LOCK:
+        photo,raw=await _decode(file)
+        other,other_raw=await _decode(second) if second is not None else (None,None)
+        def work():
+            from api.free_capture import process,persist
+            try:
+                if other_raw is not None and other_raw == raw:
+                    raise ValueError("The second photo is identical. Take a fresh overhead photo from a slightly different height.")
+                rect,result=process(photo,raw,garment_type,fov_deg,other,other_raw,estimate,camera_height_cm)
+                return persist(rect,result)
+            except ValueError as error:
+                return {"ok":False,"error":str(error)}
+            except Exception:
+                # Model failures must not masquerade as measurements or leak paths.
+                return {"ok":False,"error":"The experiment could not finish this image. Try a smaller JPEG on a plain floor."}
+        return await run_in_threadpool(work)
 
 
 @app.post("/guidance")
