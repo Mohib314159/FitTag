@@ -17,10 +17,11 @@ test('offline shell and example work at a repository subpath',async()=>{
  assert.equal((await w.event('fetch',{method:'GET',url:w.base+'app.js?v=2'})).path,'./app.js');
  assert.equal((await w.event('fetch',{method:'GET',url:w.base+'free.js?v=free-1'})).path,'./free.js');
  assert.equal((await w.event('fetch',{method:'GET',url:w.base+'free-demo.json'})).offline,true);
+ assert.equal((await w.event('fetch',{method:'GET',url:w.base+'request.mjs'})).offline,true);
 });
 test('API requests, photos and foreign origins never enter the cache',async()=>{
  const w=worker();await w.event('install');const count=w.stored.size;
- for(const req of [{method:'POST',url:w.base+'measure'},{method:'POST',url:w.base+'measure-free'},{method:'GET',url:w.base+'experiment'},{method:'GET',url:w.base+'models/metric-small.onnx'},{method:'GET',url:w.base+'overlays/private.png'},{method:'GET',url:w.base+'health'},{method:'GET',url:'https://foreign.test/app.js'}])assert.equal(await w.event('fetch',req),undefined);
+ for(const req of [{method:'POST',url:w.base+'measure'},{method:'POST',url:w.base+'measure-free'},{method:'GET',url:w.base+'experiment'},{method:'GET',url:w.base+'measurement-jobs/secret'},{method:'GET',url:w.base+'models/metric-small.onnx'},{method:'GET',url:w.base+'overlays/private.png'},{method:'GET',url:w.base+'health'},{method:'GET',url:'https://foreign.test/app.js'}])assert.equal(await w.event('fetch',req),undefined);
  assert.equal(w.stored.size,count);
 });
 test('activation removes only this app’s old shell caches',async()=>{

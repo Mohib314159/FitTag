@@ -43,3 +43,6 @@ Select **this experimental branch**, not `main`, in a new Render Blueprint using
 The experiment reuses FastAPI, `core.flatlay` segmentation and `core.measure` landmark geometry. `core.free_capture` fits and checks the floor projection; `core.depth_model` runs the pinned CPU model. Older calibration modes (hardware, A4/A5, card and ArUco development mat) remain available through the existing `/measure` API and `/button.html`.
 
 Historical 17.0 mm button recovery was a reported paper-calibration cross-check, not proof of a universal button size. Two independent real-garment paper-reference photos showed landmark agreement of 0.1–2.7 cm. Those are earlier evidence, not validation of reference-free model scale. No personal garment dimensions are published here.
+
+
+The experimental phone client includes a photo-backed waiting view with real server stages, cancellation and retained-photo recovery. The UI uses neutral colours, bottom phone actions and disclosed advanced settings. See [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) for bounded background jobs, retention, retry policy and deployment limits.

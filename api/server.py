@@ -63,9 +63,9 @@ async def private_responses(request, call_next):
     if length.isdigit() and int(length) > 13 * 1024 * 1024:
         return JSONResponse({"ok": False, "error": "Choose an image smaller than 12 MB."}, 413)
     response = await call_next(request)
-    if request.url.path.startswith(("/measure", "/overlays", "/guidance", "/experiment")):
+    if request.url.path.startswith(("/measure", "/measurement-jobs", "/overlays", "/guidance", "/experiment")):
         response.headers["Cache-Control"] = "no-store"
-    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest", "/free.js", "/free.mjs"):
+    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest", "/free.js", "/free.mjs", "/free.css", "/request.mjs"):
         response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
@@ -87,6 +87,10 @@ async def _decode(file: UploadFile):
     raw = await file.read(12 * 1024 * 1024 + 1)
     if len(raw) > 12 * 1024 * 1024:
         raise HTTPException(413, "Choose an image smaller than 12 MB.")
+    return await run_in_threadpool(_decode_image, raw), raw
+
+
+def _decode_image(raw):
     try:
         with Image.open(io.BytesIO(raw)) as source:
             if source.width * source.height > Image.MAX_IMAGE_PIXELS:
@@ -94,7 +98,7 @@ async def _decode(file: UploadFile):
             source = ImageOps.exif_transpose(source).convert("RGB")
             source.thumbnail((1800, 1800))
             img = cv2.cvtColor(np.asarray(source), cv2.COLOR_RGB2BGR)
-        return img, raw
+        return img
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
         raise HTTPException(400, "Unreadable image. Choose a JPEG, PNG or WebP photo; export HEIC as JPEG.")
 
@@ -292,4 +296,6 @@ def sample_ep(which: str):
 def index_ep(): return (WEB / "index.html").read_text(encoding="utf-8")
 
 
+from api.jobs import router as jobs_router
+app.include_router(jobs_router)
 app.mount("/", StaticFiles(directory=WEB, html=True), name="pwa")

@@ -13,12 +13,12 @@ def main():
         if not (web / name).is_file():
             raise FileNotFoundError(f"Missing {name}; run python -m tools.make_phone_example")
     for size in (192,512):
-        img = Image.new("RGB",(512,512),"#f5f2e9"); d=ImageDraw.Draw(img)
+        img = Image.new("RGB",(512,512),"#ffffff"); d=ImageDraw.Draw(img)
         d.polygon([(146,136),(382,136),(382,196),(212,196),(212,257),(349,257),(349,317),(212,317),(212,415),(146,415)],fill="#242b29")
-        d.rectangle((110,92,402,117),fill="#e3be4b")
+        d.rectangle((110,92,402,117),fill="#171717")
         for i,x in enumerate(range(140,400,35)): d.line((x,92,x,106 if i%2==0 else 114),fill="#242b29",width=4)
         img.resize((size,size),Image.Resampling.LANCZOS).save(web / f"icons/icon-{size}.png")
-    for name in ("index.html","button.html","free.html","free.css","free.js","free.mjs","free-demo.json","free-demo.jpg","app.css","app.js","client.mjs","sw.js","manifest.webmanifest","demo.json","demo.jpg","example-photo.jpg"):
+    for name in ("index.html","button.html","free.html","free.css","free.js","free.mjs","request.mjs","free-demo.json","free-demo.jpg","app.css","app.js","client.mjs","sw.js","manifest.webmanifest","demo.json","demo.jpg","example-photo.jpg"):
         shutil.copy2(web / name, ROOT / "docs" / name)
     shutil.copytree(web / "icons", ROOT / "docs/icons", dirs_exist_ok=True)
     (ROOT / "docs/.nojekyll").touch()

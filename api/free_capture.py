@@ -28,8 +28,9 @@ def _shape_rows(rows):
     return [{"name":r.name,"ratio":round(r.value_cm/length,4),"p1":r.p1,"p2":r.p2} for r in rows]
 
 
-def process(photo, raw, kind, fov_override, second=None, second_raw=None, estimate=True, camera_height_cm=0):
+def process(photo, raw, kind, fov_override, second=None, second_raw=None, estimate=True, camera_height_cm=0, progress=lambda stage: None):
     started=time.perf_counter()
+    progress('outline')
     rect,_,shape_rows,_=outline(photo,kind)
     result={"ok":True,"mode":"shape","garment_type":kind,"rows":_shape_rows(shape_rows),
             "notes":["Proportions are relative to inseam for jeans, or garment length for tops. They are not centimetres.",
@@ -39,6 +40,7 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
     focal_source='manual' if fov_override else 'photo-metadata' if camera_fov(raw) else 'assumed'
     result['diagnostics'].update(diagonal_fov_deg=round(fov,1),focal_source=focal_source)
     if camera_height_cm:
+        progress('geometry')
         scale=camera_height_cm*10/focal_from_diagonal_fov(photo.shape,fov)
         result.update(mode='distance',rows=[{'name':r.name,'value_cm':round(r.value_cm*scale,1),
                                             'tolerance_cm':round(max(2.5,r.value_cm*scale*.20),1),
@@ -52,9 +54,12 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
         result['diagnostics']['processing_seconds']=round(time.perf_counter()-started,2)
         return rect,result
     try:
+        progress('depth')
         depth=depth_model.predict(photo)
+        progress('geometry')
         candidate,rows,diagnostics=depth_measure(photo,kind,depth,focal_from_diagonal_fov(photo.shape,fov))
         if second is not None:
+            progress('second-photo')
             fov2=fov_override or camera_fov(second_raw) or 84.
             _,second_rows,_=depth_measure(second,kind,depth_model.predict(second),focal_from_diagonal_fov(second.shape,fov2))
             delta=disagreement(rows,second_rows)

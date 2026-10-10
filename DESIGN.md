@@ -46,3 +46,12 @@ FitTag has three focused states: capture, processing and result. The main screen
 Borders and spacing do the grouping. Corner radii are modest. There are no gradients, animated backgrounds or dashboard ornaments. Motion is limited to a processing indicator and respects reduced-motion preferences. Controls have visible keyboard focus, native labels and generous tap targets. Validation evidence and local saved history remain available without dominating the measurement task.
 
 New photos are explicitly uploaded after review. Detected hardware remains an assumption until visually confirmed; checking an overlay does not turn its uncertainty into proven accuracy. The synthetic example is labelled throughout.
+
+
+## Phone and waiting refinement
+
+The user rejected the muted green treatment. The experimental app now uses white, neutral grey and black actions, with a small coral activity accent. It borrows the restraint and photo-first task rhythm of consumer resale apps, not their logos, feeds or brand palettes. Revisited the live [Vinted storefront](https://www.vinted.co.uk/) in the browser: product photos lead, short ordinary labels and clearly ranked actions do the work. App Store screenshot pages returned an error in this pass, so this revision does not claim a new native-app inspection. The earlier published Vinted screenshots and Depop's documented editable listing flow remain the reference evidence above.
+
+On phones the capture/read action stays at the bottom within thumb reach, with safe-area padding and 52 px controls. Garment choice stays visible; scale, second-photo and focal-length settings share one disclosure. Native inputs remain 16 px to avoid unwanted iOS zoom. Photo tips remain accessible after selection. The result explains how to select a line and drag its endpoints.
+
+Waiting shows the selected garment, quiet activity, three coarse steps, short actual server-stage messages, cancel and a delayed slow-service explanation. No fake percentage or timed "successful" detection claims. Reduced motion keeps a static activity indicator. Focus and live status labels support keyboard and assistive use. The header's unrelated actions, saved section and footer hide while waiting. Architecture and operational limits are recorded in [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md).

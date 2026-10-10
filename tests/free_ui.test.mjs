@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {parseHTML} from 'linkedom';
 
-let document,window,memory,requests=[],responses=[];
+let document,window,memory,requests=[],responses=[],jobResult,pendingStatus=null;
 const demo=JSON.parse(fs.readFileSync(new URL('../web/free-demo.json',import.meta.url),'utf8'));
 const fixture=()=>({...structuredClone(demo),demo:false});
 before(async()=>{
@@ -18,8 +18,13 @@ before(async()=>{
  for(const id of ['kind','method','anchorPoint'])Object.defineProperty(document.getElementById(id),'value',{configurable:true,writable:true,value:id==='kind'?'jeans':id==='method'?'depth':'waist_flat'});
  globalThis.fetch=async(path,options)=>{
   if(path==='./experiment')return {ok:true,json:async()=>({depth_model:true})};
+  if(path==='./health')return {ok:true};
   if(path==='./free-demo.json')return {ok:true,json:async()=>structuredClone(demo)};
-  requests.push({path,options});const body=responses.shift();return {ok:true,json:async()=>body??fixture()};
+  requests.push({path,options});
+  if(path==='./measure-free-jobs'){jobResult=responses.shift()??fixture();return {ok:true,json:async()=>({ok:true,status_url:'/measurement-jobs/'+ 'a'.repeat(32)})};}
+  if(options?.method==='DELETE')return {ok:true,json:async()=>({status:'cancelled'})};
+  if(pendingStatus)return pendingStatus(options.signal);
+  return {ok:true,json:async()=>({ok:true,status:'succeeded',result:jobResult})};
  };
  await import('../web/free.js');
 });
@@ -44,11 +49,26 @@ test('copied listing keeps the caveat attached to a model guess',async()=>{
  let copied='';navigator.clipboard={writeText:async text=>{copied=text;}};await $('copyListing').onclick();assert.match(copied,/Unverified model estimates/);assert.match(copied,/not body circumference/);assert.match($('copyStatus').textContent,/limitations included/);
 });
 test('photo review precedes upload and real form includes selected mode',async()=>{
- $('again').onclick();choose();assert.equal($('preview').hidden,false);const before=requests.length;$('method').value='shape';$('method').onchange();responses.push({...fixture(),mode:'shape',rows:[{name:'waist_flat',ratio:.5,p1:[1,2],p2:[3,4]},{name:'inseam',ratio:1,p1:[1,2],p2:[3,4]}]});await $('measure').onclick();assert.equal(requests.length,before+1);const req=requests.at(-1);assert.equal(req.path,'./measure-free');assert.equal(req.options.body.get('estimate'),'false');assert.match($('measurements').textContent,/50.0%/);assert.doesNotMatch($('measurements').textContent,/cm|NaN/);assert.equal($('units').hidden,true);
+ $('again').onclick();choose();assert.equal($('preview').hidden,false);const before=requests.length;$('method').value='shape';$('method').onchange();responses.push({...fixture(),mode:'shape',rows:[{name:'waist_flat',ratio:.5,p1:[1,2],p2:[3,4]},{name:'inseam',ratio:1,p1:[1,2],p2:[3,4]}]});await $('measure').onclick();assert.equal(requests.length,before+2);const req=requests.findLast(r=>r.path==='./measure-free-jobs');assert.equal(req.path,'./measure-free-jobs');assert.equal(req.options.body.get('estimate'),'false');assert.match($('measurements').textContent,/50.0%/);assert.doesNotMatch($('measurements').textContent,/cm|NaN/);assert.equal($('units').hidden,true);
 });
 test('only acknowledged readouts save, and saved data contains no photo',()=>{
  $('save').onclick();assert.equal(memory.size,0);$('confirm').checked=true;$('confirm').onchange();assert.equal($('save').disabled,false);$('save').onclick();const saved=JSON.parse(memory.get('fittag-lab-saved'));assert.equal(saved[0].mode,'shape');assert.equal('overlay_url'in saved[0],false);assert.equal('photo'in saved[0],false);assert.match($('saveStatus').textContent,/saved locally/);$('forget').onclick();assert.equal(memory.size,0);
 });
 test('offline, bad distance and oversized combined photos never upload',async()=>{
  $('again').onclick();choose();const before=requests.length;navigator.onLine=false;await $('measure').onclick();assert.equal(requests.length,before);assert.match($('errorText').textContent,/Connect/);navigator.onLine=true;$('method').value='distance';$('cameraHeight').value='';await $('measure').onclick();assert.equal(requests.length,before);assert.match($('errorText').textContent,/known lens-to-floor/);$('method').value='depth';choose(9*1024*1024);const other=new File(['x'],'second.jpg',{type:'image/jpeg'});Object.defineProperty(other,'size',{value:9*1024*1024});$('secondFile').onchange({target:{files:[other]}});await $('measure').onclick();assert.equal(requests.length,before);assert.match($('errorText').textContent,/combined photos/);
+});
+
+test('waiting screen uses the selected photo and cancel preserves it',async()=>{
+ $('again').onclick();choose();$('method').value='shape';
+ pendingStatus=signal=>new Promise((resolve,reject)=>{signal.addEventListener('abort',()=>reject(new DOMException('Cancelled','AbortError')),{once:true});});
+ const run=$('measure').onclick();
+ for(let i=0;i<10;i++)await Promise.resolve();
+ assert.equal($('processing').hidden,false);
+ assert.equal($('processingPhoto').src,$('preview').src);
+ assert.match($('processingTitle').textContent,/Sending/);
+ assert.equal($('processing').querySelector('[role=progressbar]').hasAttribute('aria-valuenow'),false);
+ $('cancel').onclick();await run;pendingStatus=null;
+ assert.equal($('capture').hidden,false);assert.equal($('preview').hidden,false);
+ assert.equal($('error').hidden,true);
+ assert.ok(requests.some(r=>r.options?.method==='DELETE'));
 });
