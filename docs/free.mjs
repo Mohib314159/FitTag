@@ -1,7 +1,7 @@
 export function anchorResult(result, name, cm) {
-  if (!Number.isFinite(cm) || cm < 5 || cm > 200) throw Error('Enter a known flat length between 5 and 200 cm.');
+  if (!Number.isFinite(cm) || cm < 5 || cm > 200) throw Error('Enter a measurement between 5 and 200 cm.');
   const base=result.rows.find(row=>row.name===name);
-  if(!base) throw Error('Choose a detected measurement to anchor.');
+  if(!base) throw Error('Choose the measurement you know.');
   const divisor=base.value_cm ?? base.ratio;
   if(!Number.isFinite(divisor)||divisor<=0) throw Error('This line cannot set a scale.');
   const factor=cm/divisor;
@@ -17,10 +17,10 @@ export function rowText(row,unit='cm') {
 }
 export function canCompare(result){return result.mode==='anchored';}
 export function resultMessage(result) {
-  if(result.mode==='anchored') return 'Scale anchored to a length you supplied. Other landmarks and perspective still need checking.';
-  if(result.mode==='depth') return 'Research guess · model scale can be substantially wrong. No accuracy interval or fit verdict is established.';
-  if(result.mode==='distance') return 'Distance-assisted estimate · assumes an overhead camera, your supplied height and the reported field of view. Check those before using the scale.';
-  return 'Shape recovered. Centimetres withheld: this photo does not provide a trustworthy absolute scale.';
+  if(result.mode==='anchored') return 'Size set from your measurement. Check the other lines before using them.';
+  if(result.mode==='depth') return 'Estimated size. It can be far off. Check with a tape, or enter a measurement you know.';
+  if(result.mode==='distance') return 'Size estimated from the camera distance you entered. The camera must face straight down.';
+  return 'These are proportions, not centimetres. Enter a measurement you know to set the size.';
 }
 
 export function moveEndpoint(result, name, endpoint, point) {
@@ -43,9 +43,9 @@ export function moveEndpoint(result, name, endpoint, point) {
 }
 
 export function listingText(result) {
-  const header=result.mode==='shape'?'Garment proportions — not centimetres':
-    result.mode==='depth'?'Unverified model estimates — check with a tape before listing':
-    'Experimental garment estimates — check the lines and scale before listing';
+  const header=result.mode==='shape'?'Clothing proportions, not centimetres':
+    result.mode==='depth'?'Estimated sizes. Check with a tape before listing.':
+    'Estimated sizes. Check the lines and size before listing.';
   const lines=result.rows.map(row=>`${row.name.replaceAll('_',' ')}: ${rowText(row)}`);
   if(result.anchor)lines.push(`Scale set from supplied ${result.anchor.name.replaceAll('_',' ')}: ${result.anchor.cm} cm.`);
   if(result.mode==='shape')lines.push(`${result.garment_type==='jeans'?'Inseam':'Garment length'} is the 100% reference.`);

@@ -1,0 +1,224 @@
+{
+  "scope": "Warm Windows CPU; three runs per configuration; one generated reference-free garment photo reused. Includes outline/model/geometry, excludes upload/polling/overlays and human capture. Not Render hardware.",
+  "profiles": [
+    {
+      "threads": 1,
+      "process_peak_working_set_mb": 383.3,
+      "records": [
+        {
+          "route": "previous-outline",
+          "concurrent_photos": 1,
+          "threads": 1,
+          "median_seconds": 6.885,
+          "samples_seconds": [
+            6.885,
+            6.771,
+            6.908
+          ]
+        },
+        {
+          "route": "reuse-outline",
+          "concurrent_photos": 1,
+          "threads": 1,
+          "median_seconds": 3.822,
+          "samples_seconds": [
+            5.258,
+            3.822,
+            3.725
+          ]
+        },
+        {
+          "route": "two-photos",
+          "concurrent_photos": 2,
+          "threads": 1,
+          "median_seconds": 6.148,
+          "samples_seconds": [
+            4.676,
+            6.214,
+            6.148
+          ]
+        }
+      ]
+    },
+    {
+      "threads": 2,
+      "process_peak_working_set_mb": 383.3,
+      "records": [
+        {
+          "route": "previous-outline",
+          "concurrent_photos": 1,
+          "threads": 2,
+          "median_seconds": 4.902,
+          "samples_seconds": [
+            5.404,
+            4.902,
+            4.755
+          ]
+        },
+        {
+          "route": "reuse-outline",
+          "concurrent_photos": 1,
+          "threads": 2,
+          "median_seconds": 4.364,
+          "samples_seconds": [
+            4.356,
+            4.542,
+            4.364
+          ]
+        },
+        {
+          "route": "two-photos",
+          "concurrent_photos": 2,
+          "threads": 2,
+          "median_seconds": 5.038,
+          "samples_seconds": [
+            5.44,
+            5.038,
+            4.996
+          ]
+        }
+      ]
+    },
+    {
+      "threads": 4,
+      "process_peak_working_set_mb": 383.3,
+      "records": [
+        {
+          "route": "previous-outline",
+          "concurrent_photos": 1,
+          "threads": 4,
+          "median_seconds": 4.227,
+          "samples_seconds": [
+            4.61,
+            4.162,
+            4.227
+          ]
+        },
+        {
+          "route": "reuse-outline",
+          "concurrent_photos": 1,
+          "threads": 4,
+          "median_seconds": 3.778,
+          "samples_seconds": [
+            3.861,
+            3.734,
+            3.778
+          ]
+        },
+        {
+          "route": "two-photos",
+          "concurrent_photos": 2,
+          "threads": 4,
+          "median_seconds": 4.605,
+          "samples_seconds": [
+            4.634,
+            4.605,
+            4.528
+          ]
+        }
+      ]
+    }
+  ],
+  "records": [
+    {
+      "route": "previous-outline",
+      "concurrent_photos": 1,
+      "threads": 1,
+      "median_seconds": 6.885,
+      "samples_seconds": [
+        6.885,
+        6.771,
+        6.908
+      ]
+    },
+    {
+      "route": "reuse-outline",
+      "concurrent_photos": 1,
+      "threads": 1,
+      "median_seconds": 3.822,
+      "samples_seconds": [
+        5.258,
+        3.822,
+        3.725
+      ]
+    },
+    {
+      "route": "two-photos",
+      "concurrent_photos": 2,
+      "threads": 1,
+      "median_seconds": 6.148,
+      "samples_seconds": [
+        4.676,
+        6.214,
+        6.148
+      ]
+    },
+    {
+      "route": "previous-outline",
+      "concurrent_photos": 1,
+      "threads": 2,
+      "median_seconds": 4.902,
+      "samples_seconds": [
+        5.404,
+        4.902,
+        4.755
+      ]
+    },
+    {
+      "route": "reuse-outline",
+      "concurrent_photos": 1,
+      "threads": 2,
+      "median_seconds": 4.364,
+      "samples_seconds": [
+        4.356,
+        4.542,
+        4.364
+      ]
+    },
+    {
+      "route": "two-photos",
+      "concurrent_photos": 2,
+      "threads": 2,
+      "median_seconds": 5.038,
+      "samples_seconds": [
+        5.44,
+        5.038,
+        4.996
+      ]
+    },
+    {
+      "route": "previous-outline",
+      "concurrent_photos": 1,
+      "threads": 4,
+      "median_seconds": 4.227,
+      "samples_seconds": [
+        4.61,
+        4.162,
+        4.227
+      ]
+    },
+    {
+      "route": "reuse-outline",
+      "concurrent_photos": 1,
+      "threads": 4,
+      "median_seconds": 3.778,
+      "samples_seconds": [
+        3.861,
+        3.734,
+        3.778
+      ]
+    },
+    {
+      "route": "two-photos",
+      "concurrent_photos": 2,
+      "threads": 4,
+      "median_seconds": 4.605,
+      "samples_seconds": [
+        4.634,
+        4.605,
+        4.528
+      ]
+    }
+  ],
+  "memory_scope": "Full Windows worker peak, including generated input rendering, model warmup and all trials; not a live service memory measurement."
+}

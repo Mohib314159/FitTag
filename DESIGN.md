@@ -55,3 +55,14 @@ The user rejected the muted green treatment. The experimental app now uses white
 On phones the capture/read action stays at the bottom within thumb reach, with safe-area padding and 52 px controls. Garment choice stays visible; scale, second-photo and focal-length settings share one disclosure. Native inputs remain 16 px to avoid unwanted iOS zoom. Photo tips remain accessible after selection. The result explains how to select a line and drag its endpoints.
 
 Waiting shows the selected garment, quiet activity, three coarse steps, short actual server-stage messages, cancel and a delayed slow-service explanation. No fake percentage or timed "successful" detection claims. Reduced motion keeps a static activity indicator. Focus and live status labels support keyboard and assistive use. The header's unrelated actions, saved section and footer hide while waiting. Architecture and operational limits are recorded in [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md).
+
+
+## Selecting photos and learning the flow
+
+The first screen still invites one photo. Multiple items are a secondary path: choose up to six files, see quick local feedback and a small thumbnail, set the type for each item, then read them. Results are independent; correcting a line or supplying a known measurement survives returning to the selection. Failed items can be removed or retried without losing finished results. This differs from two photos of the same item used to catch inconsistent scale.
+
+How it works is a short three-step walkthrough. Try an example opens the existing precomputed model result without waiting; Read the example photo goes through the real capture review, quality check and server pipeline. The example has a clearly stated computer-made origin. A separate action lets users apply its known waist measurement using the normal correction controls, teaching what to do when the estimate is wrong.
+
+The copy pass removed repeated "Lab", "simulated", "research guess", "readout", "anchored" and "landmarks" from the main flow in favour of everyday labels such as "Estimated sizes", "Save measurements" and "Enter a measurement you know". Technical diagnostics stay under Photo and size details. Caveats remain attached when copying measurements for a listing; the example is never presented as a real person's clothes or proof of accuracy. This follows the concise, relevant wording encouraged by [Depop's listing guidance](https://depophelp.zendesk.com/hc/en-gb/articles/360020435158-Tips-for-describing-your-item).
+
+Quick checks do not assert that a photograph is measurable. They catch obvious empty/dark/tiny/very blurred inputs; uncertain cases retain manual review. Colour contrast is checked as well as brightness so low-luminance-contrast garments remain usable. The existing geometry rules still reject bad framing before inference.

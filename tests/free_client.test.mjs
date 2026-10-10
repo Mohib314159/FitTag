@@ -4,7 +4,7 @@ import {anchorResult,rowText,canCompare,resultMessage,moveEndpoint,listingText} 
 const shape={mode:'shape',rows:[{name:'waist_flat',ratio:.5},{name:'inseam',ratio:1}]};
 test('proportions never render as cm',()=>{assert.equal(rowText(shape.rows[0]),'50.0%');assert.equal(canCompare(shape),false);});
 test('known length anchors all rows without changing original data',()=>{const anchored=anchorResult(shape,'waist_flat',40);assert.equal(anchored.rows[1].value_cm,80);assert.equal(anchored.rows[1].tolerance_cm,16);assert.equal(anchored.mode,'anchored');assert.equal(shape.rows[1].value_cm,undefined);assert.equal(canCompare(anchored),true);});
-test('anchoring model scale cancels shared multiplicative bias',()=>{const data={mode:'depth',rows:[{name:'waist_flat',value_cm:80},{name:'inseam',value_cm:150}]};const fixed=anchorResult(data,'waist_flat',40);assert.equal(fixed.rows[1].value_cm,75);assert.equal(canCompare(data),false);assert.match(resultMessage(data),/No accuracy interval/);});
+test('anchoring model scale cancels shared multiplicative bias',()=>{const data={mode:'depth',rows:[{name:'waist_flat',value_cm:80},{name:'inseam',value_cm:150}]};const fixed=anchorResult(data,'waist_flat',40);assert.equal(fixed.rows[1].value_cm,75);assert.equal(canCompare(data),false);assert.match(resultMessage(data),/far off/);});
 test('invalid known lengths do not create bogus measurements',()=>{for(const value of [NaN,Infinity,0,-4,201])assert.throws(()=>anchorResult(shape,'waist_flat',value));assert.throws(()=>anchorResult(shape,'missing',40));});
 test('unit conversion preserves shape and scales cm',()=>{assert.equal(rowText({value_cm:25.4},'in'),'10.0 in');assert.equal(rowText({ratio:1},'in'),'100.0%');});
 test('endpoint correction changes geometry without claiming a new calibration',()=>{
@@ -17,5 +17,5 @@ test('adjusting the basis preserves honest proportional units',()=>{
 });
 test('listing text carries its scale limitations with the numbers',()=>{
  assert.match(listingText(shape),/not centimetres/);
- const text=listingText({mode:'depth',rows:[{name:'waist_flat',value_cm:40}]});assert.match(text,/Unverified/);assert.match(text,/40.0 cm/);assert.match(text,/not body circumference/);
+ const text=listingText({mode:'depth',rows:[{name:'waist_flat',value_cm:40}]});assert.match(text,/Check with a tape/);assert.match(text,/40.0 cm/);assert.match(text,/not body circumference/);
 });

@@ -54,3 +54,10 @@ where the app should have refused but did not. Report the participant/garment
 count, median paired time difference, error distribution and refusal rate. Keep
 photos and personal dimensions private; aggregate only with participant consent.
 Do not collect silent product telemetry merely to manufacture CV statistics.
+
+
+## Local performance experiment
+
+The optimized path reuses the initial outline and allows tuned CPU inference without duplicating model weights. In 27 warm Windows trials on one generated input (three per configuration), the previous repeated-outline path with one model thread had a 6.885 s median; the new path with four threads had a 3.778 s median. Two photos together/four threads had a 4.605 s median. A separate live API test, including first model load, polling and overlays, completed two photos in 8.47 s. These are developer processing benchmarks, not user task time saved or Render results. Do not claim an observed reduction in listing time, messages or returns.
+
+A defensible feature statement: "Added on-device photo checks and a multi-item upload flow with individual editable measurement results; benchmarked CPU threading and bounded parallel inference while retaining conservative defaults for constrained hosting." Keep measurement uncertainty attached to any reference-free claim.

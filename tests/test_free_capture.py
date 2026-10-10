@@ -145,3 +145,9 @@ def test_supplied_camera_distance_does_not_need_a_model(client,monkeypatch):
 @pytest.mark.parametrize('height',['NaN','10','351'])
 def test_invalid_camera_distance_is_refused(client,height):
     assert request(client,camera_height_cm=height).status_code==422
+
+
+def test_bad_framing_is_rejected_before_loading_depth(client,monkeypatch):
+    monkeypatch.setattr(depth_model,'predict',lambda *_:pytest.fail('Bad framing must not invoke depth inference'))
+    result=request(client,photo(False,crop=True)).json()
+    assert not result['ok'] and 'cropped' in result['error']

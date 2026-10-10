@@ -53,7 +53,8 @@ MM_PER_PX = 0.5
 
 app = FastAPI(title="FitTag")
 cv2.setNumThreads(1)
-MEASURE_LOCK = asyncio.Lock()
+from api.capacity import ComputeGate, bounded_env
+MEASURE_LOCK = ComputeGate(bounded_env('FITTAG_PARALLEL_PHOTOS', 1, 2))
 Image.MAX_IMAGE_PIXELS = 25_000_000
 
 
@@ -65,7 +66,7 @@ async def private_responses(request, call_next):
     response = await call_next(request)
     if request.url.path.startswith(("/measure", "/measurement-jobs", "/overlays", "/guidance", "/experiment")):
         response.headers["Cache-Control"] = "no-store"
-    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest", "/free.js", "/free.mjs", "/free.css", "/request.mjs"):
+    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest", "/free.js", "/free.mjs", "/free.css", "/request.mjs", "/batch.mjs", "/photo-check.mjs"):
         response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
@@ -149,20 +150,9 @@ def _phone_measure(img, reference, garment_type, diameter_mm, known_diameter):
             raise ValueError("No usable measurements. Retake with the whole garment visible.")
         g = GarmentMeasurement(uuid.uuid4().hex, garment_type, rows, 0, scale,
                                reference != "hardware", notes)
-        # The bounded ephemeral overlay store never contains uploaded originals.
-        for old in OVERLAYS.glob("*.png"):
-            if time.time() - old.stat().st_mtime > 3600:
-                old.unlink(missing_ok=True)
-        existing = sorted(OVERLAYS.glob("*.png"), key=lambda p: p.stat().st_mtime)
-        for old in existing[:-39]:
-            old.unlink(missing_ok=True)
-        overlay = rect
-        h, w = overlay.shape[:2]
-        overlay = cv2.resize(overlay, (int(w * min(1, 1000 / h)), int(h * min(1, 1000 / h))))
-        name = uuid.uuid4().hex + ".png"
-        cv2.imwrite(str(OVERLAYS / name), overlay)
-        return {"ok": True, "garment": _garment_dict(g), "overlay_url": f"/overlays/{name}",
-                "image_size": [w, h], "reference": reference,
+        from api.overlay_store import persist_image
+        output = persist_image(rect)
+        return {"ok": True, "garment": _garment_dict(g), **output, "reference": reference,
                 "confidence": "estimate" if reference == "hardware" else "check-overlay"}
     except (ValueError, SystemExit) as error:
         return {"ok": False, "error": str(error)}
@@ -178,7 +168,8 @@ async def measure_ref_ep(file: UploadFile = File(...)):
 @app.get("/experiment")
 def experiment_status():
     from core.depth_model import available
-    return {"button_free":True,"depth_model":available(),"experimental":True}
+    return {"button_free":True,"depth_model":available(),"experimental":True,
+            "parallel_photos":MEASURE_LOCK.limit}
 
 
 @app.post("/measure-free")

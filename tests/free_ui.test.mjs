@@ -32,27 +32,27 @@ const $=id=>document.getElementById(id);
 function choose(size=100){const file=new File(['x'],'test.jpg',{type:'image/jpeg'});Object.defineProperty(file,'size',{value:size});$('upload').onchange({target:{files:[file]}});}
 
 test('model example labels scale failure and never renders NaN',async()=>{
- await $('demo').onclick();assert.equal($('results').hidden,false);assert.match($('confidence').textContent,/Research guess/);assert.match($('demoTruth').textContent,/41.0 cm/);assert.doesNotMatch($('measurements').textContent,/NaN/);assert.equal($('save').disabled,true);
+ await $('demo').onclick();assert.equal($('results').hidden,false);assert.match($('confidence').textContent,/Estimated size/);assert.match($('demoTruth').textContent,/41.0 cm/);assert.doesNotMatch($('measurements').textContent,/NaN/);assert.equal($('save').disabled,true);
 });
 test('anchor, undo, units and line highlight execute real client handlers',()=>{
- $('anchorPoint').value='waist_flat';$('anchorCm').value='41';$('anchorApply').onclick();assert.match($('measurements').textContent,/41.0 cm/);assert.match($('confidence').textContent,/anchored/);$('inches').onclick();assert.match($('measurements').textContent,/16.1 in/);$('cm').onclick();const inseam=[...$('measurements').querySelectorAll('button')].find(b=>b.textContent==='Inseam');inseam.onclick({detail:0});assert.match($('overlayCaption').textContent,/Inseam/);$('anchorReset').onclick();assert.match($('confidence').textContent,/Research guess/);assert.match($('measurements').textContent,/74.2 cm/);
+ $('anchorPoint').value='waist_flat';$('anchorCm').value='41';$('anchorApply').onclick();assert.match($('measurements').textContent,/41.0 cm/);assert.match($('confidence').textContent,/Size set/);$('inches').onclick();assert.match($('measurements').textContent,/16.1 in/);$('cm').onclick();const inseam=[...$('measurements').querySelectorAll('button')].find(b=>b.textContent==='Inseam');inseam.onclick({detail:0});assert.match($('overlayCaption').textContent,/Inseam/);$('anchorReset').onclick();assert.match($('confidence').textContent,/Estimated size/);assert.match($('measurements').textContent,/74.2 cm/);
 });
 test('endpoint edits require rechecking and can restore the detected line',async()=>{
  await $('demo').onclick();$('confirm').checked=true;$('confirm').onchange();
  const waist=[...$('measurements').querySelectorAll('button')].find(b=>b.textContent==='Waist · flat');waist.onclick({detail:0});
  const before=$('measurements').textContent,handle=$('lines').querySelector('[data-endpoint="p2"]');
  handle.onkeydown({key:'ArrowRight',preventDefault(){}});
- assert.notEqual($('measurements').textContent,before);assert.equal($('confirm').checked,false);assert.equal($('save').disabled,true);assert.match($('confidence').textContent,/Research guess/);
+ assert.notEqual($('measurements').textContent,before);assert.equal($('confirm').checked,false);assert.equal($('save').disabled,true);assert.match($('confidence').textContent,/Estimated size/);
  $('undoEdits').onclick();assert.equal($('measurements').textContent,before);
 });
 test('copied listing keeps the caveat attached to a model guess',async()=>{
- let copied='';navigator.clipboard={writeText:async text=>{copied=text;}};await $('copyListing').onclick();assert.match(copied,/Unverified model estimates/);assert.match(copied,/not body circumference/);assert.match($('copyStatus').textContent,/limitations included/);
+ let copied='';navigator.clipboard={writeText:async text=>{copied=text;}};await $('copyListing').onclick();assert.match(copied,/Check with a tape/);assert.match(copied,/not body circumference/);assert.match($('copyStatus').textContent,/sizes need checking/);
 });
 test('photo review precedes upload and real form includes selected mode',async()=>{
  $('again').onclick();choose();assert.equal($('preview').hidden,false);const before=requests.length;$('method').value='shape';$('method').onchange();responses.push({...fixture(),mode:'shape',rows:[{name:'waist_flat',ratio:.5,p1:[1,2],p2:[3,4]},{name:'inseam',ratio:1,p1:[1,2],p2:[3,4]}]});await $('measure').onclick();assert.equal(requests.length,before+2);const req=requests.findLast(r=>r.path==='./measure-free-jobs');assert.equal(req.path,'./measure-free-jobs');assert.equal(req.options.body.get('estimate'),'false');assert.match($('measurements').textContent,/50.0%/);assert.doesNotMatch($('measurements').textContent,/cm|NaN/);assert.equal($('units').hidden,true);
 });
 test('only acknowledged readouts save, and saved data contains no photo',()=>{
- $('save').onclick();assert.equal(memory.size,0);$('confirm').checked=true;$('confirm').onchange();assert.equal($('save').disabled,false);$('save').onclick();const saved=JSON.parse(memory.get('fittag-lab-saved'));assert.equal(saved[0].mode,'shape');assert.equal('overlay_url'in saved[0],false);assert.equal('photo'in saved[0],false);assert.match($('saveStatus').textContent,/saved locally/);$('forget').onclick();assert.equal(memory.size,0);
+ $('save').onclick();assert.equal(memory.size,0);$('confirm').checked=true;$('confirm').onchange();assert.equal($('save').disabled,false);$('save').onclick();const saved=JSON.parse(memory.get('fittag-lab-saved'));assert.equal(saved[0].mode,'shape');assert.equal('overlay_url'in saved[0],false);assert.equal('photo'in saved[0],false);assert.match($('saveStatus').textContent,/saved on this device/);$('forget').onclick();assert.equal(memory.size,0);
 });
 test('offline, bad distance and oversized combined photos never upload',async()=>{
  $('again').onclick();choose();const before=requests.length;navigator.onLine=false;await $('measure').onclick();assert.equal(requests.length,before);assert.match($('errorText').textContent,/Connect/);navigator.onLine=true;$('method').value='distance';$('cameraHeight').value='';await $('measure').onclick();assert.equal(requests.length,before);assert.match($('errorText').textContent,/known lens-to-floor/);$('method').value='depth';choose(9*1024*1024);const other=new File(['x'],'second.jpg',{type:'image/jpeg'});Object.defineProperty(other,'size',{value:9*1024*1024});$('secondFile').onchange({target:{files:[other]}});await $('measure').onclick();assert.equal(requests.length,before);assert.match($('errorText').textContent,/combined photos/);
@@ -71,4 +71,37 @@ test('waiting screen uses the selected photo and cancel preserves it',async()=>{
  assert.equal($('capture').hidden,false);assert.equal($('preview').hidden,false);
  assert.equal($('error').hidden,true);
  assert.ok(requests.some(r=>r.options?.method==='DELETE'));
+});
+
+test('several selected photos produce separate reviewable results and keep edits on return',async()=>{
+ $('method').value='shape';$('kind').value='jeans';
+ // Native select.value has a setter; Linkedom's dynamically created selects do not.
+ const create=document.createElement.bind(document);
+ document.createElement=tag=>{const el=create(tag);if(tag==='select')Object.defineProperty(el,'value',{configurable:true,writable:true,value:'jeans'});return el;};
+ $('openBatch').onclick();
+ const files=[new File(['a'],'first.jpg',{type:'image/jpeg'}),new File(['b'],'second.jpg',{type:'image/jpeg'})];
+ await $('batchFiles').onchange({target:{files}});
+ assert.equal($('batch').hidden,false);assert.match($('batchList').textContent,/first.jpg/);
+ assert.equal($('batchRead').disabled,false);
+ await $('batchRead').onclick();assert.match($('batchStatus').textContent,/2 of 2 ready/);
+ const open=$('batchList').querySelector('button');open.onclick();
+ assert.equal($('results').hidden,false);assert.equal($('returnBatch').hidden,false);
+ $('anchorPoint').value='waist_flat';$('anchorCm').value='41';$('anchorApply').onclick();
+ $('returnBatch').onclick();$('batchList').querySelector('button').onclick();
+ assert.match($('measurements').textContent,/41.0 cm/);
+ document.createElement=create;
+});
+
+test('the example teaches setting a known measurement using the actual correction flow',async()=>{
+ await $('demo').onclick();assert.equal($('demoScale').hidden,false);
+ $('demoScale').onclick();assert.match($('measurements').textContent,/41.0 cm/);assert.match($('confidence').textContent,/Size set/);
+});
+test('a local black-photo refusal prevents all measurement uploads',async()=>{
+ $('again').onclick();const count=requests.length;
+ const create=document.createElement.bind(document);
+ document.createElement=tag=>{if(tag==='canvas')return {width:0,height:0,getContext:()=>({drawImage(){},getImageData:()=>({width:8,height:8,data:new Uint8ClampedArray(256)})}),toBlob:fn=>fn(null)};return create(tag);};
+ globalThis.createImageBitmap=async()=>({width:8,height:8,close(){}});
+ choose();await $('measure').onclick();
+ assert.equal(requests.length,count);assert.match($('photoCheck').textContent,/dark/);assert.equal($('measure').disabled,true);
+ delete globalThis.createImageBitmap;document.createElement=create;
 });

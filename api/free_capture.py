@@ -31,7 +31,7 @@ def _shape_rows(rows):
 def process(photo, raw, kind, fov_override, second=None, second_raw=None, estimate=True, camera_height_cm=0, progress=lambda stage: None):
     started=time.perf_counter()
     progress('outline')
-    rect,_,shape_rows,_=outline(photo,kind)
+    rect,_,shape_rows,mask=outline(photo,kind)
     result={"ok":True,"mode":"shape","garment_type":kind,"rows":_shape_rows(shape_rows),
             "notes":["Proportions are relative to inseam for jeans, or garment length for tops. They are not centimetres.",
                      "Silhouette landmarks can miss overlapped crotch seams. Check every line."],
@@ -57,7 +57,7 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
         progress('depth')
         depth=depth_model.predict(photo)
         progress('geometry')
-        candidate,rows,diagnostics=depth_measure(photo,kind,depth,focal_from_diagonal_fov(photo.shape,fov))
+        candidate,rows,diagnostics=depth_measure(photo,kind,depth,focal_from_diagonal_fov(photo.shape,fov),mask)
         if second is not None:
             progress('second-photo')
             fov2=fov_override or camera_fov(second_raw) or 84.
@@ -82,13 +82,5 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
 
 
 def persist(rect,result):
-    from api.server import OVERLAYS
-    for old in OVERLAYS.glob('*.png'):
-        if time.time()-old.stat().st_mtime>3600:old.unlink(missing_ok=True)
-    existing=sorted(OVERLAYS.glob('*.png'),key=lambda p:p.stat().st_mtime)
-    for old in existing[:-39]:old.unlink(missing_ok=True)
-    h,w=rect.shape[:2]
-    display=cv2.resize(rect,(int(w*min(1,1000/h)),int(h*min(1,1000/h))))
-    name=uuid.uuid4().hex+'.png'
-    cv2.imwrite(str(OVERLAYS/name),display)
-    return {**result,"overlay_url":'/overlays/'+name,"image_size":[w,h]}
+    from api.overlay_store import persist_image
+    return {**result,**persist_image(rect)}

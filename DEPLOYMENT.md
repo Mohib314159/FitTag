@@ -20,3 +20,6 @@ Docker is not available here; these container commands have not been exercised. 
 After a preview build succeeds, check `/health`, `/experiment`, capture/upload in every mode, the simulated counterexample, two-photo disagreement, scale correction/undo, saved readouts, Safari/Android installation and offline shell/example behavior. The checked-in `docs/` site is static and cannot run Python or ML uploads. Do not present the preview as validated centimetre measurement or deploy it over the working hardware app.
 
 Official references: [Render Docker](https://render.com/docs/docker), [Blueprint specification](https://render.com/docs/blueprint-spec), [free-service limits](https://render.com/docs/free).
+
+
+For a service with spare CPU/RAM, set `FITTAG_DEPTH_THREADS=2` or `4` and `FITTAG_PARALLEL_PHOTOS=2`, keeping one Uvicorn worker. The browser selection follows the advertised capacity. These are opt-in settings: the free Blueprint explicitly remains at one thread/one photo. Local parallel tests do not verify Render memory headroom or production latency. Original uploads retain camera metadata for calibration; preview thumbnails stay on-device.

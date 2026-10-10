@@ -46,7 +46,7 @@ def main():
             records.append(record)
             print(index,camera,result['mode'],errors,flush=True)
             if not demo_done and camera=='assumed':
-                (ROOT/'web/free-example.jpg').write_bytes(encoded.tobytes())
+                (ROOT/'web/example-jeans.jpg').write_bytes(encoded.tobytes())
                 # Model inputs contain no button, rivet, card, paper or mat.
                 Image.fromarray(cv2.cvtColor(rect,cv2.COLOR_BGR2RGB)).save(ROOT/'web/free-demo.jpg',quality=88)
                 result.update(demo=True,demo_truth_cm=truth,overlay_url='./free-demo.jpg',image_size=list(rect.shape[1::-1]))

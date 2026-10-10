@@ -1,0 +1,18 @@
+{
+  "scope": "Windows localhost live API; two generated photos, four ONNX threads, two compute slots; includes first model load, decode, upload, polling and overlay writes. Not Render or human task time.",
+  "concurrent_photos": 2,
+  "seconds": 8.47,
+  "model_threads": 4,
+  "rows_per_result": [
+    5,
+    5
+  ],
+  "stages_seen": [
+    "outline",
+    "depth",
+    "geometry",
+    "finishing"
+  ],
+  "rss_mb": 205.5,
+  "peak_working_set_mb": 336.1
+}

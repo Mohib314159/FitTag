@@ -133,8 +133,9 @@ def rectify_plane(photo, mask, coef, focal_px):
             cv2.warpPerspective(mask,target,size,flags=cv2.INTER_NEAREST),mm_per_px)
 
 
-def depth_measure(photo, kind, depth, focal_px):
-    _,_,_,mask = outline(photo,kind)
+def depth_measure(photo, kind, depth, focal_px, mask=None):
+    if mask is None:
+        _,_,_,mask = outline(photo,kind)
     coef, diagnostics = floor_plane(depth,mask,focal_px)
     rect, projected, scale = rectify_plane(photo,mask,coef,focal_px)
     # Reuse outline rules after the plane warp; do not segment the depth map.

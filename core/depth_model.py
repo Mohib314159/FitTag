@@ -34,7 +34,11 @@ def session():
             try:
                 import onnxruntime as ort
                 options = ort.SessionOptions()
-                options.intra_op_num_threads = options.inter_op_num_threads = 1
+                from api.capacity import bounded_env
+                options.intra_op_num_threads = bounded_env('FITTAG_DEPTH_THREADS', 1, 4)
+                options.inter_op_num_threads = 1
+                options.add_session_config_entry('session.intra_op.allow_spinning', '0')
+                options.add_session_config_entry('session.inter_op.allow_spinning', '0')
                 options.enable_cpu_mem_arena = False
                 options.enable_mem_pattern = False
                 _session = ort.InferenceSession(path,sess_options=options,providers=['CPUExecutionProvider'])
@@ -48,8 +52,9 @@ def session():
 def predict(photo):
     runtime = session()
     # Fixed 392-square export; training uses RGB ImageNet normalization.
-    rgb = cv2.cvtColor(photo,cv2.COLOR_BGR2RGB).astype(np.float32)/255.
-    rgb = cv2.resize(rgb,(392,392),interpolation=cv2.INTER_CUBIC)
+    # Resize before allocating RGB float arrays: same per-channel interpolation.
+    small = cv2.resize(photo.astype(np.float32),(392,392),interpolation=cv2.INTER_CUBIC)
+    rgb = cv2.cvtColor(small,cv2.COLOR_BGR2RGB).astype(np.float32)/255.
     rgb = (rgb-np.array([.485,.456,.406],np.float32))/np.array([.229,.224,.225],np.float32)
     tensor = np.ascontiguousarray(rgb.transpose(2,0,1)[None])
     try:

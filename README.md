@@ -46,3 +46,6 @@ Historical 17.0 mm button recovery was a reported paper-calibration cross-check,
 
 
 The experimental phone client includes a photo-backed waiting view with real server stages, cancellation and retained-photo recovery. The UI uses neutral colours, bottom phone actions and disclosed advanced settings. See [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) for bounded background jobs, retention, retry policy and deployment limits.
+
+
+Product directions from this conversation are recorded in [USER_DECISIONS.md](USER_DECISIONS.md). The app also supports a checked selection of several photos and a short How it works walkthrough.
