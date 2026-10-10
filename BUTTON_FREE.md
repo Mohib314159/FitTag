@@ -1,8 +1,9 @@
 # Button-free experiment
 
-This branch is a working PWA experiment, not a replacement for the hardware flow
-on `main`. It requires no button, paper, card, printed markers or object placed
-in the photo. The original experience is still available at `/button.html`.
+This working PWA experiment was promoted to `main` on 10 October 2026 with the
+owner's approval. It requires no button, paper, card, printed markers or object
+placed in the photo. Promotion does not establish reference-free accuracy.
+The original hardware experience is still available at `/button.html`.
 
 Three capture routes share the existing silhouette and landmark engine:
 
