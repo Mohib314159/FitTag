@@ -13,8 +13,8 @@ from core.measure import measure
 from core.segment import contrast, contrast_check, touches_border
 
 
-def outline(photo, kind):
-    mask = garment_mask(photo)
+def outline(photo, kind, mask=None):
+    mask = garment_mask(photo) if mask is None else mask.copy()
     cnt = largest_contour(mask) if mask is not None else None
     if cnt is None or cv2.contourArea(cnt) < photo.shape[0] * photo.shape[1] * .08:
         raise ValueError("Couldn't separate the garment. Use a plain contrasting floor and even light.")
@@ -139,7 +139,7 @@ def depth_measure(photo, kind, depth, focal_px, mask=None):
     coef, diagnostics = floor_plane(depth,mask,focal_px)
     rect, projected, scale = rectify_plane(photo,mask,coef,focal_px)
     # Reuse outline rules after the plane warp; do not segment the depth map.
-    rect, _, rows, _ = outline(rect,kind)
+    rect, _, rows, _ = outline(rect,kind,projected)
     for row in rows:
         row.value_cm = round(row.value_cm*scale,1)
         row.tolerance_cm = round(max(3.,row.value_cm*.40),1)
