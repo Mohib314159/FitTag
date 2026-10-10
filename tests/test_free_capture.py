@@ -151,3 +151,14 @@ def test_bad_framing_is_rejected_before_loading_depth(client,monkeypatch):
     monkeypatch.setattr(depth_model,'predict',lambda *_:pytest.fail('Bad framing must not invoke depth inference'))
     result=request(client,photo(False,crop=True)).json()
     assert not result['ok'] and 'cropped' in result['error']
+
+
+def test_bad_second_photo_skips_both_depth_estimates(client,monkeypatch):
+    monkeypatch.setattr(depth_model,'predict',lambda *_:pytest.fail('Validate the second outline before either model call'))
+    result=client.post('/measure-free',files={
+        'file':('first.jpg',photo(False),'image/jpeg'),
+        'second':('second.jpg',photo(False,crop=True),'image/jpeg'),
+    }).json()
+    assert result['ok'] and result['mode']=='shape'
+    assert 'cropped' in result['notes'][0]
+    assert all('value_cm' not in row for row in result['rows'])

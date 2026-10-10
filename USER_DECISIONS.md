@@ -46,3 +46,5 @@ This records Mohib's directions and preferences, separately from implementation 
 - CPU thread count is configurable from one to four; measurement capacity from one to two. Free Render defaults stay at one/one. A better-resourced deployment can opt into tested parallel settings after checking memory and latency.
 - Quick photo checks run on-device. Geometry still checks framing/outline before invoking the depth model. Ambiguous client checks warn or leave manual review available.
 - The walkthrough uses a public computer-made example with a known size; no personal garment data. It teaches checking/editing lines and supplying a known measurement.
+
+- Current refinement: changing a selected photo offers camera, library or removal while retaining the current photo until replacement. Batch review retains the chosen units, garment name and scale/line edits. These are assistant choices supporting the requested phone usability, not additional user requirements.

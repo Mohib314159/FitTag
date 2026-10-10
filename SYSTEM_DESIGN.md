@@ -4,7 +4,7 @@ The experimental phone client uses one FastAPI service and CPU inference. The ar
 
 ## Measurement lifecycle
 
-1. Review the photo locally. Pressing Read photo first checks `/health`, then uploads once to `POST /measure-free-jobs`.
+1. Review the photo locally. Pressing Read photo uploads once to `POST /measure-free-jobs`. Admission reports availability itself, removing one readiness round trip per photo.
 2. Admission takes the same compute gate as the existing hardware and synchronous endpoints, before decoding. A configured compute gate allows one or two operations to decode/process at a time. Free Render defaults to one. A busy instance returns 429 and `Retry-After: 5`; there is no growing queue of images in RAM.
 3. The accepted operation returns 202 with an opaque random status URL, `Location`, and `Retry-After`. The CPU task runs in the thread pool, keeping the event loop available for health/status requests. Image decoding also runs off the event loop.
 4. The client polls roughly once a second. Backend callbacks expose actual outline, depth, geometry, second-photo and finishing stages. The indicator stays indeterminate: stages are not elapsed-time percentages. Connecting and sending describe the client's actual request phase; the animation is decorative activity, not a detection visualization.
@@ -20,7 +20,7 @@ The selected image stays available after cancellation, timeout, busy responses, 
 - The model and geometry assumptions remain unvalidated for accurate reference-free garment scale. Reliability infrastructure does not improve measurement accuracy.
 - Client photos total at most 12 MB. The server enforces that combined limit after reading, individual file/decode limits, and a declared aggregate request-body limit. Chunked multipart ingress is not a complete bandwidth/rate-abuse defense; public production hardening would need upstream request/rate limits. The free preview is not claimed to withstand adversarial load.
 - Job IDs are random unguessable capabilities, not accounts. Responses use `no-store`; the service worker excludes job status, uploaded photos, results, health and model files. No photo data goes to another inference service.
-- Free Render services can spin down and require a startup delay. The readiness check is user-initiated; the app does not run keep-alive traffic to evade free-service limits. Local timing is not a Render benchmark.
+- Free Render services can spin down and require a startup delay. The configuration request happens once on opening the app; the app does not run keep-alive traffic to evade free-service limits. Local timing is not a Render benchmark.
 
 ## Research and decisions
 
@@ -41,3 +41,5 @@ Quick local checks inspect a small bitmap for very dark/blank images, tiny origi
 The depth path reuses the already detected original mask rather than segmenting that photo twice. Preprocessing resizes floating-point image channels before RGB normalization, avoiding full-size RGB/normalized intermediates while preserving model input within numerical tolerance. ONNX uses one shared model session, configurable intra-op threads (1–4), sequential graph execution and disabled thread spinning. Measurement admission is configurable (1–2); overlay writes/pruning use one short synchronized critical section. We do not duplicate model weights per request or spawn GPU/HPC infrastructure that this deployment does not have.
 
 The reproducible benchmark is `python -m tools.bench_parallel`, with a pinned local model configured. It compares repeated outlining vs mask reuse and concurrent photos at 1/2/4 model threads, with three warm trials per case. The generated input, local timing and peak Windows working set are recorded in `validation/parallel_latency.json`. Optional `psutil` is needed for this developer benchmark, not the serving app. Thread tuning follows [ONNX Runtime's threading guidance](https://onnxruntime.ai/docs/performance/tune-performance/threading.html). Use [Render's current compute specifications](https://render.com/docs/compute-plans) when choosing capacity. A free 0.1-CPU/512-MB service is not equivalent to the multi-core Windows benchmark.
+
+Both images in the optional same-item comparison now pass outline checks before either depth inference runs. The second mask is reused for its depth projection. A bad second photo returns the first photo's proportions and an explanation, without wasting two model calls. Focal metadata is also read only once per capture. These reduce unnecessary work; no additional latency gain is claimed without a dedicated benchmark. Image decoding and CPU work stay off the event loop, as described in [FastAPI's concurrency guidance](https://fastapi.tiangolo.com/async/).

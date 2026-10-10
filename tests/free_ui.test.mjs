@@ -87,9 +87,20 @@ test('several selected photos produce separate reviewable results and keep edits
  const open=$('batchList').querySelector('button');open.onclick();
  assert.equal($('results').hidden,false);assert.equal($('returnBatch').hidden,false);
  $('anchorPoint').value='waist_flat';$('anchorCm').value='41';$('anchorApply').onclick();
+ $('itemName').value='Everyday pair';$('itemName').oninput();$('inches').onclick();
  $('returnBatch').onclick();$('batchList').querySelector('button').onclick();
- assert.match($('measurements').textContent,/41.0 cm/);
+ assert.match($('measurements').textContent,/16.1 in/);assert.equal($('itemName').value,'Everyday pair');assert.equal($('inches').getAttribute('aria-pressed'),'true');$('cm').onclick();
  document.createElement=create;
+});
+
+test('changing a reviewed photo offers the library and camera and keeps it until replaced',()=>{
+ $('again').onclick();choose();const original=$('preview').src,dialog=$('changeDialog');
+ dialog.showModal=()=>dialog.open=true;dialog.close=()=>dialog.open=false;
+ let opened='';$('camera').click=()=>opened='camera';$('upload').click=()=>opened='library';
+ $('take').onclick();assert.equal(dialog.open,true);assert.equal($('preview').src,original);
+ $('changeLibrary').onclick();assert.equal(opened,'library');assert.equal(dialog.open,false);assert.equal($('preview').src,original);
+ $('take').onclick();$('changeCamera').onclick();assert.equal(opened,'camera');
+ $('take').onclick();$('clear').onclick();assert.equal(dialog.open,false);assert.equal($('preview').hidden,true);assert.equal($('measure').hidden,true);
 });
 
 test('the example teaches setting a known measurement using the actual correction flow',async()=>{

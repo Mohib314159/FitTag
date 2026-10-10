@@ -2,9 +2,9 @@ export const stages={
  connecting:['Getting ready','Connecting to the measurement service.'],
  uploading:['Sending your photo','Keep this screen open while your photo uploads.'],
  outline:['Finding the edges','Tracing the garment against the floor.'],
- depth:['Estimating depth','Checking the photo for clues to distance.'],
+ depth:['Estimating size','Checking the photo for clues to distance.'],
  geometry:['Checking the measurements','Testing the floor and finding measurement points.'],
- 'second-photo':['Checking your second photo','Comparing the two photos for changes in scale.'],
+ 'second-photo':['Checking your second photo','Checking its edges and comparing the photos.'],
  finishing:['Preparing your result','Getting the photo and editable lines ready.']
 };
 export function pause(ms,signal){
@@ -20,9 +20,8 @@ async function json(response){
  return data;
 }
 export async function measurePhoto(body,{signal,onStage=()=>{},onJob=()=>{},fetcher=fetch,wait=pause}={}){
- onStage('connecting');
- const health=await fetcher('./health',{signal,cache:'no-store'});
- if(!health.ok)throw Error('The measurement service is unavailable. Your photo is still selected.');
+ // Admission reports availability itself; avoid a separate round trip per photo.
+ if(signal?.aborted)throw new DOMException('Aborted','AbortError');
  onStage('uploading');
  // Never retry POST automatically: a lost reply may already have started work.
  const accepted=await json(await fetcher('./measure-free-jobs',{method:'POST',body,signal}));

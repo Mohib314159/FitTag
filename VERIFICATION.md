@@ -1,6 +1,6 @@
 # Current branch verification
 
-See [BUTTON_FREE.md](BUTTON_FREE.md) for the new experiment, 61 passing automated checks, live API/resource checks, synthetic model probe and the uncompleted Docker/Render/device checks.
+See [BUTTON_FREE.md](BUTTON_FREE.md) for the new experiment, the experimental checks, live API/resource checks, synthetic model probe and the uncompleted Docker/Render/device checks.
 
 ## Earlier hardware build verification
 
@@ -59,3 +59,10 @@ Recorded 27 warm CPU trials in `validation/parallel_latency.json` (three per cas
 Live HTTP smoke: two simultaneous accepted jobs/four threads/two slots finished in 8.47 s including first model load, each returning five rows. Live process RSS was 205.5 MB; peak Windows working set 336.1 MB. See `validation/parallel_api_smoke.json`. Free Render stays at one thread/one slot; parallel settings are opt-in. Linux/Render memory and latency remain unverified.
 
 Fresh browser visual/camera/device verification could not be completed: browser inventory returned no available browsers and the local preview request was queued. The updated service is running at `http://127.0.0.1:8006`. Earlier viewport checks are not a fresh visual check of this revision. Client DOM and real API paths were verified separately. Docker, production deployment and OS installation remain unverified.
+
+## Phone and request-path refinement (2026-10-10)
+
+- Fresh regression suite: 45 pytest cases, 42 Node checks, and the original 4 top/3 jeans geometry cases passed (94 total). Build, JavaScript syntax and Git whitespace checks passed. The Python environment emitted existing test-adapter and Windows pytest-cache warnings; assertions passed.
+- Added coverage for a cropped second photo skipping both model calls, no upload after cancellation, the camera/library/remove change dialog, and names/units/scale retained on reopening a batch result. Removed the extra health round trip before each photo submission; no new measured timing claim is made for this change.
+- The in-app browser became available. Actual photo review, walkthrough, local quality message, waiting screen, live depth result, two selected photos completing through the HTTP job API, separate results, and names/units surviving return were checked. Photos were public generated examples, never personal garments. The browser file chooser stalled despite its configured timeout before eventually supplying the files; further chooser tests were stopped.
+- This supersedes the preceding unavailable-browser note for these checked flows. Fresh checks at 360 x 640, 390 x 844 and 430 x 932 showed no horizontal overflow; fixed capture actions are 52 px high and native inputs are 16 px. Verified the change dialog offers camera/library/removal, known-size demo correction, keyboard endpoint adjustment, and a warning-free browser console. Current screenshots are `../button-free-capture-v5.jpg` and `../button-free-change-v5.jpg`. Physical camera, Safari/Android installation, Docker and Render remain unverified.

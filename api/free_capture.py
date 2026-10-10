@@ -36,8 +36,9 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
             "notes":["Proportions are relative to inseam for jeans, or garment length for tops. They are not centimetres.",
                      "Silhouette landmarks can miss overlapped crotch seams. Check every line."],
             "diagnostics":{},"cross_check":None}
-    fov=fov_override or camera_fov(raw) or 84.
-    focal_source='manual' if fov_override else 'photo-metadata' if camera_fov(raw) else 'assumed'
+    metadata_fov=camera_fov(raw) if not fov_override else None
+    fov=fov_override or metadata_fov or 84.
+    focal_source='manual' if fov_override else 'photo-metadata' if metadata_fov else 'assumed'
     result['diagnostics'].update(diagonal_fov_deg=round(fov,1),focal_source=focal_source)
     if camera_height_cm:
         progress('geometry')
@@ -54,6 +55,11 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
         result['diagnostics']['processing_seconds']=round(time.perf_counter()-started,2)
         return rect,result
     try:
+        second_mask=None
+        if second is not None:
+            # Validate both captures before loading/running either depth estimate.
+            progress('second-photo')
+            _,_,_,second_mask=outline(second,kind)
         progress('depth')
         depth=depth_model.predict(photo)
         progress('geometry')
@@ -61,7 +67,7 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
         if second is not None:
             progress('second-photo')
             fov2=fov_override or camera_fov(second_raw) or 84.
-            _,second_rows,_=depth_measure(second,kind,depth_model.predict(second),focal_from_diagonal_fov(second.shape,fov2))
+            _,second_rows,_=depth_measure(second,kind,depth_model.predict(second),focal_from_diagonal_fov(second.shape,fov2),second_mask)
             delta=disagreement(rows,second_rows)
             result['cross_check']={"difference_pct":round(delta*100,1),"agreed":delta<=.25}
             if delta>.25:
