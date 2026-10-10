@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: fittag-lab
+    name: fittag
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile

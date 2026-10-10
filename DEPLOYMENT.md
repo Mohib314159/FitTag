@@ -1,10 +1,12 @@
-# FitTag experimental preview on Render
+# FitTag on Render
 
-**Live preview:** [fittag-lab.onrender.com](https://fittag-lab.onrender.com/). Created 10 October 2026 from `codex/fittag-button-free`, as a separate free Docker service managed by the `fittag-button-free` Blueprint. The existing main-branch service is unchanged.
+**Main app:** [fittag.onrender.com](https://fittag.onrender.com/), served by the existing free Docker service `fittag` from `main`. The owner authorized merging and deploying the button-free PWA on 10 October 2026. Root `render.yaml` keeps the existing service name and free plan.
+
+The separate [preview](https://fittag-lab.onrender.com/) was created on 10 October 2026 from `codex/fittag-button-free`, managed by the `fittag-button-free` Blueprint. That branch keeps its preview configuration; merging into `main` does not change its service.
 
 On iPhone, open that URL in Safari and choose Share → Add to Home Screen (Open as Web App if shown). Physical-device capture and OS installation have not yet been verified. New measurements need internet; button-free centimetre estimates remain experimental.
 
-Keep the production hardware service on `main`. For this experiment, create a **separate** Render Blueprint and select `codex/fittag-button-free`, with `render.yaml` at the root. The service name is `fittag-lab`. Do not connect this branch to the existing production Blueprint or merge it into `main` yet.
+The existing main Blueprint selects `main` and the root `render.yaml`; automatic deployment follows pushes. New installations can select the same branch and file. The earlier instruction to keep this experiment unmerged was superseded by the owner's explicit merge/deploy request. The hardware/reference UI and API are retained at `/button.html` and `/measure`.
 
 One Docker service serves FastAPI and the PWA. Docker installs the headless measurement dependencies and ONNX Runtime, then downloads a pinned 99.8 MB metric-depth model and checks its SHA-256. A model-download failure fails the build rather than silently shipping fake scale. The model is read-only in the image; no user-upload-triggered model download or external inference call occurs. No API key, database or paid inference provider is required.
 
@@ -21,7 +23,7 @@ docker run --rm -p 8000:10000 fittag-lab
 
 Docker is not available on the local Windows host. Render successfully built and started the Linux Docker image, verified the pinned model download, and served a real model-backed photo result. See [validation/render_smoke.json](validation/render_smoke.json) and [VERIFICATION.md](VERIFICATION.md). The commands above have not been exercised with a local Docker installation.
 
-After a preview build succeeds, check `/health`, `/experiment`, capture/upload in every mode, the public example and walkthrough, two-photo disagreement, scale correction/undo, saved readouts, Safari/Android installation and offline shell/example behavior. The checked-in `docs/` site is static and cannot run Python or ML uploads. Do not present the preview as validated centimetre measurement or deploy it over the working hardware app.
+After deployment, check `/health`, `/experiment`, capture/upload in every mode, the public example and walkthrough, two-photo disagreement, scale correction/undo, saved readouts, Safari/Android installation and offline shell/example behavior. The checked-in `docs/` site is static and cannot run Python or ML uploads. Publishing on `main` does not validate the model's centimetre estimates: keep the experimental warnings and check sizes with a tape.
 
 Official references: [Render Docker](https://render.com/docs/docker), [Blueprint specification](https://render.com/docs/blueprint-spec), [free-service limits](https://render.com/docs/free).
 

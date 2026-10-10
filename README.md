@@ -1,8 +1,8 @@
 # FitTag Lab — button-free PWA experiment
 
-**Try the experimental app:** [fittag-lab.onrender.com](https://fittag-lab.onrender.com/). Runs on Render as a separate free service. Button-free size estimates still need checking. On iPhone, use Safari → Share → Add to Home Screen.
+**Open FitTag:** [fittag.onrender.com](https://fittag.onrender.com/). Runs on Render from `main`. Button-free size estimates still need checking. On iPhone, use Safari → Share → Add to Home Screen. The separate [preview](https://fittag-lab.onrender.com/) remains available.
 
-This branch explores ordinary garment photos with **no button, paper, card or reference object**. It is isolated from the working hardware product on `main`; nothing has been merged.
+FitTag explores ordinary garment photos with **no button, paper, card or reference object**. The button-free PWA was merged into `main` on 10 October 2026 with the owner's approval. The hardware/reference flow remains available at `/button.html`.
 
 Open the app → photograph a flat garment → inspect its outline → question the proposed scale. Choose learned metric depth, proportions only, or a known camera height. An optional second photo checks scale consistency. A known length of the garment can anchor or correct scale without placing a reference object in the image.
 
@@ -36,9 +36,9 @@ python -m tools.build_pwa
 
 The probe needs `FITTAG_DEPTH_MODEL` and uses synthetic data only. Build tools reproduce the static `docs/` preview from the app; GitHub Pages does not process uploads. Node dependencies are for tests only and are not installed in the serving container.
 
-## Isolated Render preview
+## Render deployment
 
-Select **this experimental branch**, not `main`, in a new Render Blueprint using the root `render.yaml`. Its service is named `fittag-lab`; Docker bundles verified model weights during build. There are no runtime model downloads or API secrets. This branch is ready for a preview, but Linux Docker/Render and physical-device installation are not verified. [Deployment details](DEPLOYMENT.md).
+Select `main` in Render using the root `render.yaml`. Its service is named `fittag`, matching the existing main-branch Blueprint. Docker bundles verified model weights during build; the same app image has already built and processed a photo on the separate Render preview. There are no runtime model downloads or API secrets. Physical-device installation and real-garment button-free accuracy remain unverified. [Deployment details](DEPLOYMENT.md).
 
 ## Existing engine and evidence
 

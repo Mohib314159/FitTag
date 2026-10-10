@@ -1,6 +1,6 @@
 # Current branch verification
 
-See [BUTTON_FREE.md](BUTTON_FREE.md) for the new experiment, the experimental checks, live API/resource checks, synthetic model probe and the uncompleted Docker/Render/device checks.
+See [BUTTON_FREE.md](BUTTON_FREE.md) for the experiment and accuracy limits. Render/container verification and the main promotion checks are recorded below; physical-device checks remain outstanding.
 
 ## Earlier hardware build verification
 
@@ -85,3 +85,9 @@ Fresh browser visual/camera/device verification could not be completed: browser 
 - In the live browser, Read the example photo selected the public original; Read photo submitted it to the server, displayed processing, and returned five editable depth-mode rows plus a new temporary overlay. Server processing reported 14.69 seconds for that single test. It is not a speed guarantee. The source was computer-made, and its large uncorrected scale error remains visible; this does not validate real-garment accuracy.
 - Verified supplying the example's known waist measurement through the ordinary correction action. Browser console had no errors/warnings. Phone-sized browser checks and manifest availability are not physical iPhone camera, OS installation or production-offline checks.
 - The metadata-only report is `validation/render_smoke.json`; it contains no personal photos, personal sizes or ephemeral job/result URLs. Uploaded originals are not persisted.
+
+## Main promotion checks (2026-10-10)
+
+The owner explicitly authorized merging and deploying the button-free PWA. Fetched remote history through normal Git/GCM and verified the experimental branch contains `origin/main`; the local merge was a fast-forward with no conflicts or overwritten changes. Preserved the existing main Render service name `fittag`, Docker runtime and free plan in root `render.yaml`. The separate preview branch retains its own `fittag-lab` configuration.
+
+Fresh checks before promotion: 45 Python API/geometry/job/parallel tests, 48 Node client/service-worker tests and all seven original geometry cases passed (100 checks). The existing Starlette/httpx test-adapter deprecation warning remains; no assertions failed. Publishing does not establish real-garment accuracy or physical iPhone installation.

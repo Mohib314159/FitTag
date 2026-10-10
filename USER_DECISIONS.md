@@ -29,7 +29,7 @@ This records Mohib's directions and preferences, separately from implementation 
 
 - Deploy the full app as one straightforward Render service, with the Python backend serving the PWA. Include Dockerfile, root `render.yaml`, configuration and realistic deployment docs.
 - Use normal Git commit/push through this computer's existing Git Credential Manager. Stop uploading files individually through the browser. Diagnose exact errors, request network access when needed, and never expose credentials or overwrite existing work.
-- Earlier authorization permitted updates to the existing FitTag repo/main for the completed hardware PWA. For the reference-free experiment, create a new branch and **do not merge it yet**. Continue publishing improvements on `codex/fittag-button-free`.
+- Initially, keep the reference-free experiment on `codex/fittag-button-free` without merging. On 10 October 2026, the owner explicitly superseded that restriction: deploy and merge onto `main` if checks pass. Keep the experimental accuracy warnings, existing hardware route and free Render plan; use normal Git and retain the existing main service name.
 - A strict one-photo processing limit is acceptable when Render cannot keep up. It is not a permanent product requirement: investigate threading/parallel techniques and measure the result, as with Otherwise. Do not silently upgrade to a paid plan or claim local speed as Render speed.
 - Research and implement system-design techniques when they solve actual problems. Keep the service practical for constrained hosting.
 - Run useful tests and local checks. Distinguish local/browser success from uncompleted container, production, camera/device and OS-install verification.
