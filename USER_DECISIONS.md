@@ -70,3 +70,7 @@ After reviewing the working local app, the owner approved the camera-studio desi
 The owner reported that choosing a photo did nothing, Back was missing, and the interface did not work well on iPhone. Fix the working flow and phone ergonomics, including native photo formats; a successful viewport screenshot is not a physical-device test.
 
 The owner also rejected button-only measurement as unreliable and asked to investigate A4 paper or common reference objects, or a properly validated alternative. Reliability takes priority over the earlier no-reference preference. Do not promise a bulletproof method or present UI approval as measurement validation. A4 is the next implementation priority; coins need separate geometric and real-photo validation.
+
+## Buttonless requirement reaffirmed (2026-10-10)
+
+The owner then explicitly rejected A4 and reaffirmed the intended experience: upload an ordinary photo, without a button or reference object, and investigate metadata, pixel geometry and any other viable cues to size. This supersedes the A4 priority above. The partial paper experiment was preserved in an unmerged Git stash on its separate branch; it is not shipped. Buttonless improvements are researched and benchmarked on `codex/fittag-buttonless-depth-audit` before changing main. Do not manufacture dependable centimetres when the required scale evidence is absent.

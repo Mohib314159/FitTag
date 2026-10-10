@@ -22,7 +22,7 @@ before(async()=>{
  // Linkedom has a getter-only select.value; model the native selection property.
  for(const id of ['kind','method','anchorPoint'])Object.defineProperty(document.getElementById(id),'value',{configurable:true,writable:true,value:id==='kind'?'jeans':id==='method'?'depth':'waist_flat'});
  globalThis.fetch=async(path,options)=>{
-  if(path==='./experiment')return {ok:true,json:async()=>({depth_model:true})};
+  if(path==='./experiment')return {ok:true,json:async()=>({depth_model:true,camera_aware_model:true})};
   if(path==='./health')return {ok:true};
   if(path==='./free-demo.json')return {ok:true,json:async()=>structuredClone(demo)};
   requests.push({path,options});
@@ -233,4 +233,12 @@ test('choosing the same file again resets the picker and unsupported files show 
  $('choose').onclick();assert.equal($('upload').value,'');assert.equal(clicks,1);
  $('upload').onchange({target:{files:[new File(['text'],'wrong.txt',{type:'text/plain'})]}});
  assert.equal($('error').hidden,false);assert.match($('errorText').textContent,/photo from your library/);
+});
+
+test('the opt-in camera-aware pilot sends its engine and retains explicit upload review',async()=>{
+ $('again').onclick();choose();$('method').value='moge';$('method').onchange();const before=requests.length;
+ assert.equal($('mogeOption').hidden,false);assert.equal($('secondOptions').hidden,true);assert.equal(requests.length,before);
+ await $('measure').onclick();const body=requests.findLast(r=>r.path==='./measure-free-jobs').options.body;
+ assert.equal(body.get('engine'),'moge');assert.equal(body.get('estimate'),'true');assert.equal(body.has('second'),false);
+ $('method').value='depth';
 });

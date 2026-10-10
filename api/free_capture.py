@@ -40,6 +40,8 @@ def process(photo, raw, kind, fov_override, second=None, second_raw=None, estima
     fov=fov_override or metadata_fov or 84.
     focal_source='manual' if fov_override else 'photo-metadata' if metadata_fov else 'assumed'
     result['diagnostics'].update(diagonal_fov_deg=round(fov,1),focal_source=focal_source)
+    from api.camera_evidence import inspect
+    result['diagnostics']['camera_evidence']=inspect(raw)
     if camera_height_cm:
         progress('geometry')
         scale=camera_height_cm*10/focal_from_diagonal_fov(photo.shape,fov)

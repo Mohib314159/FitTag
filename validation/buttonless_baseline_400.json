@@ -1,0 +1,168 @@
+{
+  "synthetic_only": true,
+  "geometry": "preserved_projected_mask",
+  "resolution": [
+    400,
+    500
+  ],
+  "summary": [
+    {
+      "camera": "assumed",
+      "accepted": 6,
+      "total": 6,
+      "median_error_pct": 45.9,
+      "max_error_pct": 81.95
+    },
+    {
+      "camera": "known",
+      "accepted": 6,
+      "total": 6,
+      "median_error_pct": 16.62,
+      "max_error_pct": 44.47
+    }
+  ],
+  "records": [
+    {
+      "case": 0,
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 60.0,
+        "inseam": 65.0,
+        "hip_flat": 67.12,
+        "leg_opening": 45.53,
+        "thigh": 59.07
+      }
+    },
+    {
+      "case": 0,
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 26.59,
+        "inseam": 30.39,
+        "hip_flat": 32.12,
+        "leg_opening": 15.32,
+        "thigh": 25.87
+      }
+    },
+    {
+      "case": 1,
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 6.83,
+        "inseam": 10.13,
+        "hip_flat": 10.0,
+        "leg_opening": 0.43,
+        "thigh": 3.86
+      }
+    },
+    {
+      "case": 1,
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 15.37,
+        "inseam": 12.89,
+        "hip_flat": 12.88,
+        "leg_opening": 22.98,
+        "thigh": 17.76
+      }
+    },
+    {
+      "case": 2,
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 81.95,
+        "inseam": 78.42,
+        "hip_flat": 81.35,
+        "leg_opening": 49.79,
+        "thigh": 73.75
+      }
+    },
+    {
+      "case": 2,
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 44.15,
+        "inseam": 44.47,
+        "hip_flat": 43.27,
+        "leg_opening": 17.45,
+        "thigh": 37.07
+      }
+    },
+    {
+      "case": 3,
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 47.53,
+        "inseam": 25.32,
+        "hip_flat": 46.94,
+        "leg_opening": 49.27,
+        "thigh": 42.62
+      }
+    },
+    {
+      "case": 3,
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 16.62,
+        "inseam": 1.01,
+        "hip_flat": 16.12,
+        "leg_opening": 18.05,
+        "thigh": 12.7
+      }
+    },
+    {
+      "case": 4,
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 49.61,
+        "inseam": 34.43,
+        "hip_flat": 53.47,
+        "leg_opening": 40.98,
+        "thigh": 45.9
+      }
+    },
+    {
+      "case": 4,
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 18.96,
+        "inseam": 6.96,
+        "hip_flat": 21.22,
+        "leg_opening": 13.17,
+        "thigh": 15.57
+      }
+    },
+    {
+      "case": 5,
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 36.53,
+        "pit_to_pit": 36.67,
+        "sleeve_length": 38.95,
+        "hem_width": 35.61
+      }
+    },
+    {
+      "case": 5,
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 7.78,
+        "pit_to_pit": 7.96,
+        "sleeve_length": 9.47,
+        "hem_width": 7.01
+      }
+    }
+  ]
+}

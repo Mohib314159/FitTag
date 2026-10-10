@@ -83,6 +83,35 @@ def test_decode_failure_releases_slot_and_no_job_is_created():
     asyncio.run(scenario())
 
 
+def test_camera_aware_pilot_is_explicit_and_does_not_fall_through_to_the_old_model(monkeypatch):
+    from api import moge_capture
+    called=[]
+    monkeypatch.setattr(moge_capture,'available',lambda:True)
+    monkeypatch.setattr(moge_capture,'process',lambda *args:called.append(args) or (None,{'ok':True,'mode':'shape','rows':[]}))
+    monkeypatch.setattr(free_capture,'process',lambda *_:pytest.fail('Pilot must not silently use the old model'))
+    monkeypatch.setattr(free_capture,'persist',lambda _,result:result)
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test') as client:
+            reply=await client.post('/measure-free-jobs',files={'file':('a.jpg',photo(False),'image/jpeg')},data={'engine':'moge'})
+            assert reply.status_code==202
+            await wait_for(lambda:not MEASURE_LOCK.locked())
+            result=await client.get(reply.json()['status_url'])
+            assert result.json()['status']=='succeeded' and len(called)==1
+            reply=await client.post('/measure-free-jobs',files={'file':('a.jpg',photo(False),'image/jpeg')},data={'engine':'invented'})
+            assert reply.status_code==422
+    asyncio.run(scenario())
+
+
+def test_unconfigured_camera_aware_model_refuses_before_admission(monkeypatch):
+    from api import moge_capture
+    monkeypatch.setattr(moge_capture,'available',lambda:False)
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test') as client:
+            reply=await client.post('/measure-free-jobs',files={'file':('a.jpg',photo(False),'image/jpeg')},data={'engine':'moge'})
+            assert reply.status_code==422 and not MEASURE_LOCK.locked()
+    asyncio.run(scenario())
+
+
 def test_combined_upload_limit_is_enforced_before_creating_work():
     async def scenario():
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:

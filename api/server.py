@@ -170,7 +170,9 @@ async def measure_ref_ep(file: UploadFile = File(...)):
 @app.get("/experiment")
 def experiment_status():
     from core.depth_model import available
+    from api.moge_capture import available as camera_aware_available
     return {"button_free":True,"depth_model":available(),"experimental":True,
+            "camera_aware_model":camera_aware_available(),
             "parallel_photos":MEASURE_LOCK.limit}
 
 

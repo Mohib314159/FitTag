@@ -52,13 +52,20 @@ def get_job(key):
 @router.post('/measure-free-jobs')
 async def submit(file: UploadFile = File(...), garment_type: str = Form('jeans'),
                  fov_deg: float = Form(0), second: UploadFile | None = File(None),
-                 estimate: bool = Form(True), camera_height_cm: float = Form(0)):
+                 estimate: bool = Form(True), camera_height_cm: float = Form(0), engine: str = Form('default')):
     import numpy as np
     from api.server import MEASURE_LOCK, _decode
     if garment_type not in ('jeans', 't-shirt') or not np.isfinite(fov_deg) or (fov_deg != 0 and not 40 <= fov_deg <= 110):
         raise HTTPException(422, 'Choose a supported garment and a field of view between 40 and 110 degrees.')
     if not np.isfinite(camera_height_cm) or (camera_height_cm != 0 and not 35 <= camera_height_cm <= 350):
         raise HTTPException(422, 'Camera height must be a known lens-to-floor distance between 35 and 350 cm.')
+    if engine not in ('default','moge'):
+        raise HTTPException(422,'Choose a supported measurement method.')
+    if engine=='moge':
+        from api.moge_capture import available
+        if not available():raise HTTPException(422,'The camera-aware pilot is not available on this service.')
+        if second is not None or camera_height_cm:
+            raise HTTPException(422,'The camera-aware pilot reads one photo at a time without a supplied distance.')
     if MEASURE_LOCK.locked():
         return JSONResponse({'ok': False, 'error': 'Another photo is being measured. Try again in a few seconds.'},
                             429, headers={'Retry-After': '5'})
@@ -89,8 +96,12 @@ async def submit(file: UploadFile = File(...), garment_type: str = Form('jeans')
 
         def work():
             from api.free_capture import process, persist
-            rect, result = process(photo, raw, garment_type, fov_deg, other, other_raw,
-                                   estimate, camera_height_cm, progress)
+            if engine=='moge':
+                from api.moge_capture import process as camera_process
+                rect,result=camera_process(photo,raw,garment_type,fov_deg,progress)
+            else:
+                rect, result = process(photo, raw, garment_type, fov_deg, other, other_raw,
+                                       estimate, camera_height_cm, progress)
             progress('finishing')
             return persist(rect, result)
 

@@ -49,11 +49,26 @@ def session():
         return _session
 
 
-def predict(photo):
+def predict(photo, preprocessing='stretch'):
     runtime = session()
     # Fixed 392-square export; training uses RGB ImageNet normalization.
     # Resize before allocating RGB float arrays: same per-channel interpolation.
-    small = cv2.resize(photo.astype(np.float32),(392,392),interpolation=cv2.INTER_CUBIC)
+    crop=None
+    if preprocessing=='stretch':
+        small=cv2.resize(photo.astype(np.float32),(392,392),interpolation=cv2.INTER_CUBIC)
+    elif preprocessing in ('letterbox','reflect'):
+        h,w=photo.shape[:2];scale=392/max(h,w)
+        rw,rh=max(1,round(w*scale)),max(1,round(h*scale))
+        resized=cv2.resize(photo.astype(np.float32),(rw,rh),interpolation=cv2.INTER_CUBIC)
+        left,top=(392-rw)//2,(392-rh)//2
+        if preprocessing=='reflect':
+            small=cv2.copyMakeBorder(resized,top,392-rh-top,left,392-rw-left,cv2.BORDER_REFLECT_101)
+        else:
+            small=cv2.copyMakeBorder(resized,top,392-rh-top,left,392-rw-left,cv2.BORDER_CONSTANT,
+                                     value=(.406*255,.456*255,.485*255))
+        crop=(left,top,rw,rh)
+    else:
+        raise ValueError('Unknown depth preprocessing experiment.')
     rgb = cv2.cvtColor(small,cv2.COLOR_BGR2RGB).astype(np.float32)/255.
     rgb = (rgb-np.array([.485,.456,.406],np.float32))/np.array([.229,.224,.225],np.float32)
     tensor = np.ascontiguousarray(rgb.transpose(2,0,1)[None])
@@ -63,4 +78,7 @@ def predict(photo):
         raise ValueError('Depth inference failed. Showing proportions only.') from None
     if depth.ndim != 2:
         raise ValueError('The metric model returned an unexpected output. Showing proportions only.')
+    if crop is not None:
+        if depth.shape!=(392,392): depth=cv2.resize(depth,(392,392),interpolation=cv2.INTER_LINEAR)
+        x,y,w,h=crop;depth=depth[y:y+h,x:x+w]
     return cv2.resize(depth,photo.shape[1::-1],interpolation=cv2.INTER_LINEAR)

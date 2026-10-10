@@ -1,0 +1,826 @@
+{
+  "synthetic_only": true,
+  "model_sha256": "50dbcac7a6d667e365a3ceffdf51cc497aa5e06b6d2c1d5824c252640fbf5bf3",
+  "summary": [
+    {
+      "preprocessing": "stretch",
+      "camera": "assumed",
+      "accepted": 5,
+      "total": 6,
+      "median_absolute_error_pct": 48.08,
+      "maximum_absolute_error_pct": 80.98
+    },
+    {
+      "preprocessing": "stretch",
+      "camera": "known",
+      "accepted": 5,
+      "total": 6,
+      "median_absolute_error_pct": 17.7,
+      "maximum_absolute_error_pct": 43.41
+    },
+    {
+      "preprocessing": "letterbox",
+      "camera": "assumed",
+      "accepted": 6,
+      "total": 6,
+      "median_absolute_error_pct": 46.32,
+      "maximum_absolute_error_pct": 93.55
+    },
+    {
+      "preprocessing": "letterbox",
+      "camera": "known",
+      "accepted": 6,
+      "total": 6,
+      "median_absolute_error_pct": 19.74,
+      "maximum_absolute_error_pct": 53.16
+    },
+    {
+      "preprocessing": "reflect",
+      "camera": "assumed",
+      "accepted": 6,
+      "total": 6,
+      "median_absolute_error_pct": 63.12,
+      "maximum_absolute_error_pct": 89.02
+    },
+    {
+      "preprocessing": "reflect",
+      "camera": "known",
+      "accepted": 6,
+      "total": 6,
+      "median_absolute_error_pct": 28.83,
+      "maximum_absolute_error_pct": 49.02
+    }
+  ],
+  "records": [
+    {
+      "case": 0,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 80.98,
+        "inseam": 69.61,
+        "hip_flat": 78.46,
+        "leg_opening": 77.02,
+        "thigh": 74.13
+      },
+      "inference_seconds": 7.56,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 0,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 43.41,
+        "inseam": 34.21,
+        "hip_flat": 40.96,
+        "leg_opening": 39.57,
+        "thigh": 37.45
+      },
+      "inference_seconds": 7.56,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 0,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 43.66,
+        "inseam": 93.55,
+        "hip_flat": 78.08,
+        "leg_opening": 4.68,
+        "thigh": 73.36
+      },
+      "inference_seconds": 4.82,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 0,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 13.66,
+        "inseam": 53.16,
+        "hip_flat": 40.96,
+        "leg_opening": 28.09,
+        "thigh": 37.45
+      },
+      "inference_seconds": 4.82,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 0,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 89.02,
+        "inseam": 77.63,
+        "hip_flat": 85.96,
+        "leg_opening": 87.66,
+        "thigh": 83.01
+      },
+      "inference_seconds": 4.59,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 0,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 49.02,
+        "inseam": 40.39,
+        "hip_flat": 46.92,
+        "leg_opening": 48.09,
+        "thigh": 44.4
+      },
+      "inference_seconds": 4.59,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 1,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 24.88,
+        "inseam": 19.61,
+        "hip_flat": 24.42,
+        "leg_opening": 27.23,
+        "thigh": 22.01
+      },
+      "inference_seconds": 4.46,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 1,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 1.22,
+        "inseam": 5.39,
+        "hip_flat": 1.92,
+        "leg_opening": 0.0,
+        "thigh": 3.47
+      },
+      "inference_seconds": 4.46,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 1,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 30.49,
+        "inseam": 24.61,
+        "hip_flat": 29.62,
+        "leg_opening": 33.19,
+        "thigh": 27.8
+      },
+      "inference_seconds": 4.55,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 1,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 2.93,
+        "inseam": 1.45,
+        "hip_flat": 2.31,
+        "leg_opening": 5.11,
+        "thigh": 0.77
+      },
+      "inference_seconds": 4.55,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 1,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 22.93,
+        "inseam": 16.97,
+        "hip_flat": 21.92,
+        "leg_opening": 24.26,
+        "thigh": 19.69
+      },
+      "inference_seconds": 4.69,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 1,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 2.93,
+        "inseam": 7.5,
+        "hip_flat": 3.65,
+        "leg_opening": 1.7,
+        "thigh": 5.41
+      },
+      "inference_seconds": 4.69,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 2,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "assumed",
+      "mode": "shape",
+      "absolute_errors_pct": {},
+      "inference_seconds": 4.65,
+      "notes": [
+        "An edge is cropped. Leave space around the whole garment and retake.",
+        "Proportions are relative to inseam for jeans, or garment length for tops. They are not centimetres.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 2,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "known",
+      "mode": "shape",
+      "absolute_errors_pct": {},
+      "inference_seconds": 4.65,
+      "notes": [
+        "An edge is cropped. Leave space around the whole garment and retake.",
+        "Proportions are relative to inseam for jeans, or garment length for tops. They are not centimetres.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 2,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 62.44,
+        "inseam": 55.92,
+        "hip_flat": 62.88,
+        "leg_opening": 74.04,
+        "thigh": 61.78
+      },
+      "inference_seconds": 6.35,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 2,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 28.54,
+        "inseam": 24.34,
+        "hip_flat": 28.65,
+        "leg_opening": 37.45,
+        "thigh": 27.8
+      },
+      "inference_seconds": 6.35,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 2,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 65.12,
+        "inseam": 59.47,
+        "hip_flat": 65.38,
+        "leg_opening": 76.6,
+        "thigh": 64.48
+      },
+      "inference_seconds": 4.65,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 2,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 30.49,
+        "inseam": 26.32,
+        "hip_flat": 30.77,
+        "leg_opening": 39.57,
+        "thigh": 29.34
+      },
+      "inference_seconds": 4.65,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 3,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 52.99,
+        "inseam": 52.66,
+        "hip_flat": 54.69,
+        "leg_opening": 47.8,
+        "thigh": 49.18
+      },
+      "inference_seconds": 4.85,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 3,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 21.04,
+        "inseam": 20.63,
+        "hip_flat": 22.45,
+        "leg_opening": 17.56,
+        "thigh": 18.44
+      },
+      "inference_seconds": 4.85,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 3,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 58.18,
+        "inseam": 58.1,
+        "hip_flat": 60.0,
+        "leg_opening": 56.1,
+        "thigh": 54.51
+      },
+      "inference_seconds": 6.02,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 3,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 24.94,
+        "inseam": 24.94,
+        "hip_flat": 26.53,
+        "leg_opening": 23.41,
+        "thigh": 22.13
+      },
+      "inference_seconds": 6.02,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 3,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 63.12,
+        "inseam": 62.03,
+        "hip_flat": 64.49,
+        "leg_opening": 59.51,
+        "thigh": 59.84
+      },
+      "inference_seconds": 5.82,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 3,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 28.83,
+        "inseam": 27.97,
+        "hip_flat": 30.0,
+        "leg_opening": 25.85,
+        "thigh": 26.23
+      },
+      "inference_seconds": 5.82,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 4,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 59.48,
+        "inseam": 48.35,
+        "hip_flat": 50.2,
+        "leg_opening": 40.98,
+        "thigh": 45.08
+      },
+      "inference_seconds": 5.28,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 4,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 26.49,
+        "inseam": 17.85,
+        "hip_flat": 18.98,
+        "leg_opening": 11.22,
+        "thigh": 14.75
+      },
+      "inference_seconds": 5.28,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 4,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 51.17,
+        "inseam": 44.18,
+        "hip_flat": 43.67,
+        "leg_opening": 40.0,
+        "thigh": 39.34
+      },
+      "inference_seconds": 5.12,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 4,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 19.74,
+        "inseam": 14.18,
+        "hip_flat": 13.67,
+        "leg_opening": 10.73,
+        "thigh": 10.25
+      },
+      "inference_seconds": 5.12,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 4,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 50.65,
+        "inseam": 43.8,
+        "hip_flat": 43.27,
+        "leg_opening": 39.51,
+        "thigh": 38.93
+      },
+      "inference_seconds": 4.55,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 4,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 18.7,
+        "inseam": 13.8,
+        "hip_flat": 13.06,
+        "leg_opening": 9.76,
+        "thigh": 9.84
+      },
+      "inference_seconds": 4.55,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 5,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 41.11,
+        "pit_to_pit": 40.19,
+        "sleeve_length": 41.58,
+        "hem_width": 39.02
+      },
+      "inference_seconds": 4.52,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 5,
+      "synthetic": true,
+      "preprocessing": "stretch",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 11.25,
+        "pit_to_pit": 10.74,
+        "sleeve_length": 11.58,
+        "hem_width": 9.66
+      },
+      "inference_seconds": 4.52,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 5,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 45.0,
+        "pit_to_pit": 44.07,
+        "sleeve_length": 46.32,
+        "hem_width": 41.86
+      },
+      "inference_seconds": 4.46,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 5,
+      "synthetic": true,
+      "preprocessing": "letterbox",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 14.58,
+        "pit_to_pit": 13.89,
+        "sleeve_length": 15.79,
+        "hem_width": 12.31
+      },
+      "inference_seconds": 4.46,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 5,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "assumed",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 68.89,
+        "pit_to_pit": 67.59,
+        "sleeve_length": 70.0,
+        "hem_width": 65.91
+      },
+      "inference_seconds": 4.57,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    },
+    {
+      "case": 5,
+      "synthetic": true,
+      "preprocessing": "reflect",
+      "camera": "known",
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 33.47,
+        "pit_to_pit": 32.41,
+        "sleeve_length": 34.21,
+        "hem_width": 31.06
+      },
+      "inference_seconds": 4.57,
+      "notes": [
+        "Experimental metric-depth guess. No error interval is established for real garments; actual error can be large. No fit decision should use these centimetres.",
+        "Camera focal length comes from photo metadata when present, otherwise an explicit field-of-view assumption.",
+        "A consistent floor plane or agreeing photos cannot detect shared model scale bias.",
+        "The garment must be flat. Depth and outline checks cannot prove this.",
+        "Silhouette landmarks can miss overlapped crotch seams. Check every line."
+      ]
+    }
+  ]
+}
