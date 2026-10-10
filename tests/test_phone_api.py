@@ -114,7 +114,7 @@ def test_busy_service_still_answers_health(client, monkeypatch):
 
 
 def test_installable_assets_and_private_dataset(client):
-    for path in ("/", "/app.js", "/app.css", "/client.mjs", "/sw.js", "/demo.json", "/demo.jpg"):
+    for path in ("/", "/app.js", "/app.css", "/client.mjs", "/camera.mjs", "/free.js", "/free.css", "/sw.js", "/demo.json", "/demo.jpg"):
         assert client.get(path).status_code == 200, path
     manifest=client.get("/manifest.webmanifest").json()
     assert manifest["display"] == "standalone"

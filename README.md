@@ -4,7 +4,7 @@
 
 FitTag explores ordinary garment photos with **no button, paper, card or reference object**. The button-free PWA was merged into `main` on 10 October 2026 with the owner's approval. The hardware/reference flow remains available at `/button.html`.
 
-Open the app → photograph a flat garment → inspect its outline → question the proposed scale. Choose learned metric depth, proportions only, or a known camera height. An optional second photo checks scale consistency. A known length of the garment can anchor or correct scale without placing a reference object in the image.
+Open the app → allow the rear camera → photograph a flat garment → inspect its outline → question the proposed scale. The browser requests camera permission on opening; an existing permission can open the preview directly. Choose photo remains available. The live view and captured frame stay on-device until Read photo is tapped. Choose learned metric depth, proportions only, or a known camera height. An optional second photo checks scale consistency. A known length of the garment can anchor or correct scale without placing a reference object in the image.
 
 **The model's unanchored scale is not reliable enough for a fit verdict.** The app makes that failure explicit. Its actual-model simulated example includes the known ground truth, which disagrees substantially with the model. Read [the experiment, measured results and limitations](BUTTON_FREE.md), [user-facing design study](DESIGN.md) and [CV evidence boundaries](CV_EVIDENCE.md).
 

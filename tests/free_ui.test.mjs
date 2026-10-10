@@ -3,17 +3,19 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {parseHTML} from 'linkedom';
 
-let document,window,memory,requests=[],responses=[],jobResult,pendingStatus=null;
+let document,window,memory,requests=[],responses=[],jobResult,pendingStatus=null,cameraRequests=[],cameraSource=null;
 const demo=JSON.parse(fs.readFileSync(new URL('../web/free-demo.json',import.meta.url),'utf8'));
 const fixture=()=>({...structuredClone(demo),demo:false});
 before(async()=>{
  ({document,window}=parseHTML(fs.readFileSync(new URL('../web/index.html',import.meta.url),'utf8')));
  Object.assign(globalThis,{document,window,matchMedia:()=>({matches:false})});
- Object.defineProperty(globalThis,'navigator',{configurable:true,value:{onLine:true}});
+ Object.defineProperty(globalThis,'navigator',{configurable:true,value:{onLine:true,mediaDevices:{getUserMedia:async options=>{cameraRequests.push(options);if(cameraSource)return cameraSource;throw Object.assign(Error(),{name:'NotAllowedError'});}}}});
  memory=new Map();globalThis.localStorage={getItem:key=>memory.get(key)||null,setItem:(key,value)=>memory.set(key,value),removeItem:key=>memory.delete(key)};
  window.HTMLElement.prototype.scrollIntoView=function(){};
  window.HTMLElement.prototype.focus=function(){};
  window.HTMLInputElement.prototype.checkValidity=function(){return Number.isFinite(Number(this.value))&&Number(this.value)>=Number(this.min)&&Number(this.value)<=Number(this.max);};
+ const video=document.getElementById('liveCamera');video.play=async()=>{};video.pause=()=>{};
+ for(const [key,value]of Object.entries({readyState:2,videoWidth:1200,videoHeight:1600}))Object.defineProperty(video,key,{configurable:true,writable:true,value});
  // Linkedom has a getter-only select.value; model the native selection property.
  for(const id of ['kind','method','anchorPoint'])Object.defineProperty(document.getElementById(id),'value',{configurable:true,writable:true,value:id==='kind'?'jeans':id==='method'?'depth':'waist_flat'});
  globalThis.fetch=async(path,options)=>{
@@ -31,6 +33,11 @@ before(async()=>{
 const $=id=>document.getElementById(id);
 function choose(size=100){const file=new File(['x'],'test.jpg',{type:'image/jpeg'});Object.defineProperty(file,'size',{value:size});$('upload').onchange({target:{files:[file]}});}
 
+test('opening the app requests only camera permission and shows no example in the capture area',async()=>{
+ await Promise.resolve();assert.equal(cameraRequests.length,1);assert.equal(cameraRequests[0].audio,false);assert.equal(cameraRequests[0].video.facingMode.ideal,'environment');
+ assert.equal($('illustration').hidden,true);assert.equal($('guideSwitch').hidden,true);assert.equal($('demo').hidden,true);assert.match($('cameraStatus').textContent,/blocked/);assert.equal(requests.length,0);
+});
+
 test('model example labels scale failure and never renders NaN',async()=>{
  await $('demo').onclick();assert.equal($('results').hidden,false);assert.match($('confidence').textContent,/Estimated size/);assert.match($('demoTruth').textContent,/41.0 cm/);assert.doesNotMatch($('measurements').textContent,/NaN/);assert.equal($('save').disabled,true);
 });
@@ -39,7 +46,7 @@ test('anchor, undo, units and line highlight execute real client handlers',()=>{
 });
 test('endpoint edits require rechecking and can restore the detected line',async()=>{
  await $('demo').onclick();$('confirm').checked=true;$('confirm').onchange();
- const waist=[...$('measurements').querySelectorAll('button')].find(b=>b.textContent==='Waist · flat');assert.equal(waist.getAttribute('aria-pressed'),'true');
+ const waist=[...$('measurements').querySelectorAll('button')].find(b=>b.textContent==='Waist · flat');waist.onclick({detail:0});
  const before=$('measurements').textContent,handle=$('lines').querySelector('[data-endpoint="p2"]');
  handle.onkeydown({key:'ArrowRight',preventDefault(){}});
  assert.notEqual($('measurements').textContent,before);assert.equal($('confirm').checked,false);assert.equal($('save').disabled,true);assert.match($('confidence').textContent,/Estimated size/);
@@ -118,18 +125,18 @@ test('a local black-photo refusal prevents all measurement uploads',async()=>{
  delete globalThis.createImageBitmap;document.createElement=create;
 });
 
-test('the labelled photo preview and garment controls work without sending a photo',()=>{
+test('the illustrated preview and garment controls work without sending a photo',()=>{
  $('again').onclick();const count=requests.length;
- $('guideLines').onclick();assert.equal($('illustration').classList.contains('is-lines'),true);assert.equal($('guideLines').getAttribute('aria-pressed'),'true');assert.match($('guideCaption').textContent,/lines/);
+ $('guideLines').onclick();assert.equal($('illustration').classList.contains('is-lines'),true);assert.equal($('guideLines').getAttribute('aria-pressed'),'true');
  $('guidePhoto').onclick();assert.equal($('illustration').classList.contains('is-lines'),false);
- $('kindTop').onclick();assert.equal($('kind').value,'t-shirt');assert.equal($('topDrawing').hasAttribute('hidden'),false);assert.equal($('jeansDrawing').hasAttribute('hidden'),true);assert.match($('layoutGuide').textContent,/sleeves/);assert.match($('guideSource').textContent,/Illustrated/);
- $('kindJeans').onclick();assert.equal($('kind').value,'jeans');assert.equal($('kindJeans').getAttribute('aria-pressed'),'true');assert.match($('guideSource').textContent,/computer-made/);assert.equal(requests.length,count);
+ $('kindTop').onclick();assert.equal($('kind').value,'t-shirt');assert.equal($('topDrawing').hasAttribute('hidden'),false);assert.equal($('jeansDrawing').hasAttribute('hidden'),true);assert.match($('layoutGuide').textContent,/sleeves/);
+ $('kindJeans').onclick();assert.equal($('kind').value,'jeans');assert.equal($('kindJeans').getAttribute('aria-pressed'),'true');assert.equal(requests.length,count);
 });
 
 test('the photo-side measurement picker reflects endpoint edits and unit conversion',async()=>{
  await $('demo').onclick();$('cm').onclick();
+ $('linePicker').querySelector('button').onclick({detail:0});
  assert.equal($('linePicker').querySelector('button').getAttribute('aria-pressed'),'true');
- assert.equal($('editHint').hidden,false);assert.match($('overlayCaption').textContent,/Waist/);
  const before=$('linePicker').textContent;
  $('lines').querySelector('[data-endpoint="p2"]').onkeydown({key:'ArrowRight',preventDefault(){}});
  assert.notEqual($('linePicker').textContent,before);assert.match($('overlayCaption').textContent,/Waist/);
@@ -159,4 +166,13 @@ test('reading the example resets unrelated garment, scale and second-photo choic
  globalThis.fetch=async(path,options)=>path==='./example-jeans.jpg'?{ok:true,blob:async()=>new Blob(['example'],{type:'image/jpeg'})}:original(path,options);
  await $('helpPhoto').onclick();globalThis.fetch=original;
  assert.equal($('kind').value,'jeans');assert.equal($('method').value,'depth');assert.equal($('customFov').checked,false);assert.equal($('secondClear').hidden,true);assert.equal(requests.length,count);assert.equal($('preview').hidden,false);
+});
+
+test('the live shutter creates a reviewable photo, releases the stream and waits before uploading',async()=>{
+ let stops=0;cameraSource={getTracks:()=>[{stop:()=>stops++,addEventListener(){}}]};
+ $('again').onclick();await $('enableCamera').onclick();assert.equal($('liveCamera').hidden,false);
+ const create=document.createElement.bind(document),before=requests.length;
+ document.createElement=name=>name==='canvas'?{getContext:()=>({drawImage(){}}),toBlob:callback=>callback(new Blob(['camera frame'],{type:'image/jpeg'}))}:create(name);
+ try{await $('take').onclick();}finally{document.createElement=create;cameraSource=null;}
+ assert.equal(stops,1);assert.equal($('liveCamera').srcObject,null);assert.equal($('preview').hidden,false);assert.equal($('cameraPrompt').hidden,true);assert.equal($('measure').hidden,false);assert.equal(requests.length,before);
 });

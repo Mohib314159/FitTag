@@ -43,11 +43,16 @@ This records Mohib's directions and preferences, separately from implementation 
 
 ## Current assistant choices, open to revision
 
-- After the main deployment, the owner said the UI still felt lifeless and invited further improvements. The photo-led capture canvas, typography contrast, simpler garment tabs and initially selected result line are assistant design choices in response; they have not yet received user acceptance.
-
 - Up to six photos in a browser-held selection, with individual checks/results and removal, stop and retry. This limit is an implementation choice, not a user-specified number.
 - CPU thread count is configurable from one to four; measurement capacity from one to two. Free Render defaults stay at one/one. A better-resourced deployment can opt into tested parallel settings after checking memory and latency.
 - Quick photo checks run on-device. Geometry still checks framing/outline before invoking the depth model. Ambiguous client checks warn or leave manual review available.
 - The walkthrough uses a public computer-made example with a known size; no personal garment data. It teaches checking/editing lines and supplying a known measurement.
 
 - Current refinement: changing a selected photo offers camera, library or removal while retaining the current photo until replacement. Batch review retains the chosen units, garment name and scale/line edits. These are assistant choices supporting the requested phone usability, not additional user requirements.
+
+## Camera-first correction (2026-10-10)
+
+- The owner rejected the latest photo-led redesign and asked to restore the preceding interface. That visual pass is reverted.
+- Opening the app should request rear-camera permission and use the existing photo area for its live view, rather than showing an illustration or example. The browser controls whether a permission popup appears; already-granted permission can open directly.
+- Keep choosing an existing photo available. The camera capture is reviewed locally before the explicit Read photo upload. Stop the camera on selection, navigation and backgrounding; show recovery when permission is denied, hardware is busy or playback cannot start.
+- This changes capture and presentation, not the experimental measurement model or its accuracy claims.

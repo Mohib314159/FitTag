@@ -1,11 +1,5 @@
 # Current branch verification
 
-## Photo-led UI refinement (2026-10-10)
-
-Fresh client regression: 48 Node checks passed, including provenance changes on garment switching, no upload from the preview controls, immediately editable first-result endpoints, correction invalidating acknowledgment, batch retention and service-worker cache/privacy handling. The targeted FastAPI installable-assets/private-dataset test passed. Build, JavaScript syntax and whitespace checks passed. No backend/model change was made; the 100 main-promotion checks below belong to that prior revision.
-
-Phone-browser checks at 360 x 640, 390 x 844 and 430 x 932 covered capture/results without horizontal page overflow, guide switching, selected endpoints and keyboard correction. Primary actions remain 52 px; guide controls are 44 px and garment tabs 48 px. Examples remain labelled computer-made. This is browser verification, not physical iPhone camera/installation or proof of better user outcomes.
-
 See [BUTTON_FREE.md](BUTTON_FREE.md) for the experiment and accuracy limits. Render/container verification and the main promotion checks are recorded below; physical-device checks remain outstanding.
 
 ## Earlier hardware build verification
@@ -101,3 +95,9 @@ Fresh checks before promotion: 45 Python API/geometry/job/parallel tests, 48 Nod
 Published commit `87a067f745fc42bcfd639b1324a5653f85f83305` to GitHub `main` through normal Git/GCM and re-fetched it to verify the root Blueprint. Render automatically deployed that commit to the existing free `fittag` service and reported Deploy succeeded in 1m09s. The live app is https://fittag.onrender.com/.
 
 Verified all 21 shell assets, `/health`, `/experiment`, the standalone manifest and retained `/button.html` return 200. Configuration reports the model present and one-photo capacity. The live app uploaded the public computer-made example through the real job API, displayed processing and returned five editable depth-mode rows with the accuracy warning intact. It reported 13.71 seconds of server processing for this one test; this is neither a speed guarantee nor real-garment accuracy evidence. The browser console reported no errors or warnings. Physical-device installation remains untested.
+
+## Camera-first correction (2026-10-10)
+
+Reverted the rejected photo-led visual pass and restored the preceding interface. The initial illustration/example controls are hidden; a new rear-camera module requests permission on opening and places the live view in the existing photo area. Capture produces a full-frame bounded JPEG locally; selection stops the stream and preserves the explicit Read photo upload. Navigation/backgrounding releases tracks and invalidates pending captures. Denied, unavailable, busy, interrupted and autoplay-blocked cameras have recovery copy and phone-camera/library paths. The measurement engine, accuracy warnings and Render capacity are unchanged.
+
+Fresh checks: all 59 Node client/camera/service-worker tests passed, including real client shutter/permission handlers with mocked camera streams, late permission, stream release, capture failure, and offline camera-module availability. The targeted FastAPI static-assets/private-dataset check passed (one existing Starlette/httpx deprecation warning). Build, JS syntax and Git whitespace checks passed. The local browser showed the restored heading, camera-permission waiting state and no initial illustration at 360 x 640, 390 x 844 and 430 x 932; no horizontal overflow, 52 px primary actions and no console warnings/errors. The in-app browser did not complete its pending camera permission request; these checks do not establish physical iPhone camera operation or installation. No personal camera frames or garment dimensions were used as evidence.

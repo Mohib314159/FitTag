@@ -19,7 +19,7 @@ def main():
         d.line([(198,354),(198,222),(316,222)],fill="#fbf8f2",width=24)
         d.line([(198,280),(287,280)],fill="#fbf8f2",width=24)
         img.resize((size,size),Image.Resampling.LANCZOS).save(web / f"icons/icon-{size}.png")
-    for name in ("index.html","button.html","free.html","free.css","free.js","free.mjs","request.mjs","photo-check.mjs","batch.mjs","example-jeans.jpg","free-demo.json","free-demo.jpg","app.css","app.js","client.mjs","sw.js","manifest.webmanifest","demo.json","demo.jpg","example-photo.jpg"):
+    for name in ("index.html","button.html","free.html","free.css","free.js","free.mjs","request.mjs","photo-check.mjs","batch.mjs","camera.mjs","example-jeans.jpg","free-demo.json","free-demo.jpg","app.css","app.js","client.mjs","sw.js","manifest.webmanifest","demo.json","demo.jpg","example-photo.jpg"):
         shutil.copy2(web / name, ROOT / "docs" / name)
     shutil.copytree(web / "icons", ROOT / "docs/icons", dirs_exist_ok=True)
     (ROOT / "docs/.nojekyll").touch()

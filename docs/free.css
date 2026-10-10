@@ -67,13 +67,7 @@
   margin:0 0 12px
 }
 .capture-heading {
-  padding:16px 0 22px
-}
-.capture-heading h1 em {
-  font-family:Georgia,"Times New Roman",serif;
-  font-weight:400;
-  letter-spacing:-2px;
-  color:var(--accent)
+  padding:20px 0 28px
 }
 .capture-heading p:last-child {
   font-size:15px;
@@ -103,7 +97,7 @@
   gap:0
 }
 .guide-switch button {
-  min-height:44px;
+  min-height:36px;
   padding:7px 12px;
   font-size:12px;
   border:0;
@@ -119,8 +113,8 @@
   height:440px;
   min-height:0;
   border:0;
-  background:#25384c;
-  border-radius:3px;
+  background:#eee6da;
+  border-radius:8px;
   overflow:hidden
 }
 .capture-app .viewfinder #preview {
@@ -129,36 +123,59 @@
   object-fit:contain;
   padding:12px
 }
+.capture-app .viewfinder #liveCamera {
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+  background:#171917
+}
+.camera-prompt {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:26px;
+  background:var(--paper);
+  color:var(--ink);
+  text-align:center
+}
+.camera-prompt p {
+  max-width:28em;
+  margin:0;
+  font-size:14px;
+  line-height:1.5
+}
+.camera-prompt button {
+  min-height:44px;
+  padding:10px 18px;
+  font-size:14px
+}
+.camera-live .frame-corner {
+  border-color:#fff;
+  z-index:1
+}
 .capture-app #illustration {
   height:100%;
   width:100%;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:16px 0
+  padding:14px 0 44px
 }
 .capture-app .viewfinder svg {
-  width:100%;
-  height:100%;
-  max-height:none;
-  opacity:1;
-  transform:none
-}
-.capture-app .viewfinder #jeansDrawing {
-  transform:rotate(-3deg);
-  transition:transform .25s ease
-}
-#jeansDrawing image {
-  filter:drop-shadow(0 4px 6px #0005)
-}
-.capture-app .is-lines #jeansDrawing {
-  transform:rotate(0)
-}
-.capture-app .viewfinder #topDrawing {
   width:310px;
-  padding:15px 0 50px;
+  height:100%;
+  max-height:390px;
+  opacity:1;
   transform:rotate(-4deg);
   transition:transform .22s ease
+}
+.capture-app .is-lines svg {
+  transform:rotate(0)
 }
 .guide-lines {
   opacity:0;
@@ -166,32 +183,6 @@
 }
 .is-lines .guide-lines {
   opacity:1
-}
-.is-lines .guide-lines path[pathLength] {
-  animation:draw-guide .4s ease both
-}
-@keyframes draw-guide {
-  from { stroke-dasharray:1;stroke-dashoffset:1 }
-  to { stroke-dasharray:1;stroke-dashoffset:0 }
-}
-.capture-app .is-lines #topDrawing {
-  transform:rotate(0)
-}
-.guide-tag rect {
-  fill:var(--white)
-}
-#jeansDrawing .guide-tag text {
-  font-size:36px
-}
-.guide-source {
-  position:absolute;
-  top:12px;
-  left:12px;
-  padding:6px 8px;
-  font-size:10px;
-  color:var(--ink);
-  background:var(--paper);
-  border-radius:2px
 }
 .guide-lines text {
   font-size:18px;
@@ -202,28 +193,17 @@
 .capture-app .frame-corner {
   width:17px;
   height:17px;
-  border-color:#f2eee5;
+  border-color:#b4a796;
   opacity:.7
 }
 .capture-app .frame-label {
-  bottom:12px;
-  left:12px;
-  right:auto;
+  bottom:17px;
+  left:20px;
+  right:20px;
   font-size:12px;
   font-family:inherit;
   letter-spacing:0;
-  color:var(--ink);
-  background:var(--white);
-  padding:8px 12px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  border-radius:2px
-}
-.add-symbol {
-  font-size:19px;
-  line-height:1;
-  color:var(--accent)
+  color:#726658
 }
 .capture-app #selectedLabel {
   background:var(--white);
@@ -259,33 +239,15 @@
   width:100%;
   font-size:14px;
   font-weight:600;
-  padding:14px 0;
-  min-height:60px;
+  padding:12px 0;
+  min-height:46px;
   border:0;
   border-top:1px solid var(--line);
   border-radius:0
 }
-.example-copy {
-  text-align:left
-}
-.example-copy b {
-  font-size:15px;
-  font-weight:650
-}
-.example-copy small {
-  display:block;
-  font-size:12px;
-  font-weight:400;
-  color:var(--muted);
-  margin-top:3px
-}
-.example-action .example-arrow {
+.example-action span {
   color:var(--accent);
-  font-size:23px;
-  transition:transform .2s ease
-}
-.example-action:hover .example-arrow {
-  transform:translate(2px,-2px)
+  font-size:19px
 }
 .has-photo #guideSwitch,.has-photo #guideHint,.has-photo #demo {
   display:none
@@ -295,36 +257,23 @@
 }
 .kind-choice {
   display:flex;
-  gap:20px;
-  margin:0 0 16px;
-  border-bottom:1px solid var(--line)
+  gap:10px;
+  margin:0 0 12px
 }
 .kind-choice button {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex:none;
+  flex:1;
   min-height:50px;
-  padding:8px 0;
-  border:0;
-  border-radius:0;
+  padding:10px 12px;
+  border-radius:4px;
   font-size:14px;
   font-weight:500;
-  background:transparent;
-  color:var(--muted)
-}
-.kind-choice svg {
-  width:23px;
-  height:25px;
-  fill:none;
-  stroke:currentColor;
-  stroke-width:1.3
+  background:var(--white)
 }
 .kind-choice [aria-pressed=true] {
-  background:transparent;
-  border:0;
-  box-shadow:inset 0 -2px 0 var(--ink);
-  color:var(--ink)
+  background:#f5e8df;
+  border:1px solid #ba4a32;
+  box-shadow:inset 0 -2px 0 #ba4a32;
+  color:#8b281b
 }
 .capture-app summary {
   min-height:52px;
@@ -1055,7 +1004,7 @@
     letter-spacing:-1.3px
   }
   .capture-app .capture-heading {
-    padding:10px 0 18px
+    padding:15px 0 23px
   }
   .capture-heading p:last-child {
     font-size:14px;
@@ -1076,13 +1025,10 @@
   }
   .capture-app .viewfinder svg {
     max-height:none;
-    width:100%
-  }
-  .capture-app .viewfinder #topDrawing {
     width:235px
   }
   .capture-app #illustration {
-    padding:16px 0
+    padding:8px 0 37px
   }
   .guide-hint {
     font-size:11px;
@@ -1189,7 +1135,7 @@
     height:215px
   }
   .capture-app #illustration {
-    padding:12px 0
+    padding-bottom:33px
   }
   .waiting-photo {
     height:200px
@@ -1221,5 +1167,5 @@
   color:var(--paper)
 }
 .capture-app .kind-choice [aria-pressed=true]:hover {
-  background:transparent
+  background:#f5e8df
 }
