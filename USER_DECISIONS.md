@@ -43,6 +43,8 @@ This records Mohib's directions and preferences, separately from implementation 
 
 ## Current assistant choices, open to revision
 
+- After the main deployment, the owner said the UI still felt lifeless and invited further improvements. The photo-led capture canvas, typography contrast, simpler garment tabs and initially selected result line are assistant design choices in response; they have not yet received user acceptance.
+
 - Up to six photos in a browser-held selection, with individual checks/results and removal, stop and retry. This limit is an implementation choice, not a user-specified number.
 - CPU thread count is configurable from one to four; measurement capacity from one to two. Free Render defaults stay at one/one. A better-resourced deployment can opt into tested parallel settings after checking memory and latency.
 - Quick photo checks run on-device. Geometry still checks framing/outline before invoking the depth model. Ambiguous client checks warn or leave manual review available.

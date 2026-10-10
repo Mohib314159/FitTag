@@ -1,5 +1,15 @@
 # FitTag UI review · 10 October 2026
 
+## Photo-led refinement after main deployment
+
+The owner felt the shipped interface still looked lifeless. The opening drawing and equally weighted controls made it resemble a form. This pass uses the existing public computer-made jeans photo on a denim-coloured canvas, mixed serif/sans typography, small garment illustrations in simple tabs, and a clearer example action. Source labels remain visible; no personal image or extra photo payload was introduced.
+
+Photo/Lines now reveals a labelled waist/inseam guide on the same example photograph, with a short line-drawing transition. These are guide lines, not live detection or an accuracy demonstration. Reduced-motion settings disable the transition. T-shirt mode retains its illustrated guide and changes the provenance label accordingly. Garment selection is above the photo, and the camera/library actions stay at the bottom on phones.
+
+Results select the first available measurement immediately and expose its editable endpoints. The caption, table and picker remain synchronized; changing an endpoint still invalidates save acknowledgment. This reduces the extra tap needed to discover editing, but no user-time saving has been measured.
+
+Revisited the official [Depop seller page](https://www.depop.com/gb/sell/) and [Photoroom batch page](https://www.photoroom.com/batch) as references for item-centred presentation and simple actions. This pass read those public pages; it did not test their authenticated flows or reuse their imagery, branding or impact claims. Earlier visual studies remain listed below.
+
 ## What was actually studied
 
 - [Depop seller page](https://www.depop.com/gb/sell/) and [published iPhone screenshots](https://apps.apple.com/gb/app/depop-buy-sell-clothes/id518684914): inspected at a phone width. The seller page includes a real app listing screen. Clothing imagery, strong type, short actions and a distinct identity make a sparse interface feel alive. FitTag borrows that clarity, not Depop's brand, marketplace feed or claims.
@@ -33,4 +43,4 @@ A supplied measurement sets size, but it does not prove the other dimensions. Th
 
 Client checks exercise actual handlers for preview switching, garment choice, photo-side selection, endpoint editing, unit conversion, save/copy/remove/undo, stale-state protection and tutorial reset. The browser checks the rendered guides, demo correction, saved example, undo, live example processing and phone layouts. Test counts are engineering evidence, not user-impact statistics.
 
-A browser-sized viewport does not verify Safari, native camera behavior, screen-reader experience or OS installation. Render latency remains unmeasured on that host. No fresh native file chooser is used in this iteration because the available automation previously stalled even with short timeouts.
+A browser-sized viewport does not verify Safari, native camera behavior, screen-reader experience or OS installation. The deployment notes record individual Render photo timings; they are not a latency or capacity guarantee. No fresh native file chooser is used in this iteration because the available automation previously stalled even with short timeouts.

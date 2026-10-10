@@ -1,5 +1,11 @@
 # Current branch verification
 
+## Photo-led UI refinement (2026-10-10)
+
+Fresh client regression: 48 Node checks passed, including provenance changes on garment switching, no upload from the preview controls, immediately editable first-result endpoints, correction invalidating acknowledgment, batch retention and service-worker cache/privacy handling. The targeted FastAPI installable-assets/private-dataset test passed. Build, JavaScript syntax and whitespace checks passed. No backend/model change was made; the 100 main-promotion checks below belong to that prior revision.
+
+Phone-browser checks at 360 x 640, 390 x 844 and 430 x 932 covered capture/results without horizontal page overflow, guide switching, selected endpoints and keyboard correction. Primary actions remain 52 px; guide controls are 44 px and garment tabs 48 px. Examples remain labelled computer-made. This is browser verification, not physical iPhone camera/installation or proof of better user outcomes.
+
 See [BUTTON_FREE.md](BUTTON_FREE.md) for the experiment and accuracy limits. Render/container verification and the main promotion checks are recorded below; physical-device checks remain outstanding.
 
 ## Earlier hardware build verification

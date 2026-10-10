@@ -39,7 +39,7 @@ test('anchor, undo, units and line highlight execute real client handlers',()=>{
 });
 test('endpoint edits require rechecking and can restore the detected line',async()=>{
  await $('demo').onclick();$('confirm').checked=true;$('confirm').onchange();
- const waist=[...$('measurements').querySelectorAll('button')].find(b=>b.textContent==='Waist · flat');waist.onclick({detail:0});
+ const waist=[...$('measurements').querySelectorAll('button')].find(b=>b.textContent==='Waist · flat');assert.equal(waist.getAttribute('aria-pressed'),'true');
  const before=$('measurements').textContent,handle=$('lines').querySelector('[data-endpoint="p2"]');
  handle.onkeydown({key:'ArrowRight',preventDefault(){}});
  assert.notEqual($('measurements').textContent,before);assert.equal($('confirm').checked,false);assert.equal($('save').disabled,true);assert.match($('confidence').textContent,/Estimated size/);
@@ -118,18 +118,18 @@ test('a local black-photo refusal prevents all measurement uploads',async()=>{
  delete globalThis.createImageBitmap;document.createElement=create;
 });
 
-test('the illustrated preview and garment controls work without sending a photo',()=>{
+test('the labelled photo preview and garment controls work without sending a photo',()=>{
  $('again').onclick();const count=requests.length;
- $('guideLines').onclick();assert.equal($('illustration').classList.contains('is-lines'),true);assert.equal($('guideLines').getAttribute('aria-pressed'),'true');
+ $('guideLines').onclick();assert.equal($('illustration').classList.contains('is-lines'),true);assert.equal($('guideLines').getAttribute('aria-pressed'),'true');assert.match($('guideCaption').textContent,/lines/);
  $('guidePhoto').onclick();assert.equal($('illustration').classList.contains('is-lines'),false);
- $('kindTop').onclick();assert.equal($('kind').value,'t-shirt');assert.equal($('topDrawing').hasAttribute('hidden'),false);assert.equal($('jeansDrawing').hasAttribute('hidden'),true);assert.match($('layoutGuide').textContent,/sleeves/);
- $('kindJeans').onclick();assert.equal($('kind').value,'jeans');assert.equal($('kindJeans').getAttribute('aria-pressed'),'true');assert.equal(requests.length,count);
+ $('kindTop').onclick();assert.equal($('kind').value,'t-shirt');assert.equal($('topDrawing').hasAttribute('hidden'),false);assert.equal($('jeansDrawing').hasAttribute('hidden'),true);assert.match($('layoutGuide').textContent,/sleeves/);assert.match($('guideSource').textContent,/Illustrated/);
+ $('kindJeans').onclick();assert.equal($('kind').value,'jeans');assert.equal($('kindJeans').getAttribute('aria-pressed'),'true');assert.match($('guideSource').textContent,/computer-made/);assert.equal(requests.length,count);
 });
 
 test('the photo-side measurement picker reflects endpoint edits and unit conversion',async()=>{
  await $('demo').onclick();$('cm').onclick();
- $('linePicker').querySelector('button').onclick({detail:0});
  assert.equal($('linePicker').querySelector('button').getAttribute('aria-pressed'),'true');
+ assert.equal($('editHint').hidden,false);assert.match($('overlayCaption').textContent,/Waist/);
  const before=$('linePicker').textContent;
  $('lines').querySelector('[data-endpoint="p2"]').onkeydown({key:'ArrowRight',preventDefault(){}});
  assert.notEqual($('linePicker').textContent,before);assert.match($('overlayCaption').textContent,/Waist/);
