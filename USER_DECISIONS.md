@@ -56,3 +56,7 @@ This records Mohib's directions and preferences, separately from implementation 
 - Opening the app should request rear-camera permission and use the existing photo area for its live view, rather than showing an illustration or example. The browser controls whether a permission popup appears; already-granted permission can open directly.
 - Keep choosing an existing photo available. The camera capture is reviewed locally before the explicit Read photo upload. Stop the camera on selection, navigation and backgrounding; show recovery when permission is denied, hardware is busy or playback cannot start.
 - This changes capture and presentation, not the experimental measurement model or its accuracy claims.
+
+## New design experiment (2026-10-10)
+
+The owner rejected the overall UI again and asked for a completely new researched direction, with no merge. This supersedes deployment permission for this experiment: keep `codex/fittag-camera-studio` separate from main. Explore a working camera-and-editor interface; do not substitute a visual mockup or imply that changing the UI validates the button-free scale. Research, iteration and verification are recorded in DESIGN_STUDIO.md.

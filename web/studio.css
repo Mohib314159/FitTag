@@ -1,0 +1,166 @@
+/* Camera studio experiment. Photo is the canvas; controls have one job. */
+.studio-app {--paper:#f8f8f6;--ink:#171717;--muted:#696966;--line:#dfdfdb;--white:#fff;--accent:#171717;--green:#171717;background:var(--paper);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+.studio-app header {height:64px;padding:12px 24px;max-width:1100px;margin:auto;border:0}
+.studio-app .brand {font-size:23px;letter-spacing:-1px;font-weight:750;gap:0}
+.studio-app .brand svg {display:none}
+.studio-app header .quiet {font-size:14px;min-height:44px;color:inherit}
+.studio-app main {max-width:1100px;padding:0 24px 30px}
+.studio-app h1 {font-size:30px;letter-spacing:-1px;line-height:1.1}
+.studio-app h2 {font-size:21px;letter-spacing:-.5px}
+.studio-app .primary,.studio-app .primary:hover {background:#171717;border-color:#171717;color:#fff}
+.studio-app .secondary {background:transparent;border-color:var(--line);color:var(--ink)}
+.studio-app button {border-radius:6px;min-height:44px;transition:opacity .14s,background .14s}
+.studio-app button:hover {background:#e9e9e5}
+.studio-app button:active:not(:disabled) {transform:scale(.98)}
+.studio-app button:focus-visible,.studio-app a:focus-visible,.studio-app summary:focus-visible,.studio-app input:focus-visible,.studio-app select:focus-visible {outline:2px solid #b53322;outline-offset:4px}
+.studio-app input,.studio-app select {font-size:16px}
+.studio-app[data-screen=capture] {background:#111;color:#fff}
+.studio-app[data-screen=capture] header {color:#fff}
+.studio-app[data-screen=capture] header button:hover {background:#303030}
+.studio-app[data-screen=capture] main {padding-bottom:0}
+.studio-app .capture-heading {position:relative;padding:12px 0 22px}
+.studio-app .capture-heading h1 {font-size:24px;letter-spacing:-.6px;margin-bottom:6px;padding-right:90px}
+.studio-app .capture-heading p {font-size:14px;color:#b5b5b0;margin:0}
+.studio-app #settings {position:absolute;right:0;top:8px;color:#c8c8c4;padding:10px 0 10px 12px}
+.studio-app #settings:hover {background:#303030}
+.studio-app .workspace {display:flex;flex-direction:column;gap:0}
+.studio-app .capture-canvas {position:relative;width:100%}
+.studio-app .viewfinder {height:clamp(340px,calc(100svh - 340px),650px);background:#1d1d1d;border:1px solid #333;border-radius:0}
+.studio-app .viewfinder #preview,.studio-app .viewfinder #liveCamera {width:100%;height:100%;padding:0;object-fit:contain;background:#1d1d1d}
+.studio-app .camera-prompt {color:#fff;background:#1d1d1d;padding:28px;gap:18px}
+.studio-app .camera-prompt>.camera-symbol {width:32px;height:24px;opacity:.55;margin-bottom:8px}
+.studio-app .camera-prompt>.camera-symbol:before {width:10px;height:10px;top:5px;left:9px}
+.studio-app .camera-prompt>.camera-symbol:after {width:12px;left:8px}
+.studio-app .camera-prompt p {font-size:15px;max-width:24em;color:#d5d5d0}
+.studio-app .camera-prompt .secondary {color:#fff;border-color:#656565;padding:12px 22px}
+.studio-app .camera-prompt .quiet {color:#c4c4bf}
+.studio-app .camera-prompt button:hover {background:#383838}
+.studio-app .frame-corner {border-color:#7a7a74;z-index:1;width:18px;height:18px;opacity:1}
+.studio-app .viewfinder.camera-live .frame-corner {border-color:#fff}
+.studio-app .guide-hint {padding:14px 0 0;justify-content:center;gap:20px;color:#b5b5b0;font-size:12px}
+.studio-app .guide-hint span:before {display:none}
+.studio-app #selectedLabel {font-size:12px;background:#111;color:#fff;bottom:12px;right:12px;padding:7px 10px}
+.studio-app .capture-panel {padding:18px 0 0;max-width:600px;margin:auto;width:100%}
+.studio-app .kind-choice {justify-content:center;gap:32px;margin:0 0 10px}
+.studio-app .kind-choice button {color:#ababab;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:8px 2px;flex:none;min-height:44px;font-size:14px}
+.studio-app .kind-choice button[aria-pressed=true],.studio-app .kind-choice button[aria-pressed=true]:hover {color:#fff;background:transparent;border-bottom-color:#fff}
+.studio-app .kind-choice button:hover {color:#fff;background:transparent}
+.studio-app .actions {display:grid;grid-template-columns:1fr 86px 1fr;align-items:center;gap:28px;position:static;padding:0;margin:12px auto 0;background:transparent;border:0;max-width:370px}
+.studio-app .actions #take {grid-column:2;grid-row:1;width:74px;height:74px;min-height:74px;border:3px solid white;box-shadow:inset 0 0 0 4px #111;border-radius:50%;background:white!important;font-size:0;color:transparent;padding:0;justify-self:center}
+.studio-app .actions #take .camera-symbol {display:none}
+.studio-app .actions #choose,.studio-app .actions #help {display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px;min-height:68px;font-size:12px;color:#deded8;background:transparent;border:0;padding:6px}
+.studio-app #choose {grid-column:1;grid-row:1}
+.studio-app #help {grid-column:3;grid-row:1}
+.studio-app .photos-symbol {display:block;width:26px;height:25px;border:1.5px solid currentColor;border-radius:3px;position:relative}
+.studio-app .photos-symbol:before {content:'';position:absolute;width:14px;height:10px;border-left:1.5px solid currentColor;border-top:1.5px solid currentColor;transform:rotate(45deg);left:4px;top:12px}
+.studio-app .photos-symbol:after {content:'';position:absolute;left:4px;top:4px;width:4px;height:4px;border-radius:50%;background:currentColor}
+.studio-app .help-symbol {display:grid;place-items:center;width:26px;height:26px;border:1.5px solid currentColor;border-radius:50%;font-size:17px}
+.studio-app .capture-note {color:#aaa;font-size:12px;text-align:center;margin:14px 0 4px}
+.studio-app .privacy {color:#8c8c88;font-size:11px;text-align:center;margin:0;padding:0 0 max(18px,env(safe-area-inset-bottom))}
+.studio-app .photo-check {color:#d0d0cb;text-align:center;font-size:13px;padding:0 0 6px}
+.studio-app .photo-check[data-level=stop] {color:#ff9c86}
+.studio-app .photo-check[data-level=warn] {color:#e9ce89}
+.studio-app .photo-check:before {color:#fff}
+.studio-app .has-photo .capture-panel {padding-top:12px}
+.studio-app .has-photo .actions {max-width:600px;grid-template-columns:1fr 110px;gap:12px}
+.studio-app .has-photo .actions #measure {display:block;order:0;grid-column:1;grid-row:1;height:56px;margin:0;background:#fff;border-color:#fff;color:#111;font-size:16px;border-radius:6px}
+.studio-app .has-photo .actions #take {order:0;grid-column:2;grid-row:1;width:110px;height:56px;min-height:56px;border:1px solid #555;box-shadow:none;border-radius:6px;background:transparent!important;font-size:13px;color:#fff}
+.studio-app .has-photo .actions #choose,.studio-app .has-photo .actions #help {display:none}
+.studio-app[data-screen=capture] .lower,.studio-app[data-screen=capture] footer {display:none}
+.studio-app .notice {background:#ededdf;color:#35352e;border-left-color:#8c8c76;margin:8px 0}
+.studio-app .error {background:#ffede7;border-color:#b53322;color:#541d12;position:relative;z-index:6}
+.studio-app[data-screen=capture] .error {position:fixed;left:18px;right:18px;bottom:15px;max-width:560px;margin:auto}
+.studio-app dialog {color:#171717;background:#f8f8f6;border:0;border-radius:16px;max-height:85svh;overflow-y:auto;padding:24px;width:calc(100% - 24px);max-width:460px}
+.studio-app dialog::backdrop {background:#000a}
+.studio-app dialog>button:first-child {float:right}
+.studio-app dialog h2 {clear:both;padding-top:8px}
+.studio-app .settings-dialog .measurement-options {margin-top:0}
+.studio-app .settings-dialog .batch-link {font-size:14px;color:#171717}
+.studio-app .settings-dialog #install {width:100%;border-top:1px solid #dfdfdb;border-radius:0;text-align:left}
+.studio-app .guidance li>span {color:#696966}
+.studio-app #processing {max-width:530px;padding:12px 0 30px}
+.studio-app .waiting-photo {height:clamp(240px,49svh,480px);border-radius:0;background:#e8e8e4}
+.studio-app .waiting-photo img {object-fit:contain}
+.studio-app .scan-line,.studio-app .activity-track {display:none}
+.studio-app .waiting-badge {background:#171717;color:#fff;left:14px;bottom:14px;border-radius:4px;padding:9px 12px}
+.studio-app .activity-dot {background:#fff}
+.studio-app .processing-steps {margin:22px 0;border-color:var(--line)}
+.studio-app .processing-steps li[aria-current=true] {color:#171717;border-color:#171717}
+.studio-app #processingTitle {font-size:26px;margin-bottom:12px}
+.studio-app #progressText {font-size:15px;color:#696966;line-height:1.5}
+.studio-app .waiting-note {font-size:13px}
+.studio-app #results {padding-top:8px}
+.studio-app #results>.section-top {margin-bottom:8px}
+.studio-app #resultMode {font-size:12px;color:#696966;letter-spacing:0;text-transform:none}
+.studio-app #results h1 {font-size:27px;margin-bottom:8px;letter-spacing:-.8px}
+.studio-app #resultSubtitle {font-size:14px;line-height:1.5;margin:0 0 8px}
+.studio-app .scale-hint {color:#696966;font-size:12px;margin:0 0 18px}
+.studio-app .result-layout {grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:36px;align-items:start}
+.studio-app .result-layout figure {border-radius:0;background:transparent;overflow:visible}
+.studio-app .measurement-photo {background:#e6e6e1;border-radius:0}
+.studio-app .result-layout img {max-height:560px}
+.studio-app .result-layout figcaption {padding:18px 0 8px;background:transparent;color:#4e4e49;font-size:14px;border:0}
+.studio-app .result-layout figcaption strong {color:#171717;font-size:30px;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.studio-app .line-navigation {display:flex;gap:18px;justify-content:center;align-items:center;padding:0 0 10px;border-bottom:1px solid var(--line);color:#696966;font-size:12px}
+.studio-app .line-navigation button {min-width:60px;font-size:24px;border:0;background:transparent}
+.studio-app .line-picker {padding:12px 0 8px;gap:22px;margin:0;scrollbar-width:none}
+.studio-app .line-picker button {padding:7px 0;min-height:44px;min-width:0;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent!important;color:#6d6d65;font-size:12px;flex:none}
+.studio-app .line-picker button[aria-pressed=true] {color:#171717;border-bottom-color:#171717}
+.studio-app .line-picker button strong {display:none}
+.studio-app .edit-controls {background:transparent;border:0;padding:4px 0 0;gap:10px;color:#696966}
+.studio-app .edit-controls p {font-size:12px}
+.studio-app #sizePanel {padding-top:0}
+.studio-app #reviewSizes {margin:0 0 28px;height:52px}
+.studio-app .confidence {background:#efefea;border:0;border-left:2px solid #8b8b80;color:#42423b;font-size:14px;line-height:1.55;padding:14px;margin:14px 0}
+.studio-app .units button {font-size:13px;border-radius:0}
+.studio-app .measurement-link {font-size:14px;color:inherit;min-height:44px}
+.studio-app #anchorDetails {border-bottom:1px solid var(--line);margin-bottom:18px}
+.studio-app .saved-actions button {background:transparent}
+.studio-app .saved-item {padding:20px 0}
+.studio-app .saved-item h2 {font-size:19px}
+.studio-app .batch-item {border-radius:0}
+@media(max-width:680px) {
+ .studio-app header {height:60px;padding:8px 20px}
+ .studio-app main {padding:0 20px 24px}
+ .studio-app[data-screen=capture] main {padding:0}
+ .studio-app .capture-heading {padding:7px 20px 18px}
+ .studio-app .capture-heading h1 {font-size:23px;margin:0 0 6px}
+ .studio-app #settings {right:20px;top:3px;font-size:13px}
+ .studio-app .viewfinder,.studio-app .has-photo .viewfinder {height:calc(100svh - 385px - env(safe-area-inset-top) - env(safe-area-inset-bottom));min-height:260px;width:100%;border-left:0;border-right:0}
+ .studio-app .viewfinder #preview {height:100%}
+ .studio-app .guide-hint {padding:12px 10px 0;font-size:11px;gap:24px}
+ .studio-app .capture-panel {padding:12px 20px 0}
+ .studio-app .kind-choice {margin:0 0 2px;gap:32px}
+ .studio-app .actions {position:static;padding:0;margin-top:10px;gap:24px}
+ .studio-app .has-photo .actions {position:sticky;bottom:0;background:#111;padding:10px 0}
+ .studio-app .capture-note {margin:10px 0 3px}
+ .studio-app .privacy {font-size:10px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+ .studio-app .result-layout {display:flex;flex-direction:column;gap:22px}
+ .studio-app .result-layout figure,.studio-app #sizePanel {width:100%}
+ .studio-app .measurement-photo {margin:0 -20px}
+ .studio-app .result-layout img {max-height:clamp(330px,calc(100svh - 330px),560px)}
+ .studio-app .result-layout figcaption {padding-top:15px}
+ .studio-app .line-navigation {padding-bottom:2px}
+ .studio-app .line-picker {gap:24px;padding-top:10px}
+ .studio-app .line-picker button {min-height:44px}
+ .studio-app #reviewSizes {margin-bottom:24px}
+ .studio-app dialog {margin:auto auto 8px;border-radius:16px 16px 8px 8px}
+ .studio-app #processing {padding-top:8px}
+ .studio-app .waiting-photo {height:calc(100svh - 390px);min-height:220px;margin:0 -20px}
+ .studio-app .processing-steps {margin:20px 0}
+ .studio-app .lower {margin-top:24px}
+}
+@media(max-height:700px) and (max-width:680px) {
+ .studio-app .capture-heading {padding-bottom:12px}
+ .studio-app .viewfinder,.studio-app .has-photo .viewfinder {min-height:240px;height:calc(100svh - 365px)}
+ .studio-app .guide-hint {padding-top:8px}
+ .studio-app .capture-panel {padding-top:6px}
+ .studio-app .kind-choice button {min-height:44px}
+ .studio-app .actions {margin-top:4px}
+ .studio-app .capture-note {margin-top:6px}
+ .studio-app .privacy {padding-bottom:8px}
+}
+@media(prefers-reduced-motion:reduce) {.studio-app *,.studio-app *:before,.studio-app *:after {animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.studio-app .error {padding-right:58px}
+.studio-app #dismissError {position:absolute;top:4px;right:4px;min-width:44px;min-height:44px;font-size:25px;color:#541d12;border:0;padding:8px;background:transparent}

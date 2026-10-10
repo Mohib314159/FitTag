@@ -38,3 +38,7 @@ A browser-sized viewport does not verify Safari, native camera behavior, screen-
 ## Requested correction (2026-10-10)
 
 The owner rejected the subsequent photo-led visual pass. Restored this preceding interface and replaced the initial illustrated photo area with a rear-camera preview. The preview starts on opening after browser permission; Open camera and Use phone camera provide recovery, and Choose photo remains in the bottom actions. Example imagery is no longer foregrounded on the opening screen. Camera frames stay local until the existing Read photo action. Camera behavior on a physical iPhone remains to be checked.
+
+## Alternative branch
+
+The owner requested a completely new experiment after rejecting the main interface. `codex/fittag-camera-studio` explores camera-first capture and a focused line editor. The actual reference study, iterations and limitations are in DESIGN_STUDIO.md. This branch is not merged or deployed to main.

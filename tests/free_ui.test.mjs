@@ -13,6 +13,7 @@ before(async()=>{
  memory=new Map();globalThis.localStorage={getItem:key=>memory.get(key)||null,setItem:(key,value)=>memory.set(key,value),removeItem:key=>memory.delete(key)};
  window.HTMLElement.prototype.scrollIntoView=function(){};
  window.HTMLElement.prototype.focus=function(){};
+ for(const dialog of document.querySelectorAll('dialog')){dialog.showModal=()=>dialog.setAttribute('open','');dialog.close=()=>dialog.removeAttribute('open');}
  window.HTMLInputElement.prototype.checkValidity=function(){return Number.isFinite(Number(this.value))&&Number(this.value)>=Number(this.min)&&Number(this.value)<=Number(this.max);};
  const video=document.getElementById('liveCamera');video.play=async()=>{};video.pause=()=>{};
  for(const [key,value]of Object.entries({readyState:2,videoWidth:1200,videoHeight:1600}))Object.defineProperty(video,key,{configurable:true,writable:true,value});
@@ -175,4 +176,30 @@ test('the live shutter creates a reviewable photo, releases the stream and waits
  document.createElement=name=>name==='canvas'?{getContext:()=>({drawImage(){}}),toBlob:callback=>callback(new Blob(['camera frame'],{type:'image/jpeg'}))}:create(name);
  try{await $('take').onclick();}finally{document.createElement=create;cameraSource=null;}
  assert.equal(stops,1);assert.equal($('liveCamera').srcObject,null);assert.equal($('preview').hidden,false);assert.equal($('cameraPrompt').hidden,true);assert.equal($('measure').hidden,false);assert.equal(requests.length,before);
+});
+
+test('photo settings use a sheet and the batch action closes it before changing screens',()=>{
+ $('again').onclick();$('settings').onclick();assert.equal($('settingsDialog').hasAttribute('open'),true);
+ assert.equal($('settingsDialog').contains($('method')),true);assert.equal($('settingsDialog').contains($('openBatch')),true);
+ $('openBatch').onclick();assert.equal($('settingsDialog').hasAttribute('open'),false);assert.equal(document.body.dataset.screen,'batch');
+ $('batchBack').onclick();assert.equal(document.body.dataset.screen,'capture');
+ $('settings').onclick();$('closeSettings').onclick();assert.equal($('settingsDialog').hasAttribute('open'),false);
+});
+
+test('measurement review starts ready to edit and arrow navigation respects both boundaries',async()=>{
+ await $('demo').onclick();const buttons=()=>[...$('linePicker').querySelectorAll('button')];
+ assert.equal(buttons()[0].getAttribute('aria-pressed'),'true');assert.equal($('previousLine').disabled,true);
+ assert.match($('linePosition').textContent,/1 \/ 5/);assert.ok($('lines').querySelector('[data-endpoint="p1"]'));
+ $('nextLine').onclick();assert.equal(buttons()[1].getAttribute('aria-pressed'),'true');assert.match($('linePosition').textContent,/2 \/ 5/);
+ $('previousLine').onclick();$('previousLine').onclick();assert.equal(buttons()[0].getAttribute('aria-pressed'),'true');
+ for(let index=0;index<8;index++)$('nextLine').onclick();assert.equal(buttons()[4].getAttribute('aria-pressed'),'true');assert.equal($('nextLine').disabled,true);
+ $('inches').onclick();assert.match($('overlayCaption').textContent,/in/);assert.match($('linePosition').textContent,/5 \/ 5/);
+ $('reviewSizes').onclick();assert.equal($('reviewSizes').hidden,true);
+ await $('demo').onclick();assert.equal($('reviewSizes').hidden,false);assert.equal(document.body.dataset.screen,'results');
+});
+
+test('an error can be dismissed without losing the selected photo or starting an upload',async()=>{
+ $('again').onclick();choose();const before=requests.length;$('method').value='distance';$('cameraHeight').value='';await $('measure').onclick();
+ assert.equal($('error').hidden,false);$('dismissError').onclick();assert.equal($('error').hidden,true);assert.equal($('preview').hidden,false);assert.equal(requests.length,before);
+ $('method').value='depth';
 });

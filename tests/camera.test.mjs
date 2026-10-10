@@ -54,3 +54,18 @@ test('no frame, no canvas or failed encoding never creates a photo',async()=>{
  f.video.readyState=2;await assert.rejects(()=>captureFrame(f.video,{createCanvas:()=>({getContext:()=>null})}),/could not take/);
  await assert.rejects(()=>captureFrame(f.video,{createCanvas:()=>({getContext:()=>({drawImage(){}}),toBlob:callback=>callback(null)})}),/could not be captured/);
 });
+
+test('returning before an old permission answer settles restarts once and uses a fresh stream',async()=>{
+ let grant,requests=0,newStops=0;const newTrack=new EventTarget();newTrack.stop=()=>newStops++;const newStream={getTracks:()=>[newTrack]};
+ const f=fixture(()=>{requests++;return requests===1?new Promise(resolve=>grant=resolve):Promise.resolve(newStream);});
+ const first=f.camera.start();await Promise.resolve();f.camera.stop();const restart=f.camera.start(),duplicate=f.camera.start();
+ grant(f.stream);assert.equal(await first,false);assert.equal(await restart,true);await duplicate;
+ assert.equal(requests,2);assert.equal(f.stops(),1);assert.equal(f.video.srcObject,newStream);assert.equal(f.camera.ready(),true);
+ f.camera.stop();assert.equal(newStops,1);
+});
+
+test('leaving again cancels a queued camera restart without another permission request',async()=>{
+ let grant,requests=0;const f=fixture(()=>{requests++;return new Promise(resolve=>grant=resolve);});
+ const first=f.camera.start();await Promise.resolve();f.camera.stop();const restart=f.camera.start();f.camera.stop();grant(f.stream);
+ await first;assert.equal(await restart,false);assert.equal(requests,1);assert.equal(f.video.srcObject,null);assert.equal(f.stops(),1);
+});

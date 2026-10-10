@@ -1,5 +1,5 @@
-const CACHE = 'fittag-shell-free-v8';
-const SHELL = ['./','./index.html','./app.css','./app.js','./client.mjs','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon.svg','./demo.json','./demo.jpg','./free.css','./free.js','./free.mjs','./request.mjs','./photo-check.mjs','./batch.mjs','./camera.mjs','./example-jeans.jpg','./free-demo.json','./free-demo.jpg','./button.html'];
+const CACHE = 'fittag-shell-studio-v2';
+const SHELL = ['./','./index.html','./app.css','./app.js','./client.mjs','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon.svg','./demo.json','./demo.jpg','./free.css','./free.js','./free.mjs','./request.mjs','./photo-check.mjs','./batch.mjs','./camera.mjs','./studio.css','./example-jeans.jpg','./free-demo.json','./free-demo.jpg','./button.html'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('fittag-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{

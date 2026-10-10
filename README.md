@@ -1,4 +1,6 @@
-# FitTag Lab — button-free PWA experiment
+# FitTag — camera studio design preview
+
+This branch (`codex/fittag-camera-studio`) explores a new phone interface. It is not merged or deployed to the main service. See [DESIGN_STUDIO.md](DESIGN_STUDIO.md) for the researched references, design iterations and verification. Run the existing FastAPI server to try the complete flow locally.
 
 **Open FitTag:** [fittag.onrender.com](https://fittag.onrender.com/). Runs on Render from `main`. Button-free size estimates still need checking. On iPhone, use Safari → Share → Add to Home Screen. The separate [preview](https://fittag-lab.onrender.com/) remains available.
 

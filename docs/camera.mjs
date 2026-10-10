@@ -1,6 +1,6 @@
 // Camera frames stay on-device. The measurement client decides when to upload.
 export function createCamera(video,{mediaDevices=globalThis.navigator?.mediaDevices,onState=()=>{},canStart=()=>true}={}){
- let stream=null,pending=null,generation=0;
+ let stream=null,pending=null,generation=0,pendingGeneration=null;
  const release=source=>source?.getTracks().forEach(track=>track.stop());
  const ready=()=>Boolean(stream&&video.readyState>=2&&video.videoWidth&&video.videoHeight);
  const state=(name,message)=>onState(name,message);
@@ -9,9 +9,15 @@ export function createCamera(video,{mediaDevices=globalThis.navigator?.mediaDevi
  video.addEventListener('loadeddata',frame);video.addEventListener('playing',frame);
  async function start(){
   if(!canStart())return false;
-  if(pending)return pending;
+  if(pending){
+   if(pendingGeneration===generation)return pending;
+   const restart=generation;
+   state('requesting','Allow camera access in the browser prompt.');
+   return pending.then(()=>restart===generation&&canStart()?start():false);
+  }
   if(!mediaDevices?.getUserMedia){state('unavailable','Live camera isn’t available in this browser. Use your phone camera or choose a photo.');return false;}
   const ticket=++generation;
+  pendingGeneration=ticket;
   state('requesting','Allow camera access in the browser prompt.');
   pending=Promise.resolve().then(async()=>{
    try{
@@ -35,7 +41,7 @@ export function createCamera(video,{mediaDevices=globalThis.navigator?.mediaDevi
     release(stream);stream=null;video.srcObject=null;video.hidden=true;
     const message=error?.name==='NotAllowedError'?'Camera access is blocked. Allow it in your browser’s site settings, or choose a photo.':error?.name==='NotFoundError'?'No camera was found. You can choose a photo instead.':error?.name==='NotReadableError'?'The camera is being used elsewhere. Close that app, then try again.':'The camera could not start. Try again, use your phone camera, or choose a photo.';
     state('unavailable',message);return false;
-   }finally{pending=null;}
+   }finally{pending=null;pendingGeneration=null;}
   });
   return pending;
  }

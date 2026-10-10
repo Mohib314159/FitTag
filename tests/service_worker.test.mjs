@@ -18,7 +18,7 @@ test('offline shell and example work at a repository subpath',async()=>{
  assert.equal((await w.event('fetch',{method:'GET',url:w.base+'free.js?v=free-1'})).path,'./free.js');
  assert.equal((await w.event('fetch',{method:'GET',url:w.base+'free-demo.json'})).offline,true);
  assert.equal((await w.event('fetch',{method:'GET',url:w.base+'request.mjs'})).offline,true);
- for(const asset of ['batch.mjs','photo-check.mjs','camera.mjs','example-jeans.jpg'])assert.equal((await w.event('fetch',{method:'GET',url:w.base+asset})).offline,true);
+ for(const asset of ['batch.mjs','photo-check.mjs','camera.mjs','studio.css','example-jeans.jpg'])assert.equal((await w.event('fetch',{method:'GET',url:w.base+asset})).offline,true);
 });
 test('API requests, photos and foreign origins never enter the cache',async()=>{
  const w=worker();await w.event('install');const count=w.stored.size;
