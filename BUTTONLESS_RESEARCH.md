@@ -1,5 +1,9 @@
 # Buttonless scale audit
 
+Follow-up: [more reliable buttonless options](BUTTONLESS_OPTIONS.md) compares
+sensor capture, original HEIC depth, newer RGB models and garment-specific
+learning, with sources and a proposed real-garment evaluation plan.
+
 The owner reaffirmed buttonless upload on 10 October 2026. The paper experiment
 was set aside, unmerged. This branch investigates ordinary photos without
 substituting a button, coin, card or paper requirement.
