@@ -78,7 +78,7 @@
 .capture-app header nav{display:flex;gap:0}.capture-app header .quiet{font-size:12px;padding:10px}.capture-app input[type=text]{font:inherit;font-size:14px;width:100%;min-height:46px;padding:10px;border:1px solid var(--line);border-radius:3px;background:#fff}.capture-app .viewfinder[role=button]{cursor:pointer}.capture-app .viewfinder[role=button]:focus-visible{outline:3px solid #171717;outline-offset:3px}.capture-app .viewfinder[role=button]:hover{border-color:#999999}
 
 /* Phone ergonomics: native-size fields, stable thumb actions, quiet surfaces. */
-.capture-app{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.capture-app{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100svh}
 .capture-app button:hover{background:#f0f0f0}
 .capture-app .primary:hover,.capture-app #take:hover,.capture-app #measure:hover{background:#303030}
 .capture-app .primary{background:#171717;border-color:#171717;color:#fff}
