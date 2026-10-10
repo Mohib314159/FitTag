@@ -33,16 +33,18 @@ export function assessPixels({data,width,height},info={}){
 }
 export async function checkPhoto(file){
  if(typeof createImageBitmap!=='function')return {level:'unchecked',message:'Check that every edge is visible and the photo is sharp.'};
- let bitmap;
+ let bitmap,decodeTimer,expired=false;
  try{
   const info=photoInfo(await file.slice(0,262144).arrayBuffer(),file.type);
   if(info.width&&info.height&&(info.width*info.height>25000000||Math.min(info.width,info.height)/Math.max(info.width,info.height)<.1))return {level:'stop',message:'Choose a normal camera photo under 25 megapixels.'};
-  bitmap=await createImageBitmap(file,{resizeWidth:Math.min(512,info.width||512),imageOrientation:'from-image'});
+  const decoding=createImageBitmap(file,{resizeWidth:Math.min(512,info.width||512),imageOrientation:'from-image'});
+  decoding.then(image=>{if(expired)image.close();},()=>{});
+  bitmap=await Promise.race([decoding,new Promise((_,reject)=>{decodeTimer=setTimeout(()=>{expired=true;reject(Error('Photo check timed out'));},8000);})]);
   const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;
   const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);
   const result=assessPixels(ctx.getImageData(0,0,canvas.width,canvas.height),info);
   result.thumbnail=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.72));
   return result;
- }catch(error){if(['InvalidStateError','EncodingError'].includes(error.name))return {level:'stop',message:'This photo won’t open. Choose another photo.'};return {level:'unchecked',message:'Check that every edge is visible and the photo is sharp.'};}
- finally{bitmap?.close();}
+ }catch(error){if(['InvalidStateError','EncodingError'].includes(error.name)&&!(/image\/hei[cf]/i.test(file.type)||/\.hei[cf]$/i.test(file.name||'')))return {level:'stop',message:'This photo won’t open. Choose another photo.'};return {level:'unchecked',message:'Photo selected. Check every edge before reading it.'};}
+ finally{clearTimeout(decodeTimer);bitmap?.close();}
 }

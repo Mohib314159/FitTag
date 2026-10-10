@@ -26,6 +26,7 @@ import asyncio
 import io
 import time
 from PIL import Image, ImageOps, UnidentifiedImageError
+from pillow_heif import register_heif_opener
 from pathlib import Path
 
 import cv2
@@ -56,6 +57,7 @@ cv2.setNumThreads(1)
 from api.capacity import ComputeGate, bounded_env
 MEASURE_LOCK = ComputeGate(bounded_env('FITTAG_PARALLEL_PHOTOS', 1, 2))
 Image.MAX_IMAGE_PIXELS = 25_000_000
+register_heif_opener(thumbnails=False)
 
 
 @app.middleware("http")
@@ -66,7 +68,7 @@ async def private_responses(request, call_next):
     response = await call_next(request)
     if request.url.path.startswith(("/measure", "/measurement-jobs", "/overlays", "/guidance", "/experiment")):
         response.headers["Cache-Control"] = "no-store"
-    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest", "/free.js", "/free.mjs", "/free.css", "/request.mjs", "/batch.mjs", "/photo-check.mjs"):
+    if request.url.path in ("/", "/index.html", "/sw.js", "/app.js", "/app.css", "/client.mjs", "/manifest.webmanifest", "/free.js", "/free.mjs", "/free.css", "/request.mjs", "/batch.mjs", "/photo-check.mjs", "/camera.mjs", "/navigation.mjs", "/studio.css"):
         response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
@@ -101,7 +103,7 @@ def _decode_image(raw):
             img = cv2.cvtColor(np.asarray(source), cv2.COLOR_RGB2BGR)
         return img
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
-        raise HTTPException(400, "Unreadable image. Choose a JPEG, PNG or WebP photo; export HEIC as JPEG.")
+        raise HTTPException(400, "This photo could not be opened. Choose another JPEG, PNG, WebP or HEIC photo.")
 
 
 @app.get("/health")

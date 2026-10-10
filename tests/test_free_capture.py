@@ -162,3 +162,15 @@ def test_bad_second_photo_skips_both_depth_estimates(client,monkeypatch):
     assert result['ok'] and result['mode']=='shape'
     assert 'cropped' in result['notes'][0]
     assert all('value_cm' not in row for row in result['rows'])
+
+
+def test_heic_photo_reaches_the_existing_reference_free_engine(client):
+    image = Image.open(io.BytesIO(photo(False)))
+    exif = Image.Exif(); exif[41989] = 24
+    raw = io.BytesIO(); image.save(raw, 'HEIF', quality=95, exif=exif)
+    response = client.post('/measure-free', files={'file':('IMG_0100.HEIC',raw.getvalue(),'image/heic')}, data={'estimate':'false'})
+    assert response.status_code == 200
+    result = response.json()
+    assert result['ok'] and result['mode'] == 'shape'
+    assert len(result['rows']) == 5
+    assert api.camera_fov(raw.getvalue()) is not None

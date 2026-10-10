@@ -64,3 +64,9 @@ The owner rejected the overall UI again and asked for a completely new researche
 ## Camera studio approval (2026-10-10)
 
 After reviewing the working local app, the owner approved the camera-studio design, authorized merging it onto main and asked for the Render link on the main README. This supersedes the experiment's no-merge restriction. Keep this direction as the baseline for future refinements. Approval concerns the interface; measurement accuracy and physical-device verification limits still apply.
+
+## Navigation, iPhone import and measurement reliability (2026-10-10)
+
+The owner reported that choosing a photo did nothing, Back was missing, and the interface did not work well on iPhone. Fix the working flow and phone ergonomics, including native photo formats; a successful viewport screenshot is not a physical-device test.
+
+The owner also rejected button-only measurement as unreliable and asked to investigate A4 paper or common reference objects, or a properly validated alternative. Reliability takes priority over the earlier no-reference preference. Do not promise a bulletproof method or present UI approval as measurement validation. A4 is the next implementation priority; coins need separate geometric and real-photo validation.

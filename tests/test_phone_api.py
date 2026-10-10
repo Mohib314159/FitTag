@@ -97,6 +97,18 @@ def test_exif_orientation_and_resize(client, monkeypatch):
     assert observed == [(1800,900,3)]
 
 
+def test_heic_upload_decodes_and_resizes_without_exposing_metadata(client, monkeypatch):
+    observed = []
+    monkeypatch.setattr(server, "_phone_measure", lambda img, *args: observed.append(img.shape) or {"ok": False})
+    image = Image.new("RGB", (2400, 1200), "white")
+    exif = Image.Exif(); exif[41989] = 24; exif[315] = "private test metadata"
+    raw = io.BytesIO(); image.save(raw, "HEIF", exif=exif, quality=80)
+    response = client.post("/measure", files={"file": ("IMG_0100.HEIC", raw.getvalue(), "image/heic")})
+    assert response.status_code == 200
+    assert observed == [(900, 1800, 3)]
+    assert "private test metadata" not in response.text
+
+
 def test_busy_service_still_answers_health(client, monkeypatch):
     entered, release = threading.Event(), threading.Event()
     def busy(*args):

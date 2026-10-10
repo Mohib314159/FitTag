@@ -3,7 +3,8 @@ export function formatValue(cm, unit) { return (cm / (unit === 'in' ? 2.54 : 1))
 export function validateFile(file) {
   if (!file) return 'Choose a photo first.';
   if (file.size > 12 * 1024 * 1024) return 'Choose a photo smaller than 12 MB.';
-  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) return 'Choose a JPEG, PNG or WebP image. Export HEIC photos as JPEG first.';
+  const type=(file.type||'').toLowerCase();
+  if (!['image/jpeg','image/png','image/webp','image/heic','image/heif'].includes(type) && !(!type && /\.(jpe?g|png|webp|heic|heif)$/i.test(file.name||''))) return 'Choose a photo from your library: JPEG, PNG, WebP or HEIC.';
   return '';
 }
 export function comparisonText(row, target) {

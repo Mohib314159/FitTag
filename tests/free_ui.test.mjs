@@ -9,6 +9,8 @@ const fixture=()=>({...structuredClone(demo),demo:false});
 before(async()=>{
  ({document,window}=parseHTML(fs.readFileSync(new URL('../web/index.html',import.meta.url),'utf8')));
  Object.assign(globalThis,{document,window,matchMedia:()=>({matches:false})});
+ const historyEntries=[];let historyIndex=0;
+ window.history={replaceState:state=>historyEntries[historyIndex]=state,pushState:state=>{historyEntries.splice(++historyIndex);historyEntries[historyIndex]=state;},back:()=>{if(historyIndex>0){const event=new window.Event('popstate');event.state=historyEntries[--historyIndex];window.dispatchEvent(event);}}};
  Object.defineProperty(globalThis,'navigator',{configurable:true,value:{onLine:true,mediaDevices:{getUserMedia:async options=>{cameraRequests.push(options);if(cameraSource)return cameraSource;throw Object.assign(Error(),{name:'NotAllowedError'});}}}});
  memory=new Map();globalThis.localStorage={getItem:key=>memory.get(key)||null,setItem:(key,value)=>memory.set(key,value),removeItem:key=>memory.delete(key)};
  window.HTMLElement.prototype.scrollIntoView=function(){};
@@ -152,7 +154,7 @@ test('saved measurements retain units, copy their caveat, and undo removal witho
  const actions=$('savedList').querySelector('.saved-actions');await actions.children[0].onclick();assert.match(copied,/Check with a tape/);assert.match(copied,/in/);
  actions.children[1].onclick();assert.equal(JSON.parse(memory.get('fittag-lab-saved')).length,0);assert.equal($('restoreSaved').hidden,false);
  $('restoreSaved').onclick();assert.equal(JSON.parse(memory.get('fittag-lab-saved'))[0].name,'Practice pair');assert.equal($('restoreSaved').hidden,true);
- $('forget').onclick();assert.equal(memory.size,0);assert.match($('savedList').textContent,/favourite pieces/);$('savedBack').onclick();assert.equal($('capture').hidden,false);
+ $('forget').onclick();assert.equal(memory.size,0);assert.match($('savedList').textContent,/favourite pieces/);$('savedBack').onclick();assert.equal($('results').hidden,false);
 });
 
 test('saving a new item invalidates an old undo rather than overwriting the new measurements',async()=>{
@@ -202,4 +204,33 @@ test('an error can be dismissed without losing the selected photo or starting an
  $('again').onclick();choose();const before=requests.length;$('method').value='distance';$('cameraHeight').value='';await $('measure').onclick();
  assert.equal($('error').hidden,false);$('dismissError').onclick();assert.equal($('error').hidden,true);assert.equal($('preview').hidden,false);assert.equal(requests.length,before);
  $('method').value='depth';
+});
+
+test('iPhone HEIC selection immediately enters review without uploading and allows a server preview fallback',async()=>{
+ $('again').onclick();const before=requests.length;
+ const photo=new File(['heic bytes'],'IMG_0100.HEIC',{type:'image/heic'});
+ $('upload').onchange({target:{files:[photo]}});
+ assert.equal($('capture').classList.contains('has-photo'),true);assert.equal($('goBack').hidden,false);
+ assert.match($('captureHeading').innerHTML,/Check your photo/);assert.match($('previewStatus').textContent,/Opening/);
+ await Promise.resolve();await Promise.resolve();
+ $('preview').onerror();assert.match($('previewStatus').textContent,/Photo selected/);assert.equal($('measure').disabled,false);assert.equal(requests.length,before);
+ $('method').value='shape';await $('measure').onclick();
+ assert.equal(requests.findLast(r=>r.path==='./measure-free-jobs').options.body.get('file').type,'image/heic');
+});
+
+test('Back preserves a selected photo and result edits, and closes a sheet first',async()=>{
+ const preview=$('preview').src;
+ $('lines').querySelector('[data-endpoint="p2"]').onkeydown({key:'ArrowRight',preventDefault(){}});const edited=$('measurements').textContent;
+ $('reviewSizes').onclick();assert.equal($('backToLines').hidden,false);$('goBack').onclick();assert.equal($('reviewSizes').hidden,false);assert.equal($('measurements').textContent,edited);
+ $('openSaved').onclick();$('goBack').onclick();assert.equal($('results').hidden,false);assert.equal($('measurements').textContent,edited);
+ $('goBack').onclick();assert.equal($('capture').hidden,false);assert.equal($('preview').src,preview);
+ $('settings').onclick();assert.equal($('settingsDialog').hasAttribute('open'),true);$('goBack').onclick();assert.equal($('settingsDialog').hasAttribute('open'),false);assert.equal($('preview').src,preview);
+ $('goBack').onclick();assert.equal($('preview').hidden,true);assert.equal($('measure').hidden,true);
+});
+
+test('choosing the same file again resets the picker and unsupported files show a visible error',()=>{
+ $('upload').value='prior-photo';let clicks=0;$('upload').click=()=>clicks++;
+ $('choose').onclick();assert.equal($('upload').value,'');assert.equal(clicks,1);
+ $('upload').onchange({target:{files:[new File(['text'],'wrong.txt',{type:'text/plain'})]}});
+ assert.equal($('error').hidden,false);assert.match($('errorText').textContent,/photo from your library/);
 });

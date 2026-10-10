@@ -4,36 +4,86 @@ import {measurePhoto,stages} from './request.mjs';
 import {checkPhoto} from './photo-check.mjs';
 import {runBatch} from './batch.mjs';
 import {createCamera,captureFrame} from './camera.mjs';
+import {createNavigation} from './navigation.mjs';
 const $=id=>document.getElementById(id);
 let file=null,second=null,previewURL=null,current=null,baseResult=null,geometry=null,drag=null,unit='cm',active=null,run=0,controller=null,installPrompt=null,backend=null,jobURL=null;
 let quality=null,qualityPromise=Promise.resolve(),secondQuality=null,secondPromise=Promise.resolve(),batchItems=[],batchController=null,batchConcurrency=1,fromBatch=false,batchViewing=null,exampleInput=null,removedSaved=null;
 let captureTicket=0,capturing=false,resumeCamera=false;
+let resultVersion=0,photoVersion=0,previewFailed=false,pendingError=null;
 const cameraView=createCamera($('liveCamera'),{canStart:()=>!file&&!$('capture').hidden&&document.visibilityState!=='hidden',onState:(state,message)=>{
  $('cameraStatus').textContent=message;$('cameraPrompt').hidden=Boolean(file)||state==='ready';
+ $('take').disabled=!file&&['requesting','starting'].includes(state);
  $('enableCamera').disabled=state==='requesting'||state==='starting';
  $('viewfinder').classList.toggle('camera-live',state==='ready');
 }});
-$('enableCamera').onclick=()=>cameraView.start();$('nativeCamera').onclick=()=>$('camera').click();
+$('enableCamera').onclick=()=>cameraView.start();$('nativeCamera').onclick=()=>{$('camera').value='';$('camera').click();};
 window.addEventListener('pagehide',()=>{captureTicket++;cameraView.stop();});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){captureTicket++;resumeCamera=cameraView.ready();cameraView.stop();}else if(resumeCamera&&!file&&!$('capture').hidden){resumeCamera=false;void cameraView.start();}});
 window.addEventListener('pageshow',()=>{if(!file&&!$('capture').hidden)void cameraView.start();});
 const timerController=new AbortController(),healthTimeout=setTimeout(()=>timerController.abort(),10000);
 fetch('./experiment',{signal:timerController.signal}).then(async r=>{backend=r.ok;if(!r.ok)$('modeNotice').hidden=false;else {const config=await r.json();batchConcurrency=Math.max(1,Math.min(2,config.parallel_photos||1));}}).catch(()=>{}).finally(()=>clearTimeout(healthTimeout));
-function show(name){document.body.dataset.screen=name;if(name!=='capture'){captureTicket++;cameraView.stop();}for(const id of ['capture','processing','results','batch','saved'])$(id).hidden=id!==name;document.body.classList.toggle('is-processing',name==='processing');$('error').hidden=true;window.scrollTo?.({top:0,behavior:'instant'});if(name==='capture'&&!file)void cameraView.start();}
+function displayScreen(name){document.body.dataset.screen=name;if(name!=='capture'){captureTicket++;cameraView.stop();}for(const id of ['capture','processing','results','batch','saved'])$(id).hidden=id!==name;document.body.classList.toggle('is-processing',name==='processing');$('error').hidden=true;window.scrollTo?.({top:0,behavior:'instant'});if(name==='capture'&&!file)void cameraView.start();}
+function stopReading(){if(!controller)return;++run;controller.abort();if(jobURL)fetch(jobURL,{method:'DELETE',keepalive:true}).catch(()=>{});controller=null;jobURL=null;}
+const navigation=createNavigation((route,canBack)=>{
+ if(route.screen!=='processing'&&route.screen!=='results')stopReading();
+ for(const dialog of document.querySelectorAll('dialog'))if(dialog.id!==route.dialog&&dialog.hasAttribute('open'))dialog.close();
+ let screen=route.screen;
+ if(screen==='camera'){if(file)clear();screen='capture';}
+ if(screen==='photo')screen='capture';
+ if(['results','sizes'].includes(screen)&&(!current||route.resultVersion!==resultVersion))screen='capture';
+ if(screen==='sizes')screen='results';
+ displayScreen(screen);
+ $('goBack').hidden=!canBack;
+ if(screen==='results'){
+  $('reviewSizes').hidden=route.screen==='sizes';$('backToLines').hidden=route.screen!=='sizes';
+  if(route.screen==='sizes'){$('confidence').scrollIntoView({block:'start',behavior:'auto'});$('confidence').focus({preventScroll:true});}
+ }
+ if(route.dialog&&!$(route.dialog).hasAttribute('open'))$(route.dialog).showModal();
+ if(pendingError){const message=pendingError;pendingError=null;error(message);}
+});
+function show(name){
+ const screen=name==='capture'?(file?'photo':'camera'):name;
+ navigation.go({screen,resultVersion:screen==='results'?resultVersion:undefined,photoVersion:['photo','processing'].includes(screen)?photoVersion:undefined},{replace:!!navigation.current().dialog||navigation.current().screen==='processing'||(screen==='photo'&&navigation.current().screen==='photo')});
+}
+function openDialog(id){navigation.go({...navigation.current(),dialog:id});}
+function closeDialog(id){$(id).close();if(navigation.current().dialog===id)navigation.back();}
+function goBack(){
+ if(controller){stopReading();navigation.back();return;}
+ rememberBatchReview();navigation.back();
+}
+$('goBack').onclick=goBack;
+for(const dialog of document.querySelectorAll('dialog'))dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog(dialog.id);});
 function processingStage(stage){const [title,text]=stages[stage]||stages.finishing;$('processingTitle').textContent=title;$('progressText').textContent=text;$('processing').dataset.stage=stage;for(const step of $('processingSteps').children)step.setAttribute('aria-current',String(step.dataset.phase===(['connecting','uploading'].includes(stage)?'send':stage==='finishing'?'ready':'read')));}
 function error(message){$('errorText').textContent=message;$('error').hidden=false;$('error').focus();}
 function captureCopy(selected=false){$('captureHeading').innerHTML=selected?'Check your photo.':'Lay it flat.';$('captureLead').textContent=selected?'Every edge visible? You’re ready.':'Keep every edge in the frame.';}
-function selected(next){exampleInput=null;const problem=validateFile(next);if(problem)return error(problem);captureTicket++;file=next;cameraView.stop();clearSecond();if(previewURL)URL.revokeObjectURL(previewURL);file=next;previewURL=URL.createObjectURL(file);$('preview').src=previewURL;$('preview').hidden=false;$('illustration').hidden=true;$('selectedLabel').hidden=false;$('capture').classList.add('has-photo');$('viewfinder').removeAttribute('role');$('viewfinder').removeAttribute('tabindex');$('captureTitle').textContent='Every edge visible? Read the photo.';quality=null;captureCopy(true);$('measure').disabled=true;$('photoCheck').hidden=false;$('photoCheck').textContent='Checking photo…';qualityPromise=checkPhoto(next).then(result=>{if(file!==next)return;quality=result;$('photoCheck').textContent=result.message;$('photoCheck').dataset.level=result.level;$('measure').disabled=result.level==='stop';});$('measure').hidden=$('clear').hidden=false;$('take').textContent='Change photo';$('take').setAttribute('aria-label','Change photo');$('choose').textContent='Change photo';$('viewfinder').scrollIntoView({block:'start'});$('measure').focus({preventScroll:true});}
-function clear(){if(previewURL)URL.revokeObjectURL(previewURL);file=null;captureTicket++;cameraView.stop();previewURL=null;quality=null;captureCopy();exampleInput=null;$('photoCheck').hidden=true;$('preview').removeAttribute('src');$('preview').hidden=true;$('illustration').hidden=true;$('selectedLabel').hidden=true;$('capture').classList.remove('has-photo');$('viewfinder').removeAttribute('role');$('viewfinder').removeAttribute('tabindex');$('captureTitle').textContent='Flat garment. Clear floor. Straight down.';$('measure').hidden=$('clear').hidden=true;$('camera').value=$('upload').value='';$('take').innerHTML='<span class="camera-symbol" aria-hidden="true"></span>Take photo';$('choose').innerHTML='<span class="photos-symbol" aria-hidden="true"></span>Photos';$('take').setAttribute('aria-label','Take photo');clearSecond();void cameraView.start();}
+function selected(next){
+ exampleInput=null;const problem=validateFile(next);if(problem)return error(problem);
+ captureTicket++;photoVersion++;file=next;current=null;previewFailed=false;cameraView.stop();clearSecond();
+ if(previewURL)URL.revokeObjectURL(previewURL);previewURL=URL.createObjectURL(file);
+ $('previewStatus').hidden=false;$('previewStatus').textContent='Opening your photo…';
+ $('preview').src=previewURL;$('preview').hidden=false;$('illustration').hidden=true;$('selectedLabel').hidden=false;
+ $('selectedLabel').textContent='Selected · not uploaded';$('capture').classList.add('has-photo');
+ $('captureTitle').textContent='Every edge visible? Read the photo.';quality=null;captureCopy(true);
+ $('measure').disabled=true;$('photoCheck').hidden=false;$('photoCheck').textContent='Checking photo…';
+ qualityPromise=checkPhoto(next).catch(()=>({level:'unchecked',message:'Photo selected. Check the edges before reading.'})).then(result=>{
+  if(file!==next)return;quality=result;$('photoCheck').textContent=previewFailed?'Photo selected. Read it to open the preview and find the lines.':result.message;
+  $('photoCheck').dataset.level=result.level;$('measure').disabled=result.level==='stop';
+ });
+ $('measure').hidden=$('clear').hidden=false;$('take').textContent='Change photo';$('take').setAttribute('aria-label','Change photo');$('choose').textContent='Change photo';
+ show('capture');$('measure').focus({preventScroll:true});
+}
+$('preview').onload=()=>{$('previewStatus').hidden=true;};
+$('preview').onerror=()=>{if(!file)return;previewFailed=true;$('previewStatus').hidden=false;$('previewStatus').textContent='Photo selected. This browser can’t preview it yet.';$('photoCheck').textContent='Read photo to open it and find the lines.';};
+function clear(){if(previewURL)URL.revokeObjectURL(previewURL);file=null;current=null;captureTicket++;cameraView.stop();previewURL=null;quality=null;captureCopy();exampleInput=null;$('photoCheck').hidden=true;$('previewStatus').hidden=true;$('preview').removeAttribute('src');$('preview').hidden=true;$('illustration').hidden=true;$('selectedLabel').hidden=true;$('capture').classList.remove('has-photo');$('viewfinder').removeAttribute('role');$('viewfinder').removeAttribute('tabindex');$('captureTitle').textContent='Flat garment. Clear floor. Straight down.';$('measure').hidden=$('clear').hidden=true;$('camera').value=$('upload').value='';$('take').innerHTML='<span class="camera-symbol" aria-hidden="true"></span>Take photo';$('choose').innerHTML='<span class="photos-symbol" aria-hidden="true"></span>Photos';$('take').setAttribute('aria-label','Take photo');$('choose').setAttribute('aria-label','Choose photo');clearSecond();void cameraView.start();}
 function clearSecond(){second=null;secondQuality=null;$('secondFile').value='';$('secondStatus').textContent='Optional. Both photos upload only when you tap Read photo.';$('secondClear').hidden=true;}
 $('take').onclick=async()=>{
- if(file)return $('changeDialog').showModal();
+ if(file)return openDialog('changeDialog');
  if(capturing)return;
  if(!cameraView.ready())return cameraView.start();
  const ticket=++captureTicket;capturing=true;$('take').disabled=true;
  try{const photo=await captureFrame($('liveCamera'));if(ticket===captureTicket&&!$('capture').hidden)selected(photo);}
  catch(e){if(ticket===captureTicket&&!$('capture').hidden)error(e.message);}finally{capturing=false;$('take').disabled=false;}
-};$('closeChange').onclick=()=>$('changeDialog').close();for(const [id,input]of [['changeCamera','camera'],['changeLibrary','upload']])$(id).onclick=()=>{$('changeDialog').close();$(input).value='';$(input).click();};$('choose').onclick=()=>$('upload').click();for(const id of ['camera','upload'])$(id).onchange=e=>{if(e.target.files[0])selected(e.target.files[0]);};$('clear').onclick=()=>{$('changeDialog').close();clear();$('take').focus();};
+};$('closeChange').onclick=()=>closeDialog('changeDialog');for(const [id,input]of [['changeCamera','camera'],['changeLibrary','upload']])$(id).onclick=()=>{closeDialog('changeDialog');$(input).value='';$(input).click();};$('choose').onclick=()=>{$('upload').value='';$('upload').click();};for(const id of ['camera','upload'])$(id).onchange=e=>{if(e.target.files[0])selected(e.target.files[0]);};$('clear').onclick=()=>{closeDialog('changeDialog');clear();$('take').focus();};
 $('secondChoose').onclick=()=>$('secondFile').click();$('secondClear').onclick=clearSecond;$('secondFile').onchange=e=>{const candidate=e.target.files[0];if(!candidate)return;const problem=validateFile(candidate);if(problem)return error(problem);second=candidate;secondQuality=null;$('secondStatus').textContent='Checking photo…';secondPromise=checkPhoto(candidate).then(result=>{if(second!==candidate)return;secondQuality=result;$('secondStatus').textContent=result.level==='stop'?result.message:'Second photo ready. Make sure it shows the same item.';});$('secondClear').hidden=false;};
 $('method').onchange=()=>{$('distanceOptions').hidden=$('method').value!=='distance';$('secondOptions').hidden=$('method').value!=='depth';};
 $('customFov').onchange=()=>$('fov').disabled=!$('customFov').checked;
@@ -55,10 +105,10 @@ $('measure').onclick=async()=>{
  const body=new FormData();body.append('file',file);body.append('garment_type',$('kind').value);body.append('fov_deg',$('customFov').checked?$('fov').value:'0');body.append('estimate',String($('method').value==='depth'));body.append('camera_height_cm',$('method').value==='distance'?$('cameraHeight').value:'0');if(second&&$('method').value==='depth')body.append('second',second);
  show('processing');$('processingPhoto').src=previewURL;$('slowHint').hidden=true;processingStage('connecting');$('processingTitle').focus();
  try{const data=await measurePhoto(body,{signal:request.signal,onStage:stage=>{if(token===run)processingStage(stage);},onJob:url=>{requestJob=url;if(token===run)jobURL=url;if(token!==run)fetch(url,{method:'DELETE',keepalive:true}).catch(()=>{});}});if(token===run){if(exampleInput)data.demo=true,data.demo_truth_cm=exampleInput;fromBatch=false;render(data);}}
- catch(e){if(token===run){show('capture');error(e.name==='AbortError'?'The request timed out. Your photo is still selected.':e instanceof TypeError?'The connection was interrupted. Your photo is still selected. Try again when you are connected.':e.message);}}
+ catch(e){if(token===run){pendingError=e.name==='AbortError'?'The request timed out. Your photo is still selected.':e instanceof TypeError?'The connection was interrupted. Your photo is still selected. Try again when you are connected.':e.message;stopReading();navigation.back();}}
  finally{clearTimeout(timeout);clearTimeout(slow);if(request.signal.aborted&&requestJob)fetch(requestJob,{method:'DELETE',keepalive:true}).catch(()=>{});if(token===run){controller=null;jobURL=null;}}
 };
-$('cancel').onclick=()=>{++run;controller?.abort();if(jobURL)fetch(jobURL,{method:'DELETE',keepalive:true}).catch(()=>{});controller=null;jobURL=null;show('capture');$('measure').focus();};$('again').onclick=()=>{fromBatch=false;show('capture');clear();$('take').focus();};
+$('cancel').onclick=goBack;$('again').onclick=()=>{fromBatch=false;clear();show('capture');$('take').focus();};
 function selectLine(name,scroll=false){active=name;table();lines();if(scroll&&matchMedia('(max-width:680px)').matches)$('overlay').scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});}
 function table(){
  const selectedIndex=current.rows.findIndex(row=>row.name===active);$('linePosition').textContent=selectedIndex<0?'Choose a line':`${selectedIndex+1} / ${current.rows.length}`;$('previousLine').disabled=selectedIndex<=0;$('nextLine').disabled=selectedIndex===current.rows.length-1;
@@ -71,7 +121,7 @@ function lines(){const focusEndpoint=document.activeElement?.getAttribute('data-
 function rememberBatchReview(){if(fromBatch&&batchViewing)batchViewing.review={baseResult,geometry,current,active,unit,pickerOffset:$('linePicker').scrollLeft||0,name:$('itemName').value};}
 $('itemName').oninput=rememberBatchReview;
 function update(){table();lines();rememberBatchReview();$('confidence').textContent=resultMessage(current);$('resultScaleHint').textContent=current.mode==='anchored'?'Size set by you. Check the other lines.':current.mode==='shape'?'No scale yet. These are proportions, not centimetres.':'Estimated sizes. Check with a tape before using them.';$('confirm').checked=false;$('save').disabled=true;$('saveStatus').textContent='';}
-function render(data){$('reviewSizes').hidden=false;$('returnBatch').hidden=!fromBatch;$('itemName').value='';$('copyStatus').textContent='';$('demoTruth').hidden=!data.demo;$('demoScale').hidden=!data.demo;$('demoTruth').textContent=data.demo?`Example jeans: waist ${(data.demo_truth_cm?.waist_flat||41).toFixed(1)} cm; estimated waist ${data.rows.find(r=>r.name==='waist_flat')?.value_cm?.toFixed(1)||'withheld'} cm. Check the estimate with a tape or enter a known length.`:'';baseResult=data;geometry=structuredClone(data);current=geometry;active=data.rows[0]?.name||null;$('linePicker').scrollLeft=0;show('results');$('resultTitle').textContent='Check the lines.';$('resultTitle').focus();$('resultMode').textContent=data.demo?'Example · computer-made photo':'Your garment';$('overlay').src=data.overlay_url;$('anchorPoint').replaceChildren();for(const row of data.rows){const option=document.createElement('option');option.value=row.name;option.textContent=labels[row.name]||row.name;$('anchorPoint').append(option);}$('anchorCm').value='';$('anchorStatus').textContent='';$('anchorReset').hidden=true;$('notes').replaceChildren();for(const original of data.notes){const note=data.demo&&original.startsWith('Simulated garment')?'Example image made on a computer, with no button or reference object.':data.demo&&original.startsWith('Known synthetic flat waist')?'The example has a known size. Use it to practise checking and correcting an estimate.':original;const li=document.createElement('li');li.textContent=note;$('notes').append(li);}$('diagnostics').replaceChildren();const names={focal_source:'Camera focal length',diagonal_fov_deg:'Diagonal field of view',floor_depth_m:'Inferred floor depth (m)',camera_height_cm:'Supplied camera height (cm)',plane_residual_pct:'Floor median residual (%)',plane_p90_pct:'Floor 90th percentile residual (%)',tilt_deg:'Inferred floor tilt (°)',processing_seconds:'Processing time (s)'};for(const [key,label]of Object.entries(names)){if(data.diagnostics[key]===undefined)continue;const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=String(data.diagnostics[key]);$('diagnostics').append(dt,dd);}$('crossCheck').hidden=!data.cross_check;if(data.cross_check)$('crossCheck').textContent=`Two-photo check: ${data.cross_check.difference_pct}% difference. ${data.cross_check.agreed?'They agree, but both estimates could still be wrong.':'They disagree. Showing proportions instead.'}`;update();}
+function render(data){resultVersion++;$('backToLines').hidden=true;$('reviewSizes').hidden=false;$('returnBatch').hidden=!fromBatch;$('itemName').value='';$('copyStatus').textContent='';$('demoTruth').hidden=!data.demo;$('demoScale').hidden=!data.demo;$('demoTruth').textContent=data.demo?`Example jeans: waist ${(data.demo_truth_cm?.waist_flat||41).toFixed(1)} cm; estimated waist ${data.rows.find(r=>r.name==='waist_flat')?.value_cm?.toFixed(1)||'withheld'} cm. Check the estimate with a tape or enter a known length.`:'';baseResult=data;geometry=structuredClone(data);current=geometry;active=data.rows[0]?.name||null;$('linePicker').scrollLeft=0;show('results');$('resultTitle').textContent='Check the lines.';$('resultTitle').focus();$('resultMode').textContent=data.demo?'Example · computer-made photo':'Your garment';$('overlay').src=data.overlay_url;$('anchorPoint').replaceChildren();for(const row of data.rows){const option=document.createElement('option');option.value=row.name;option.textContent=labels[row.name]||row.name;$('anchorPoint').append(option);}$('anchorCm').value='';$('anchorStatus').textContent='';$('anchorReset').hidden=true;$('notes').replaceChildren();for(const original of data.notes){const note=data.demo&&original.startsWith('Simulated garment')?'Example image made on a computer, with no button or reference object.':data.demo&&original.startsWith('Known synthetic flat waist')?'The example has a known size. Use it to practise checking and correcting an estimate.':original;const li=document.createElement('li');li.textContent=note;$('notes').append(li);}$('diagnostics').replaceChildren();const names={focal_source:'Camera focal length',diagonal_fov_deg:'Diagonal field of view',floor_depth_m:'Inferred floor depth (m)',camera_height_cm:'Supplied camera height (cm)',plane_residual_pct:'Floor median residual (%)',plane_p90_pct:'Floor 90th percentile residual (%)',tilt_deg:'Inferred floor tilt (°)',processing_seconds:'Processing time (s)'};for(const [key,label]of Object.entries(names)){if(data.diagnostics[key]===undefined)continue;const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=String(data.diagnostics[key]);$('diagnostics').append(dt,dd);}$('crossCheck').hidden=!data.cross_check;if(data.cross_check)$('crossCheck').textContent=`Two-photo check: ${data.cross_check.difference_pct}% difference. ${data.cross_check.agreed?'They agree, but both estimates could still be wrong.':'They disagree. Showing proportions instead.'}`;update();}
 $('anchorApply').onclick=()=>{try{current=anchorResult(geometry,$('anchorPoint').value,parseFloat($('anchorCm').value));update();$('anchorStatus').textContent='Size set from your measurement. Check the other lines too. The allowance beside each size is a guide, not a guarantee.';$('anchorReset').hidden=false;}catch(e){$('anchorStatus').textContent=e.message;}};
 $('anchorReset').onclick=()=>{current=geometry;update();$('anchorStatus').textContent='Your measurement was removed.';$('anchorReset').hidden=true;};
 $('confirm').onchange=()=>$('save').disabled=!$('confirm').checked;for(const [id,value]of [['cm','cm'],['inches','in']])$(id).onclick=()=>{unit=value;$('cm').setAttribute('aria-pressed',String(unit==='cm'));$('inches').setAttribute('aria-pressed',String(unit==='in'));table();lines();rememberBatchReview();};
@@ -89,7 +139,7 @@ function savedList(){
 }
 $('save').onclick=()=>{if(!$('confirm').checked)return;try{localStorage.setItem('fittag-lab-saved',JSON.stringify([{name:$('itemName').value.trim().slice(0,80),date:new Date().toISOString(),mode:current.mode,unit,garment_type:current.garment_type,demo:!!current.demo,rows:current.rows,anchor:current.anchor||null,edited:!!current.edited},...saved()].slice(0,20)));$('saveStatus').textContent='Measurements saved on this device. Photos are not saved.';$('save').disabled=true;removedSaved=null;$('restoreSaved').hidden=true;$('savedStatus').textContent='';savedList();}catch{$('saveStatus').textContent='Device storage is unavailable. Your result remains visible.';}};
 $('forget').onclick=()=>{try{removedSaved=saved();localStorage.removeItem('fittag-lab-saved');savedList();$('restoreSaved').hidden=!removedSaved.length;$('savedStatus').textContent='Cleared from this device. You can undo that.';}catch{error('Device storage is unavailable.');}};
-window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('nativeInstall').hidden=false;});$('install').onclick=()=>$('installDialog').showModal();$('closeInstall').onclick=()=>$('installDialog').close();$('nativeInstall').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('nativeInstall').hidden=true;$('installDialog').close();}};
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('nativeInstall').hidden=false;});$('install').onclick=()=>openDialog('installDialog');$('closeInstall').onclick=()=>closeDialog('installDialog');$('nativeInstall').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('nativeInstall').hidden=true;closeDialog('installDialog');}};
 function network(){$('network').hidden=navigator.onLine;}window.addEventListener('online',network);window.addEventListener('offline',network);network();savedList();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
 function correct(name,endpoint,point,source){
@@ -108,14 +158,14 @@ $('copyListing').onclick=async()=>{
 };
 
 // Camera capture has explicit buttons; the preview is not an upload target.
-$('openSaved').onclick=()=>{savedList();show('saved');$('savedTitle').focus();};$('savedBack').onclick=()=>show('capture');$('restoreSaved').onclick=()=>{if(!removedSaved)return;try{localStorage.setItem('fittag-lab-saved',JSON.stringify(removedSaved));removedSaved=null;$('restoreSaved').hidden=true;$('savedStatus').textContent='Your saved measurements are back.';savedList();}catch{error('Device storage is unavailable.');}};
+$('openSaved').onclick=()=>{savedList();show('saved');$('savedTitle').focus();};$('savedBack').onclick=goBack;$('restoreSaved').onclick=()=>{if(!removedSaved)return;try{localStorage.setItem('fittag-lab-saved',JSON.stringify(removedSaved));removedSaved=null;$('restoreSaved').hidden=true;$('savedStatus').textContent='Your saved measurements are back.';savedList();}catch{error('Device storage is unavailable.');}};
 
-$('help').onclick=()=>$('helpDialog').showModal();
-$('closeHelp').onclick=()=>$('helpDialog').close();
-$('helpExample').onclick=()=>{$('helpDialog').close();$('demo').onclick();};
-$('openBatch').onclick=()=>{$('settingsDialog').close();show('batch');drawBatch();};
-$('batchBack').onclick=()=>{show('capture');};
-$('returnBatch').onclick=()=>{rememberBatchReview();fromBatch=false;show('batch');drawBatch();};
+$('help').onclick=()=>openDialog('helpDialog');
+$('closeHelp').onclick=()=>closeDialog('helpDialog');
+$('helpExample').onclick=()=>{$('demo').onclick();};
+$('openBatch').onclick=()=>{show('batch');drawBatch();};
+$('batchBack').onclick=goBack;
+$('returnBatch').onclick=()=>{rememberBatchReview();fromBatch=false;goBack();drawBatch();};
 $('batchChoose').onclick=()=>{$('batchFiles').value='';$('batchFiles').click();};
 function drawBatch(){
  $('batchList').replaceChildren();
@@ -177,14 +227,16 @@ function openBatchResult(item){
 $('demoScale').onclick=()=>{if(!current?.demo)return;$('anchorDetails').open=true;$('anchorPoint').value='waist_flat';$('anchorCm').value=String(current.demo_truth_cm?.waist_flat||41);$('anchorApply').onclick();$('tableTitle').scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});};
 
 $('helpPhoto').onclick=async()=>{
- try{const [photo,info]=await Promise.all([fetch('./example-jeans.jpg'),fetch('./free-demo.json')]);if(!photo.ok||!info.ok)throw Error();const raw=await photo.blob(),data=await info.json();$('helpDialog').close();$('kind').value='jeans';$('kind').onchange();$('method').value='depth';$('method').onchange();$('customFov').checked=false;$('customFov').onchange();show('capture');selected(new File([raw],'Example jeans.jpg',{type:'image/jpeg'}));exampleInput=data.demo_truth_cm;}
+ try{const [photo,info]=await Promise.all([fetch('./example-jeans.jpg'),fetch('./free-demo.json')]);if(!photo.ok||!info.ok)throw Error();const raw=await photo.blob(),data=await info.json();$('kind').value='jeans';$('kind').onchange();$('method').value='depth';$('method').onchange();$('customFov').checked=false;$('customFov').onchange();selected(new File([raw],'Example jeans.jpg',{type:'image/jpeg'}));exampleInput=data.demo_truth_cm;}
  catch{error('The example photo could not load. Try again when you’re connected.');}
 };
 
 void cameraView.start();
 
-$('settings').onclick=()=>$('settingsDialog').showModal();$('closeSettings').onclick=()=>$('settingsDialog').close();
+$('settings').onclick=()=>openDialog('settingsDialog');$('closeSettings').onclick=()=>closeDialog('settingsDialog');
 for(const [id,step]of [['previousLine',-1],['nextLine',1]])$(id).onclick=()=>{if(!current?.rows.length)return;const index=current.rows.findIndex(row=>row.name===active),next=Math.max(0,Math.min(current.rows.length-1,index+step));selectLine(current.rows[next].name);$('linePicker').querySelector('[aria-pressed="true"]')?.scrollIntoView({block:'nearest',inline:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});rememberBatchReview();};
-$('reviewSizes').onclick=()=>{$('reviewSizes').hidden=true;$('confidence').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});$('confidence').focus({preventScroll:true});};
+$('reviewSizes').onclick=()=>navigation.go({screen:'sizes',resultVersion});
 
 $('dismissError').onclick=()=>{$('error').hidden=true;};
+
+$('backToLines').onclick=goBack;
