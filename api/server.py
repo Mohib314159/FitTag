@@ -19,6 +19,8 @@ Endpoints
 from __future__ import annotations
 
 import base64
+import hashlib
+import os
 import sys
 import tempfile
 import uuid
@@ -49,6 +51,7 @@ from core.tryon import try_on, TRYON_DISCLAIMER
 from core.contracts import GarmentMeasurement, Measurement, BodyProfile
 
 WEB = Path(__file__).resolve().parent.parent / "web"
+UI_SHA256 = hashlib.sha256((WEB / "index.html").read_bytes()).hexdigest()
 OVERLAYS = Path(tempfile.mkdtemp(prefix="fittag_overlays_"))
 MM_PER_PX = 0.5
 
@@ -107,7 +110,7 @@ def _decode_image(raw):
 
 
 @app.get("/health")
-def health(): return {"ok": True, "service": "fittag"}
+def health(): return {"ok": True, "service": "fittag", "build": os.environ.get("RENDER_GIT_COMMIT", "local"), "ui_sha256": UI_SHA256}
 
 
 @app.post("/measure")

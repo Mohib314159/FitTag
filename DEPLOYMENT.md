@@ -27,6 +27,8 @@ Docker is not available on the local Windows host. Render successfully built and
 
 After deployment, check `/health`, `/experiment`, capture/upload in every mode, the public example and walkthrough, two-photo disagreement, scale correction/undo, saved readouts, Safari/Android installation and offline shell/example behavior. The checked-in `docs/` site is static and cannot run Python or ML uploads. Publishing on `main` does not validate the model's centimetre estimates: keep the experimental warnings and check sizes with a tape.
 
+`/health` reports the runtime `RENDER_GIT_COMMIT` (or `local`) and a SHA-256 of the served index file. Verify these and the actual public HTML after deployment rather than relying only on a dashboard Live badge. The commit variable is [provided by Render](https://render.com/docs/environment-variables). Only the release identifier and public UI hash are returned, not environment values or secrets.
+
 Official references: [Render Docker](https://render.com/docs/docker), [Blueprint specification](https://render.com/docs/blueprint-spec), [free-service limits](https://render.com/docs/free).
 
 

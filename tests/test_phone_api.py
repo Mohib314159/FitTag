@@ -109,6 +109,14 @@ def test_heic_upload_decodes_and_resizes_without_exposing_metadata(client, monke
     assert "private test metadata" not in response.text
 
 
+def test_health_identifies_the_served_release_without_returning_environment_secrets(client, monkeypatch):
+    monkeypatch.setenv('RENDER_GIT_COMMIT','a'*40)
+    monkeypatch.setenv('PRIVATE_TEST_SECRET','never return this')
+    result=client.get('/health').json()
+    assert result['ok'] and result['build']=='a'*40 and len(result['ui_sha256'])==64
+    assert 'never return this' not in str(result)
+
+
 def test_busy_service_still_answers_health(client, monkeypatch):
     entered, release = threading.Event(), threading.Event()
     def busy(*args):
