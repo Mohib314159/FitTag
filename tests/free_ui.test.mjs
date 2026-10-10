@@ -84,6 +84,7 @@ test('several selected photos produce separate reviewable results and keep edits
  assert.equal($('batch').hidden,false);assert.match($('batchList').textContent,/first.jpg/);
  assert.equal($('batchRead').disabled,false);
  await $('batchRead').onclick();assert.match($('batchStatus').textContent,/2 of 2 ready/);
+ assert.equal($('batchRead').hidden,true);
  const open=$('batchList').querySelector('button');open.onclick();
  assert.equal($('results').hidden,false);assert.equal($('returnBatch').hidden,false);
  $('anchorPoint').value='waist_flat';$('anchorCm').value='41';$('anchorApply').onclick();
@@ -115,4 +116,47 @@ test('a local black-photo refusal prevents all measurement uploads',async()=>{
  choose();await $('measure').onclick();
  assert.equal(requests.length,count);assert.match($('photoCheck').textContent,/dark/);assert.equal($('measure').disabled,true);
  delete globalThis.createImageBitmap;document.createElement=create;
+});
+
+test('the illustrated preview and garment controls work without sending a photo',()=>{
+ $('again').onclick();const count=requests.length;
+ $('guideLines').onclick();assert.equal($('illustration').classList.contains('is-lines'),true);assert.equal($('guideLines').getAttribute('aria-pressed'),'true');
+ $('guidePhoto').onclick();assert.equal($('illustration').classList.contains('is-lines'),false);
+ $('kindTop').onclick();assert.equal($('kind').value,'t-shirt');assert.equal($('topDrawing').hasAttribute('hidden'),false);assert.equal($('jeansDrawing').hasAttribute('hidden'),true);assert.match($('layoutGuide').textContent,/sleeves/);
+ $('kindJeans').onclick();assert.equal($('kind').value,'jeans');assert.equal($('kindJeans').getAttribute('aria-pressed'),'true');assert.equal(requests.length,count);
+});
+
+test('the photo-side measurement picker reflects endpoint edits and unit conversion',async()=>{
+ await $('demo').onclick();$('cm').onclick();
+ $('linePicker').querySelector('button').onclick({detail:0});
+ assert.equal($('linePicker').querySelector('button').getAttribute('aria-pressed'),'true');
+ const before=$('linePicker').textContent;
+ $('lines').querySelector('[data-endpoint="p2"]').onkeydown({key:'ArrowRight',preventDefault(){}});
+ assert.notEqual($('linePicker').textContent,before);assert.match($('overlayCaption').textContent,/Waist/);
+ $('inches').onclick();assert.match($('linePicker').textContent,/in/);assert.match($('resultScaleHint').textContent,/Estimated/);
+});
+
+test('saved measurements retain units, copy their caveat, and undo removal without photos',async()=>{
+ await $('demo').onclick();$('inches').onclick();$('itemName').value='Practice pair';$('confirm').checked=true;$('save').onclick();
+ const data=JSON.parse(memory.get('fittag-lab-saved'));assert.equal(data[0].unit,'in');assert.equal('overlay_url'in data[0],false);
+ $('openSaved').onclick();assert.equal($('saved').hidden,false);assert.match($('savedList').textContent,/Practice pair/);assert.match($('savedList').textContent,/in/);
+ let copied='';navigator.clipboard={writeText:async text=>{copied=text;}};
+ const actions=$('savedList').querySelector('.saved-actions');await actions.children[0].onclick();assert.match(copied,/Check with a tape/);assert.match(copied,/in/);
+ actions.children[1].onclick();assert.equal(JSON.parse(memory.get('fittag-lab-saved')).length,0);assert.equal($('restoreSaved').hidden,false);
+ $('restoreSaved').onclick();assert.equal(JSON.parse(memory.get('fittag-lab-saved'))[0].name,'Practice pair');assert.equal($('restoreSaved').hidden,true);
+ $('forget').onclick();assert.equal(memory.size,0);assert.match($('savedList').textContent,/favourite pieces/);$('savedBack').onclick();assert.equal($('capture').hidden,false);
+});
+
+test('saving a new item invalidates an old undo rather than overwriting the new measurements',async()=>{
+ await $('demo').onclick();$('itemName').value='New example';$('confirm').checked=true;$('save').onclick();assert.equal($('restoreSaved').hidden,true);
+ $('restoreSaved').onclick();const data=JSON.parse(memory.get('fittag-lab-saved'));assert.equal(data.length,1);assert.equal(data[0].name,'New example');$('forget').onclick();
+});
+
+test('reading the example resets unrelated garment, scale and second-photo choices before upload',async()=>{
+ $('again').onclick();choose();$('method').value='distance';$('kindTop').onclick();$('customFov').checked=true;
+ $('secondFile').onchange({target:{files:[new File(['x'],'old-second.jpg',{type:'image/jpeg'})]}});
+ const original=globalThis.fetch,count=requests.length;$('helpDialog').close=()=>{};
+ globalThis.fetch=async(path,options)=>path==='./example-jeans.jpg'?{ok:true,blob:async()=>new Blob(['example'],{type:'image/jpeg'})}:original(path,options);
+ await $('helpPhoto').onclick();globalThis.fetch=original;
+ assert.equal($('kind').value,'jeans');assert.equal($('method').value,'depth');assert.equal($('customFov').checked,false);assert.equal($('secondClear').hidden,true);assert.equal(requests.length,count);assert.equal($('preview').hidden,false);
 });

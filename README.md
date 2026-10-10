@@ -49,3 +49,5 @@ The experimental phone client includes a photo-backed waiting view with real ser
 
 
 Product directions from this conversation are recorded in [USER_DECISIONS.md](USER_DECISIONS.md). The app also supports a checked selection of several photos and a short How it works walkthrough.
+
+Interface research and the current interaction audit are in [UX_REVIEW.md](UX_REVIEW.md); user directions are recorded in [USER_DECISIONS.md](USER_DECISIONS.md).

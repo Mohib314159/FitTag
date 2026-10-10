@@ -28,7 +28,7 @@ export function assessPixels({data,width,height},info={}){
  for(let y=1;y<height-1;y++)for(let x=1;x<width-1;x++){const i=y*width+x,v=gray[i-1]+gray[i+1]+gray[i-width]+gray[i+width]-4*gray[i];sum+=v;squares+=v*v;count++;}
  const sharpness=squares/count-(sum/count)**2;
  if(sharpness<.12)return {level:'stop',message:'This photo looks very blurry. Hold the camera steady and take another.'};
- if(sharpness<1.2)return {level:'warn',message:'This photo may be blurry. Check that the waistband and hems look sharp.'};
+ if(sharpness<1.2)return {level:'warn',message:'This photo may be blurry. Check that the edges look sharp.'};
  return {level:'ready',message:'Photo ready. Check that every edge is visible.'};
 }
 export async function checkPhoto(file){

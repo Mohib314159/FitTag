@@ -1,4 +1,17 @@
-# Product design decisions
+# Current interface direction · 10 October 2026
+
+The user rejected the neutral revision as lifeless. Restraint is still a constraint, but it is not the whole visual direction. The current experiment uses warm paper, drawn denim, a red measurement mark, a clothing-tag/F identity and stronger type. The first view shows what the task is for and invites one photo; it remains a working capture screen rather than a marketing page.
+
+Fresh visual study included Depop's published seller page and iPhone screenshots, Photoroom's published iPhone screenshots, and the Apple Measure guide's actual annotated camera screen. Vinted's App Store page returned an error in this pass; earlier Vinted inspection is historical evidence, not a fresh successful native-app check. No native app was installed or authenticated. The concrete comparison and resulting interactions are recorded in [UX_REVIEW.md](UX_REVIEW.md).
+
+The Photo/Lines preview is an illustrated framing guide, with no invented numerical result. Try an example opens the real precomputed generated-image result; reading that example still goes through local photo review and the backend. The two paths stay distinct. Measurement selection now sits above the photo, with the selected number attached to the photo caption and the same endpoint editing/undo underneath. Scale limitations appear before those numerical controls as well as beside the full table.
+
+Saved measurements have their own view, with item names, chosen units, provenance/scale status, copy, removal and undo. No photo is saved. A new save invalidates an old undo snapshot so it cannot overwrite newer measurements. Multi-photo results retain names/units/edits, and completed selections no longer show an unusable Read button. Example capture resets unrelated photo/type/scale choices; selecting a new primary photo clears a stale second photo.
+
+The CSS was consolidated rather than adding another stack of overrides. Tap targets remain 52 px, native inputs 16 px, motion is brief and tied to user changes, and reduced-motion preferences are honored. The tag identity is shared by the header and PWA icons. This revision is locally tested; it does not establish user acceptance or reference-free measurement accuracy.
+
+## Earlier design research and revisions
+
 
 ## Button-free branch iteration
 

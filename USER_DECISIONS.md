@@ -14,6 +14,7 @@ This records Mohib's directions and preferences, separately from implementation 
 ## Interaction and design
 
 - Treat UI as product design. Study real interfaces and interactions, including Vinted, Depop, Otherwise, Apple camera flows and other excellent consumer apps. Otherwise is a reference for friendliness, not a requirement to copy its evidence-canvas/panel layout.
+- Restraint alone is not enough: the user rejected the plain neutral revision as dead, unexciting and uninviting. Give the clothing tool personality and keep iterating on usefulness as well as appearance.
 - Avoid generic AI/SaaS styling: gradients, glows, arbitrary purple/blue, excessive pills, oversized rounded cards, animated dashboards and long explanations.
 - Mohib rejected the muted green treatment. Use a more intentional palette and continue improving spacing, hierarchy, empty/error/waiting states and phone ergonomics.
 - Use normal, concise language. In particular, avoid repeatedly foregrounding technical language such as "simulated" in the main flow. Preserve truthful example provenance in clear everyday words.

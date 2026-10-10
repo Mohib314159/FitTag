@@ -19,3 +19,9 @@ test('listing text carries its scale limitations with the numbers',()=>{
  assert.match(listingText(shape),/not centimetres/);
  const text=listingText({mode:'depth',rows:[{name:'waist_flat',value_cm:40}]});assert.match(text,/Check with a tape/);assert.match(text,/40.0 cm/);assert.match(text,/not body circumference/);
 });
+
+test('listing text uses the chosen units while keeping proportions as percentages',()=>{
+ assert.match(listingText({mode:'depth',rows:[{name:'waist_flat',value_cm:25.4}]},'in'),/10.0 in/);
+ assert.match(listingText(shape,'in'),/50.0%/);
+ assert.doesNotMatch(listingText(shape,'in'),/50.0 in/);
+});

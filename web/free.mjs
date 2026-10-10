@@ -42,11 +42,11 @@ export function moveEndpoint(result, name, endpoint, point) {
   return {...result,edited:true,rows};
 }
 
-export function listingText(result) {
+export function listingText(result,unit='cm') {
   const header=result.mode==='shape'?'Clothing proportions, not centimetres':
     result.mode==='depth'?'Estimated sizes. Check with a tape before listing.':
     'Estimated sizes. Check the lines and size before listing.';
-  const lines=result.rows.map(row=>`${row.name.replaceAll('_',' ')}: ${rowText(row)}`);
+  const lines=result.rows.map(row=>`${row.name.replaceAll('_',' ')}: ${rowText(row,unit)}`);
   if(result.anchor)lines.push(`Scale set from supplied ${result.anchor.name.replaceAll('_',' ')}: ${result.anchor.cm} cm.`);
   if(result.mode==='shape')lines.push(`${result.garment_type==='jeans'?'Inseam':'Garment length'} is the 100% reference.`);
   return [header,...lines,'FitTag · flat garment measurements, not body circumference.'].join('\n');

@@ -13,10 +13,11 @@ def main():
         if not (web / name).is_file():
             raise FileNotFoundError(f"Missing {name}; run python -m tools.make_phone_example")
     for size in (192,512):
-        img = Image.new("RGB",(512,512),"#ffffff"); d=ImageDraw.Draw(img)
-        d.polygon([(146,136),(382,136),(382,196),(212,196),(212,257),(349,257),(349,317),(212,317),(212,415),(146,415)],fill="#242b29")
-        d.rectangle((110,92,402,117),fill="#171717")
-        for i,x in enumerate(range(140,400,35)): d.line((x,92,x,106 if i%2==0 else 114),fill="#242b29",width=4)
+        img = Image.new("RGB",(512,512),"#fbf8f2"); d=ImageDraw.Draw(img)
+        d.polygon([(145,100),(315,100),(375,160),(375,412),(145,412)],fill="#b53322")
+        d.ellipse((310,143,338,171),fill="#fbf8f2")
+        d.line([(198,354),(198,222),(316,222)],fill="#fbf8f2",width=24)
+        d.line([(198,280),(287,280)],fill="#fbf8f2",width=24)
         img.resize((size,size),Image.Resampling.LANCZOS).save(web / f"icons/icon-{size}.png")
     for name in ("index.html","button.html","free.html","free.css","free.js","free.mjs","request.mjs","photo-check.mjs","batch.mjs","example-jeans.jpg","free-demo.json","free-demo.jpg","app.css","app.js","client.mjs","sw.js","manifest.webmanifest","demo.json","demo.jpg","example-photo.jpg"):
         shutil.copy2(web / name, ROOT / "docs" / name)
