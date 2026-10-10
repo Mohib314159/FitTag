@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-10",
+  "url": "https://fittag-lab.onrender.com/",
+  "source_commit": "fd29eb8a7393f6b7746d617394d9a359edfb57ce",
+  "plan": "free",
+  "build": "Render Linux Docker build and model checksum succeeded",
+  "health_status": 200,
+  "experiment": {
+    "button_free": true,
+    "depth_model": true,
+    "experimental": true,
+    "parallel_photos": 1
+  },
+  "live_photo": {
+    "input": "public computer-made example-jeans.jpg; no personal garment",
+    "mode": "depth",
+    "rows": 5,
+    "server_processing_seconds": 14.69,
+    "known_measurement_correction": "verified in browser",
+    "claims": "one live test; not a speed or real-garment accuracy guarantee"
+  },
+  "private_overlay_headers": {
+    "method": "GET",
+    "status": 200,
+    "cache_control": "no-store"
+  },
+  "shell_assets": [
+    {
+      "path": "./",
+      "status": 200,
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "./index.html",
+      "status": 200,
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "./app.css",
+      "status": 200,
+      "type": "text/css; charset=utf-8"
+    },
+    {
+      "path": "./app.js",
+      "status": 200,
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "./client.mjs",
+      "status": 200,
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "./manifest.webmanifest",
+      "status": 200,
+      "type": "application/manifest+json"
+    },
+    {
+      "path": "./icons/icon-192.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "path": "./icons/icon-512.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "path": "./icons/icon.svg",
+      "status": 200,
+      "type": "image/svg+xml"
+    },
+    {
+      "path": "./demo.json",
+      "status": 200,
+      "type": "application/json"
+    },
+    {
+      "path": "./demo.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "path": "./free.css",
+      "status": 200,
+      "type": "text/css; charset=utf-8"
+    },
+    {
+      "path": "./free.js",
+      "status": 200,
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "./free.mjs",
+      "status": 200,
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "./request.mjs",
+      "status": 200,
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "./photo-check.mjs",
+      "status": 200,
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "./batch.mjs",
+      "status": 200,
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "./example-jeans.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "path": "./free-demo.json",
+      "status": 200,
+      "type": "application/json"
+    },
+    {
+      "path": "./free-demo.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "path": "./button.html",
+      "status": 200,
+      "type": "text/html; charset=utf-8"
+    }
+  ],
+  "physical_iphone_installation": "not verified"
+}

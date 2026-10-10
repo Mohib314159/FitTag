@@ -1,5 +1,7 @@
 # FitTag Lab — button-free PWA experiment
 
+**Try the experimental app:** [fittag-lab.onrender.com](https://fittag-lab.onrender.com/). Runs on Render as a separate free service. Button-free size estimates still need checking. On iPhone, use Safari → Share → Add to Home Screen.
+
 This branch explores ordinary garment photos with **no button, paper, card or reference object**. It is isolated from the working hardware product on `main`; nothing has been merged.
 
 Open the app → photograph a flat garment → inspect its outline → question the proposed scale. Choose learned metric depth, proportions only, or a known camera height. An optional second photo checks scale consistency. A known length of the garment can anchor or correct scale without placing a reference object in the image.
