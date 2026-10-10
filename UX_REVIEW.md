@@ -42,3 +42,6 @@ The owner rejected the subsequent photo-led visual pass. Restored this preceding
 ## Alternative branch
 
 The owner requested a completely new experiment after rejecting the main interface. `codex/fittag-camera-studio` explores camera-first capture and a focused line editor. The actual reference study, iterations and limitations are in DESIGN_STUDIO.md. This branch is not merged or deployed to main.
+# Approved direction (2026-10-10)
+
+The owner reviewed the camera-studio interface locally, approved it for main and asked to retain this direction. This supersedes the experiment's earlier no-merge status. See DESIGN_STUDIO.md for the current design and VERIFICATION.md for promotion checks. Earlier reviews below describe their respective versions.

@@ -105,3 +105,9 @@ Fresh checks: all 59 Node client/camera/service-worker tests passed, including r
 ## Separate camera-studio design branch (2026-10-10)
 
 The owner requested a fresh researched design with no merge. `codex/fittag-camera-studio` implements a camera screen, settings sheet, focused line editor and photo-backed processing view while preserving the existing backend and accuracy warnings. See DESIGN_STUDIO.md for inspected primary visual references, iterations and verification limits. Fresh verification: 64 Node checks and the targeted Python asset/privacy check passed. Real local HTTP photo processing, endpoint correction, known-length correction, sheet navigation and error dismissal were exercised. Capture fits at 360 x 640, 390 x 844 and 430 x 932; desktop was checked at 1280 x 800. No horizontal overflow or console errors/warnings were observed. The public computer-made test image is only UI test evidence. Physical iPhone camera and installation remain unverified. Main and the main Render service are not changed by this branch.
+
+## Approved camera-studio promotion (2026-10-10)
+
+The owner approved the reviewed local interface and authorized its merge onto main, superseding the earlier no-merge restriction. Main fast-forwarded cleanly to the tested design. The Render link is immediately below the main README heading; preview-only wording and the installable app's preview name were removed. The existing Dockerfile, root Render Blueprint, free service capacity and measurement engine are preserved.
+
+Fresh promotion checks: 64 Node tests and the targeted FastAPI asset/private-dataset test passed. Static build, JavaScript syntax and Git whitespace checks passed. The existing Starlette/httpx deprecation warning remains. These checks do not establish physical iPhone camera operation, OS installation or button-free measurement accuracy. Production deployment is verified separately after publication.

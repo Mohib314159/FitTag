@@ -1,6 +1,6 @@
-# Camera studio design experiment
+# Camera studio design
 
-Branch: `codex/fittag-camera-studio`, starting from `c4d4ac4`. The owner requested a completely new direction and explicitly said not to merge. This branch does not update the existing Render service or claim to improve measurement accuracy.
+Developed on `codex/fittag-camera-studio`, starting from `c4d4ac4`. The owner initially requested a separate design experiment, then approved the result and its merge onto main on 10 October 2026. This is now the chosen product direction. Presentation changes do not improve measurement accuracy.
 
 ## What was actually studied
 
@@ -27,7 +27,7 @@ The waiting view uses the selected photo and actual backend stages. The old anim
 3. Small-phone review made the garment too small. Increased the photo's height allowance while retaining its original aspect ratio and alignment with the selectable SVG overlay. Results can scroll; the capture controls fit on the initial screen.
 4. Returning from a secondary view now restarts an allowed camera when no photo is selected. If an older permission answer is still pending, the new intent waits for it, releases its stale stream and restarts once; leaving again cancels the queued restart. Settings closes before opening Batch. Tests model native dialog methods explicitly because the DOM test library does not supply them.
 
-The permission waiting screen is still the least expressive state. A real camera image should give this interface its character; that is a design judgment, not a verified user preference. The in-app browser initially left the camera request pending and returned blocked access on a later reload. The fallback state was inspected; there is no claim of a physical-device camera pass. No private photos or personal garment sizes are published. Public generated example files are used only for regression checks and remain honestly labelled in the secondary walkthrough.
+The permission waiting screen is still the least expressive state. A real camera image should give this interface its character. The owner approved the overall direction after reviewing the local app; that approval is not a physical-device camera test. The in-app browser initially left the camera request pending and returned blocked access on a later reload. The fallback state was inspected. No private photos or personal garment sizes are published. Public generated example files are used only for regression checks and remain honestly labelled in the secondary walkthrough.
 
 ## Verification
 
@@ -37,4 +37,4 @@ The permission waiting screen is still the least expressive state. A real camera
 - Browser: settings/help sheets, local pre-upload review, real HTTP measurement job, actual waiting stages and returned editable measurements, keyboard endpoint adjustment and known-length correction were exercised. No console errors/warnings were observed.
 - Phone capture layouts: 360 x 640, 390 x 844 and 430 x 932. The capture controls fit; no horizontal overflow. Result image and SVG bounds agree within rounding. The same workflow was inspected at 1280 x 800 on desktop, with no horizontal overflow.
 - Screenshots in the task's output folder use the public computer-made test image, not a personal garment. They are UI evidence only, not accuracy evidence.
-- Not verified: physical iPhone camera, Safari OS installation, screen-reader acceptance or a Render deployment of this branch. Backend/model and hosting capacity were not changed.
+- Not verified in the branch review: physical iPhone camera, Safari OS installation, screen-reader acceptance or Render deployment. Backend/model and hosting capacity were not changed. Promotion and deployment checks are recorded separately.

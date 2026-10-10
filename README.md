@@ -1,14 +1,14 @@
-# FitTag — camera studio design preview
+# FitTag — clothing measurements
 
-This branch (`codex/fittag-camera-studio`) explores a new phone interface. It is not merged or deployed to the main service. See [DESIGN_STUDIO.md](DESIGN_STUDIO.md) for the researched references, design iterations and verification. Run the existing FastAPI server to try the complete flow locally.
+**Open FitTag:** [fittag.onrender.com](https://fittag.onrender.com/). Runs on Render from `main`. On iPhone, use Safari → Share → Add to Home Screen.
 
-**Open FitTag:** [fittag.onrender.com](https://fittag.onrender.com/). Runs on Render from `main`. Button-free size estimates still need checking. On iPhone, use Safari → Share → Add to Home Screen. The separate [preview](https://fittag-lab.onrender.com/) remains available.
+The camera-first interface puts your garment on screen, then lets you check and adjust each measurement line. The owner approved this direction for main on 10 October 2026. See [DESIGN_STUDIO.md](DESIGN_STUDIO.md) for the references, iterations and verification. Button-free size estimates still need checking.
 
 FitTag explores ordinary garment photos with **no button, paper, card or reference object**. The button-free PWA was merged into `main` on 10 October 2026 with the owner's approval. The hardware/reference flow remains available at `/button.html`.
 
 Open the app → allow the rear camera → photograph a flat garment → inspect its outline → question the proposed scale. The browser requests camera permission on opening; an existing permission can open the preview directly. Choose photo remains available. The live view and captured frame stay on-device until Read photo is tapped. Choose learned metric depth, proportions only, or a known camera height. An optional second photo checks scale consistency. A known length of the garment can anchor or correct scale without placing a reference object in the image.
 
-**The model's unanchored scale is not reliable enough for a fit verdict.** The app makes that failure explicit. Its actual-model simulated example includes the known ground truth, which disagrees substantially with the model. Read [the experiment, measured results and limitations](BUTTON_FREE.md), [user-facing design study](DESIGN.md) and [CV evidence boundaries](CV_EVIDENCE.md).
+**The model's unanchored scale is not reliable enough for a fit verdict.** The app makes that failure explicit. Its public computer-made example includes the known ground truth, which disagrees substantially with the model. Read [the experiment, measured results and limitations](BUTTON_FREE.md), [user-facing design study](DESIGN.md) and [CV evidence boundaries](CV_EVIDENCE.md).
 
 The PWA supports phone capture/upload and review, processing/cancel, interactive line overlays with drag/keyboard endpoint correction and a magnifier, cm/in or ratios, known-length correction/undo, error and confidence states, explicit acknowledgment before named local saving, copyable listing text, installation and an offline shell/example. Photos are not saved as originals; no photo is sent to an external ML provider. Personal sizes/photos are not included. The prior hardware/reference UI is preserved at `/button.html`.
 

@@ -60,3 +60,7 @@ This records Mohib's directions and preferences, separately from implementation 
 ## New design experiment (2026-10-10)
 
 The owner rejected the overall UI again and asked for a completely new researched direction, with no merge. This supersedes deployment permission for this experiment: keep `codex/fittag-camera-studio` separate from main. Explore a working camera-and-editor interface; do not substitute a visual mockup or imply that changing the UI validates the button-free scale. Research, iteration and verification are recorded in DESIGN_STUDIO.md.
+
+## Camera studio approval (2026-10-10)
+
+After reviewing the working local app, the owner approved the camera-studio design, authorized merging it onto main and asked for the Render link on the main README. This supersedes the experiment's no-merge restriction. Keep this direction as the baseline for future refinements. Approval concerns the interface; measurement accuracy and physical-device verification limits still apply.
