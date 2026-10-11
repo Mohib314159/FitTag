@@ -44,6 +44,14 @@ coverage, an inconsistent plane or excessive tilt, and rectifies the retained
 RGB garment mask with the existing geometry engine. Existing landmarks then
 produce all supported measurement lines and centimetre values together.
 
+By default, the importer samples at most five evenly spaced matching frames and
+selects among usable frames by surrounding high-confidence floor coverage and
+plane residual. An unusable first frame does not invalidate a later usable one.
+It records refusals and the spread of each measurement across accepted frames;
+the sizes are not fused. Consistent frames can share the same wrong scale or
+landmark. The spread is repeatability evidence, not an accuracy interval or
+verified fit verdict.
+
 Depth confidence concerns sensor readings, not the accuracy of an inseam or
 waist landmark. Folded fabric and misplaced lines still require review. The
 archive tests use generated inputs and actual LZFSE compression/decompression;
@@ -55,7 +63,7 @@ In a local environment with the existing FitTag dependencies:
 
 ```powershell
 python -m pip install -r requirements-lidar-trial.txt
-python -m tools.import_record3d C:\path\garment.r3d --rear-lidar --frame 0 --kind jeans --output C:\path\new-private-result
+python -m tools.import_record3d C:\path\garment.r3d --rear-lidar --kind jeans --output C:\path\new-private-result
 ```
 
 The output directory must be new. The command writes `result.json` and an actual

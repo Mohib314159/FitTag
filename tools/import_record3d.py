@@ -7,6 +7,7 @@ import argparse
 import io
 import json
 from pathlib import Path,PurePosixPath
+import re
 import struct
 import zipfile
 import cv2
@@ -118,15 +119,77 @@ def read_frame(path,frame=0):
         # Deliberately return no poses, identity, audio, GPS or full metadata.
         return photo,depth,confidence,K
 
+def sample_frames(path,max_candidates=5):
+    """Bound work on a short local recording; do not score every video frame."""
+    if not 1<=max_candidates<=5:raise ValueError('Inspect between one and five frames.')
+    if Path(path).stat().st_size>512*1024*1024:raise ValueError('Use a shorter clip; this local trial accepts at most 512 MB.')
+    with zipfile.ZipFile(path) as archive:
+        names=archive.namelist()
+        if len(names)>10000:raise ValueError('Use a shorter recording.')
+        frames=sorted({int(match.group(1)) for name in names
+                       if (match:=re.fullmatch(r'rgbd/(\d+)\.jpg',name)) and int(match.group(1))<=10000})
+        frames=[f for f in frames if f'rgbd/{f}.depth' in names and f'rgbd/{f}.conf' in names]
+    if not frames:raise ValueError('No matching RGB, depth and confidence frames. Export a raw rear-LiDAR recording.')
+    positions=np.linspace(0,len(frames)-1,min(max_candidates,len(frames)),dtype=int)
+    return [frames[int(i)] for i in positions]
+
+def compare_frames(records):
+    """Repeatability only. Consistent frames can share the same scale/line error."""
+    accepted=[r for r in records if r['accepted']]
+    names=sorted({name for r in accepted for name in r['measurements_cm']})
+    spans={}
+    for name in names:
+        values=[r['measurements_cm'][name] for r in accepted if name in r['measurements_cm']]
+        if len(values)>1 and min(values)>0:
+            spans[name]=round(100*(max(values)-min(values))/float(np.median(values)),2)
+    return {'accepted_frames':len(accepted),'attempted_frames':len(records),
+            'relative_span_pct':spans,'absolute_accuracy_verified':False,
+            'note':'Frame agreement is repeatability, not proof of correct sizes. Check every line against an independent measurement.'}
+
+def select_frame(path,kind,max_candidates=5):
+    records=[];best=None;best_rank=None
+    for frame in sample_frames(path,max_candidates):
+        try:
+            photo,depth,confidence,K=read_frame(path,frame)
+            rect,result=process(photo,depth,confidence,K,kind)
+        except ValueError as error:
+            records.append({'frame':frame,'accepted':False,'reason':str(error)})
+            continue
+        diag=result['diagnostics']
+        records.append({'frame':frame,'accepted':True,'diagnostics':diag,
+                        'measurements_cm':{r['name']:r['value_cm'] for r in result['rows']}})
+        # Rank only sensor-floor quality. Never select against tape ground truth
+        # or whichever garment dimensions appear most plausible.
+        rank=(diag['high_confidence_floor_fraction'],-diag['plane_p90_pct'],-frame)
+        if best_rank is None or rank>best_rank:
+            best=(rect,result,frame);best_rank=rank
+    if best is None:
+        reasons='; '.join(dict.fromkeys(r['reason'] for r in records))
+        raise ValueError('No usable sampled frame. '+reasons)
+    rect,result,frame=best
+    result['selected_frame']=frame
+    result['frame_checks']=records
+    result['frame_comparison']=compare_frames(records)
+    result['notes'].append('Selected by surrounding floor-depth quality from at most five sampled frames; sizes are not fused or verified.')
+    return rect,result
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('recording',type=Path)
-    parser.add_argument('--frame',type=int,default=0);parser.add_argument('--kind',choices=['jeans','t-shirt'],default='jeans')
+    parser.add_argument('--frame',type=int,help='Use one specific frame; omitted means automatic sampling.')
+    parser.add_argument('--kind',choices=['jeans','t-shirt'],default='jeans')
     parser.add_argument('--rear-lidar',action='store_true',help='Confirm recording used the rear LiDAR camera, not FaceID or AI depth.')
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     if not args.rear_lidar:parser.error('Confirm rear LiDAR capture with --rear-lidar; no other depth source is supported.')
     if args.output.exists():parser.error('Choose a new private output directory; existing results are not overwritten.')
-    photo,depth,confidence,K=read_frame(args.recording,args.frame)
-    rect,result=process(photo,depth,confidence,K,args.kind)
+    try:
+        if args.frame is None:
+            rect,result=select_frame(args.recording,args.kind)
+        else:
+            photo,depth,confidence,K=read_frame(args.recording,args.frame)
+            rect,result=process(photo,depth,confidence,K,args.kind)
+            result['selected_frame']=args.frame
+    except (ValueError,OSError,zipfile.BadZipFile) as error:
+        parser.exit(2,f'Capture could not be read: {error}\n')
     args.output.mkdir(parents=True)
     overlay=rect.copy()
     for row in result['rows']:

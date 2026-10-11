@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 from core.free_capture import camera_inverse
 from core.lidar_capture import fit_sensor_floor,process
-from tools.import_record3d import decode,read_frame,declared_lzfse_bytes,camera
+from tools.import_record3d import decode,read_frame,declared_lzfse_bytes,camera,sample_frames,select_frame,compare_frames
 from tests.test_phone_api import photo
 
 def archive(tmp_path,**changes):
@@ -73,3 +73,38 @@ def test_per_frame_camera_replaces_static_camera():
     meta={'K':[1.,0,0,0,1.,0,0,0,1.], 'perFrameIntrinsicCoeffs':[[300.,310.,200.,250.]]}
     K=camera(meta,0)
     assert K[0,0]==300 and K[1,1]==310 and K[0,2]==200 and K[1,2]==250
+
+def test_auto_selection_recovers_from_low_confidence_first_frame(tmp_path):
+    lib=pytest.importorskip('liblzfse')
+    path,_=archive(tmp_path)
+    with zipfile.ZipFile(path) as z:members={name:z.read(name) for name in z.namelist()}
+    for suffix in ['jpg','depth','conf']:members[f'rgbd/4.{suffix}']=members[f'rgbd/0.{suffix}']
+    members['rgbd/0.conf']=lib.compress(np.zeros((100,75),np.uint8).tobytes())
+    with zipfile.ZipFile(path,'w') as z:
+        for name,value in members.items():z.writestr(name,value)
+    _,result=select_frame(path,'jeans')
+    assert result['selected_frame']==4
+    assert not result['frame_checks'][0]['accepted']
+    assert result['frame_comparison']['accepted_frames']==1
+    assert result['frame_comparison']['relative_span_pct']=={}
+    assert result['frame_comparison']['absolute_accuracy_verified'] is False
+
+def test_sampling_is_bounded_and_requires_matching_streams(tmp_path):
+    path=tmp_path/'frames.r3d'
+    with zipfile.ZipFile(path,'w') as z:
+        for frame in range(30):
+            for suffix in ['jpg','depth','conf']:z.writestr(f'rgbd/{frame}.{suffix}',b'fixture')
+        z.writestr('rgbd/99.jpg',b'unmatched')
+    assert sample_frames(path)==[0,7,14,21,29]
+    assert sample_frames(path,1)==[0]
+
+def test_consistent_or_disagreeing_frames_do_not_verify_absolute_accuracy():
+    for values in [[40,40],[40,60]]:
+        report=compare_frames([{'accepted':True,'measurements_cm':{'waist_flat':x}} for x in values])
+        assert report['absolute_accuracy_verified'] is False
+        assert report['relative_span_pct']['waist_flat']==(0 if values[0]==values[1] else 40)
+
+def test_all_bad_frames_refuse_instead_of_inventing_measurements(tmp_path):
+    lib=pytest.importorskip('liblzfse')
+    path,_=archive(tmp_path,**{'rgbd/0.conf':lib.compress(np.zeros((100,75),np.uint8).tobytes())})
+    with pytest.raises(ValueError,match='No usable sampled frame'):select_frame(path,'jeans')

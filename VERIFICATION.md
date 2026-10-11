@@ -135,3 +135,25 @@ A generated exact-depth control still missed one inseam by 10.7 cm. Three mask-c
 The local Record3D importer passed a generated compressed-archive round trip through the actual LZFSE decoder, full camera matrix, floor fit, measurement engine and CLI overlay export. The generated overlay was visually inspected. These inputs are computer-made fixtures, not a real iPhone recording. Tests cover camera/depth crop mismatch, unsafe archive paths, compressed expansion limits, low-confidence depth, camera matrices with unequal focal lengths and off-centre principal points, and per-frame calibration.
 
 Fresh complete Python suite: **74 passed**, with one existing Starlette/httpx test-adapter deprecation warning. Command: `python -m pytest tests -q -p no:cacheprovider`. The frontend was not changed or retested during this importer/model comparison. No original owner photo or `.r3d` recording was supplied. Physical capture, real archive compatibility, device installation and real-garment accuracy remain unverified. No native application, public archive-upload endpoint, Render dependency change, merge or deployment was added.
+
+## Bounded LiDAR frame selection and CV audit (2026-10-11)
+
+The local importer now samples at most five matching video frames, records
+refusal reasons, selects by surrounding sensor-floor quality and reports
+per-measurement relative spread across accepted frames. It does not fuse the
+sizes or call consistency absolute accuracy. Explicit `--frame` selection
+remains available. The CLI gives a readable capture error instead of a traceback
+for supported input/refusal errors and still refuses an existing output directory.
+
+Fresh full Python suite: **78 passed** in 48.74 seconds, with the same existing
+Starlette/httpx test-adapter warning. Four new checks cover a low-confidence
+first frame followed by a usable frame, bounded matching-stream sampling,
+all-frame refusal and repeatability that never asserts absolute accuracy.
+The default automatic CLI ran end to end on the existing generated compressed
+recording fixture and wrote measurements plus an overlay. No real device
+recording was supplied and no physical accuracy claim follows.
+
+CV_EVIDENCE.md now foregrounds current features and evaluation boundaries.
+The separate Bloomberg Data Scientist section and source notes live outside
+this repository; no original CV or README was edited. Other project source and
+recorded results were inspected for those documents, not rerun as new validation.

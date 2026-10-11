@@ -82,3 +82,14 @@ The owner then explicitly rejected A4 and reaffirmed the intended experience: up
 - The owner confirmed no Mac is available. Use an existing iPhone app's raw calibrated depth export for a bounded private capture/import test before investing in a native application. The chosen Record3D format is an assistant implementation choice, not a user requirement or purchase authorization.
 - The owner expressed concern about wasted effort. Prioritize one real garment trial and a clear failure diagnosis; do not keep downloading models or redesigning the UI without evidence that the measurement path is useful.
 - Keep this sensing/research work on the existing experimental branch. Do not merge it, change the deployed PWA or publish personal recordings, dimensions or outputs. A successful generated archive round trip is not physical-device verification.
+
+## CV section and continued iteration (2026-10-11)
+
+The owner asked to continue improving the trial and prepare a separate local CV
+section for a Bloomberg Data Scientist internship, using Otherwise and the other
+projects. This is not a request to put CV prose in the README. Use understandable
+scope, benchmark and evaluation figures; do not invent user impact. The owner has
+a referral but no vacancy link. Exact team-specific requirements remain unverified.
+Automatic LiDAR frame sampling is an assistant choice to make the real capture
+trial less dependent on the first frame; it does not change the no-merge boundary
+or prove real garment accuracy.

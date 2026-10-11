@@ -1,5 +1,29 @@
 # Numbers that explain the user benefit
 
+## Current data-science framing (11 October 2026)
+
+Built a phone-first garment-measurement PWA with five editable jeans readouts,
+proportion-only results when scale is unavailable, and known-length scale
+correction. Compared five monocular depth candidates on six generated garment
+captures, separating scale failures from silhouette/landmark failures; no reliable
+arbitrary-photo measurement was established.
+
+The completed model comparisons are in [BUTTONLESS_MODEL_RESULTS.md](BUTTONLESS_MODEL_RESULTS.md).
+Three additional models were actually run, not merely researched. Their results
+must not be presented as real-garment accuracy. The rear-LiDAR importer is a local,
+unmerged capture trial; recorded camera geometry and generated archive tests do
+not establish physical iPhone or real garment performance.
+
+The separate Bloomberg Data Scientist section was prepared outside this repository.
+Do not repeat the older CV's hardware-only description, 0.8 cm agreement or
+0.14 cm MAE as current reference-free accuracy. Independent paper-reference photo
+agreement is historical repeatability, and the 17.0 mm recovered button is a
+calibration cross-check, not a universal button size. Keep personal dimensions out
+of CVs, public examples and committed evidence.
+
+The figures below remain historical results for the stated calibration/benchmark
+protocols. They are not updated accuracy scores for the latest model comparison.
+
 FitTag's intended benefit is less effort checking the dimensions of second-hand
 clothes: capture once, inspect/correct the lines, keep a record, and copy a
 measurement description. Actual reductions in listing time, returns or buyer
