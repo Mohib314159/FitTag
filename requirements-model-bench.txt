@@ -1,0 +1,20 @@
+# Isolated Windows CPU research runtime; never install in the serving container.
+# Python 3.13 was used. Author source checkouts and external weights are required.
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy==2.5.2
+scipy==1.18.1
+opencv-python-headless==5.0.0.93
+pillow==12.3.0
+pillow-heif==1.8.0
+torch==2.14.1+cpu
+torchvision==0.29.1+cpu
+timm==1.0.30
+einops==0.8.2
+huggingface_hub==2.2.0
+safetensors==0.8.0
+omegaconf==2.4.0
+addict==2.4.0
+psutil==7.2.2
+ImageIO==2.38.1
+matplotlib==3.11.2
+wandb==0.30.0

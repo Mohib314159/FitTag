@@ -124,7 +124,7 @@ def measure_tshirt(contour, mm_per_px, tol_scale=1.0) -> list[Measurement]:
 
 # --- bottoms ----------------------------------------------------------------------
 
-def measure_jeans(contour, mm_per_px, tol_scale=1.0) -> list[Measurement]:
+def measure_jeans(contour, mm_per_px, tol_scale=1.0, crotch_gap=6) -> list[Measurement]:
     p = _profile(contour)
     mask, ys, xL, xR, width = p["mask"], p["ys"], p["xL"], p["xR"], p["width"]
     if ys.size < 5:
@@ -151,7 +151,10 @@ def measure_jeans(contour, mm_per_px, tol_scale=1.0) -> list[Measurement]:
     min_leg = 0.04 * Hh
     persist = max(3, int(0.03 * Hh))
     def _split(y):
-        r = _runs(mask[y])
+        # The leg gap starts narrow at the crotch. Bridging up to six pixels
+        # postpones this landmark far down close-set legs and shortens inseam.
+        # Persistence and minimum leg widths already reject transient notches.
+        r = _runs(mask[y], gap=crotch_gap)
         return len(r) >= 2 and sum((b - a) >= min_leg for a, b in r) >= 2
     for y in range(int(ymin + 0.1 * Hh), ymax + 1 - persist):
         if all(_split(y + k) for k in range(0, persist, max(1, persist // 4))):
@@ -159,7 +162,7 @@ def measure_jeans(contour, mm_per_px, tol_scale=1.0) -> list[Measurement]:
             break
     if crotch_y is not None:
         inseam = ymax - crotch_y
-        gap = _runs(mask[min(ymax, crotch_y + 2)])
+        gap = _runs(mask[min(ymax, crotch_y + 2)], gap=crotch_gap)
         crotch_x = (gap[0][1] + gap[1][0]) // 2 if len(gap) >= 2 else int(xL.mean() + width.mean() / 2)
         out.append(Measurement("inseam", cm(inseam), _tol("inseam", tol_scale),
                                (crotch_x, crotch_y), (crotch_x, ymax)))

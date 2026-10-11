@@ -1,0 +1,24 @@
+{
+  "fixture_source": "https://raw.githubusercontent.com/bigcat88/pillow_heif/master/tests/images/heif_other/pug.heic",
+  "sha256": "1ddce96766efbfa0f6bdf634bdab26bdeff831393df8d67f4cdc7b7a7afebc67",
+  "bytes": 1299081,
+  "inspection": {
+    "focal_35mm": 26.0,
+    "subject_distance_m": null,
+    "digital_zoom": null,
+    "embedded_depth_candidates": 1,
+    "absolute_scale_verified": false,
+    "depth_layers": [
+      {
+        "width": 768,
+        "height": 576
+      }
+    ],
+    "auxiliary_types": [
+      "hdr_gain_map"
+    ],
+    "metric_depth_usable": false,
+    "reason": "No verified absolute depth, units and RGB alignment are available."
+  },
+  "not_garment_accuracy_validation": true
+}

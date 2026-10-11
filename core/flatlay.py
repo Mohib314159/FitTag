@@ -51,14 +51,14 @@ def _biggest(mask):
     return (lbl == k).astype(np.uint8) * 255, k, stats
 
 
-def _split_on(channel_img: np.ndarray, open_px: int):
+def _split_on(channel_img: np.ndarray, open_px: int, blur_sigma: float = 3.):
     """Threshold one channel, decide which side is the garment, clean it, keep the biggest blob.
 
     Which side is background is settled by the image border, not by which side is smaller: a
     garment photographed close up fills most of the frame, so 'the minority is the object' is
     simply false. The background is whatever touches the edge.
     """
-    ch = cv2.GaussianBlur(channel_img, (0, 0), 3)
+    ch = cv2.GaussianBlur(channel_img, (0, 0), blur_sigma) if blur_sigma else channel_img
     _, m = cv2.threshold(ch, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     border = np.concatenate([m[0], m[-1], m[:, 0], m[:, -1]])
     if border.mean() > 127:                       # the border is 'foreground', so the split is inverted
@@ -89,7 +89,7 @@ def _split_on(channel_img: np.ndarray, open_px: int):
     return big, float(stats[k, cv2.CC_STAT_AREA]) / total
 
 
-def garment_mask(photo: np.ndarray, channel: str = "auto", open_px: int = 21) -> "np.ndarray | None":
+def garment_mask(photo: np.ndarray, channel: str = "auto", open_px: int = 21, blur_sigma: float = 3.) -> "np.ndarray | None":
     """Silhouette of the garment, split on whichever Lab channel separates it best.
 
     'auto' tries L, a* and b* and keeps the one whose threshold leaves a single clean blob rather
@@ -99,11 +99,11 @@ def garment_mask(photo: np.ndarray, channel: str = "auto", open_px: int = 21) ->
     lab = cv2.cvtColor(photo, cv2.COLOR_BGR2LAB)
     options = {"L": lab[:, :, 0], "a": lab[:, :, 1], "b": lab[:, :, 2]}
     if channel != "auto":
-        mask, _ = _split_on(options[channel], open_px)
+        mask, _ = _split_on(options[channel], open_px, blur_sigma)
         return mask
     best, best_score = None, -1.0
     for name in ("b", "a", "L"):
-        mask, score = _split_on(options[name], open_px)
+        mask, score = _split_on(options[name], open_px, blur_sigma)
         if mask is not None and score > best_score:
             best, best_score = mask, score
     return best

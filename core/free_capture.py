@@ -63,6 +63,21 @@ def focal_from_diagonal_fov(shape, diagonal_fov=84.):
     return math.hypot(w, h) / (2 * math.tan(math.radians(diagonal_fov)/2))
 
 
+def camera_inverse(shape, camera):
+    """Scalar experimental focal, or a fully calibrated pixel-space K matrix."""
+    h,w=shape[:2]
+    if np.isscalar(camera):
+        if not math.isfinite(camera) or camera<=0:raise ValueError('Invalid camera focal length.')
+        intrinsic=np.array([[camera,0,(w-1)/2],[0,camera,(h-1)/2],[0,0,1.]],np.float64)
+    else:
+        intrinsic=np.asarray(camera,dtype=np.float64)
+        if intrinsic.shape!=(3,3) or not np.isfinite(intrinsic).all():raise ValueError('Invalid camera calibration.')
+        if intrinsic[0,0]<=0 or intrinsic[1,1]<=0 or not np.allclose(intrinsic[2],[0,0,1]):
+            raise ValueError('Unsupported camera calibration.')
+    try:return np.linalg.inv(intrinsic)
+    except np.linalg.LinAlgError:raise ValueError('Camera calibration is singular.') from None
+
+
 def floor_plane(depth, mask, focal_px):
     """Robust fit: inverse Z = a*x/f + b*y/f + c on background only.
 
@@ -82,7 +97,7 @@ def floor_plane(depth, mask, focal_px):
     x, y, z = xx.flat[ids], yy.flat[ids], depth.flat[ids]
     if np.ptp(x) < .6*w or np.ptp(y) < .6*h:
         raise ValueError("Floor depth is only visible on one side. Include floor around every edge.")
-    rays = np.column_stack(((x-(w-1)/2)/focal_px,(y-(h-1)/2)/focal_px,np.ones(len(x))))
+    rays = np.column_stack((x,y,np.ones(len(x)))) @ camera_inverse(mask.shape,focal_px).T
     inv = 1/z
     weights = np.ones(len(z))
     for _ in range(7):
@@ -114,8 +129,7 @@ def rectify_plane(photo, mask, coef, focal_px):
     horizontal = np.array([1.,0.,0.])-normal*normal[0]
     horizontal /= np.linalg.norm(horizontal)
     vertical = np.cross(normal,horizontal)
-    intrinsic_inv = np.array([[1/focal_px,0,-(w-1)/(2*focal_px)],
-                              [0,1/focal_px,-(h-1)/(2*focal_px)],[0,0,1.]])
+    intrinsic_inv = camera_inverse(mask.shape,focal_px)
     homography = np.stack((horizontal,vertical,coef))@intrinsic_inv
     corners = np.array([[0,0],[w-1,0],[w-1,h-1],[0,h-1]],np.float32)
     projected = cv2.perspectiveTransform(corners[None],homography)[0]

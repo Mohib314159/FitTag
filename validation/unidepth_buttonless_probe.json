@@ -1,0 +1,480 @@
+{
+  "synthetic_only": true,
+  "candidate": "unidepth",
+  "torch": "2.14.1+cpu",
+  "device": "cpu",
+  "threads": 4,
+  "input_resolution": [
+    400,
+    500
+  ],
+  "records": [
+    {
+      "case": 0,
+      "camera": "estimated",
+      "focal_px": 566.631,
+      "inference_seconds": 2.86,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 49.76,
+        "inseam": 47.76,
+        "hip_flat": 47.5,
+        "leg_opening": 53.62,
+        "thigh": 49.42
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 20.4,
+        "inseam": 36.3,
+        "hip_flat": 24.7,
+        "leg_opening": 12.6,
+        "thigh": 12.8
+      },
+      "measurements_cm": {
+        "waist_flat": 20.6,
+        "inseam": 39.7,
+        "hip_flat": 27.3,
+        "leg_opening": 10.9,
+        "thigh": 13.1
+      },
+      "diagnostics": {
+        "floor_depth_m": 1.01,
+        "plane_residual_pct": 1.0,
+        "plane_p90_pct": 2.3,
+        "tilt_deg": 0.6,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 0,
+      "camera": "known",
+      "focal_px": 450.0,
+      "inference_seconds": 2.55,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 39.76,
+        "inseam": 37.76,
+        "hip_flat": 37.5,
+        "leg_opening": 44.68,
+        "thigh": 39.77
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 16.3,
+        "inseam": 28.7,
+        "hip_flat": 19.5,
+        "leg_opening": 10.5,
+        "thigh": 10.3
+      },
+      "measurements_cm": {
+        "waist_flat": 24.7,
+        "inseam": 47.3,
+        "hip_flat": 32.5,
+        "leg_opening": 13.0,
+        "thigh": 15.6
+      },
+      "diagnostics": {
+        "floor_depth_m": 0.95,
+        "plane_residual_pct": 1.6,
+        "plane_p90_pct": 3.5,
+        "tilt_deg": 0.4,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 1,
+      "camera": "estimated",
+      "focal_px": 715.059,
+      "inference_seconds": 2.46,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 62.93,
+        "inseam": 63.16,
+        "hip_flat": 62.69,
+        "leg_opening": 66.81,
+        "thigh": 64.86
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 25.8,
+        "inseam": 48.0,
+        "hip_flat": 32.6,
+        "leg_opening": 15.7,
+        "thigh": 16.8
+      },
+      "measurements_cm": {
+        "waist_flat": 15.2,
+        "inseam": 28.0,
+        "hip_flat": 19.4,
+        "leg_opening": 7.8,
+        "thigh": 9.1
+      },
+      "diagnostics": {
+        "floor_depth_m": 1.12,
+        "plane_residual_pct": 0.7,
+        "plane_p90_pct": 1.6,
+        "tilt_deg": 1.3,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 1,
+      "camera": "known",
+      "focal_px": 450.0,
+      "inference_seconds": 2.52,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 45.61,
+        "inseam": 45.53,
+        "hip_flat": 45.38,
+        "leg_opening": 50.64,
+        "thigh": 48.65
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 18.7,
+        "inseam": 34.6,
+        "hip_flat": 23.6,
+        "leg_opening": 11.9,
+        "thigh": 12.6
+      },
+      "measurements_cm": {
+        "waist_flat": 22.3,
+        "inseam": 41.4,
+        "hip_flat": 28.4,
+        "leg_opening": 11.6,
+        "thigh": 13.3
+      },
+      "diagnostics": {
+        "floor_depth_m": 1.03,
+        "plane_residual_pct": 1.8,
+        "plane_p90_pct": 3.8,
+        "tilt_deg": 0.6,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 2,
+      "camera": "estimated",
+      "focal_px": 580.262,
+      "inference_seconds": 2.48,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 43.9,
+        "inseam": 41.97,
+        "hip_flat": 43.08,
+        "leg_opening": 51.06,
+        "thigh": 45.56
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 18.0,
+        "inseam": 31.9,
+        "hip_flat": 22.4,
+        "leg_opening": 12.0,
+        "thigh": 11.8
+      },
+      "measurements_cm": {
+        "waist_flat": 23.0,
+        "inseam": 44.1,
+        "hip_flat": 29.6,
+        "leg_opening": 11.5,
+        "thigh": 14.1
+      },
+      "diagnostics": {
+        "floor_depth_m": 1.28,
+        "plane_residual_pct": 0.5,
+        "plane_p90_pct": 1.1,
+        "tilt_deg": 14.5,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 2,
+      "camera": "known",
+      "focal_px": 450.0,
+      "inference_seconds": 2.57,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 32.68,
+        "inseam": 30.79,
+        "hip_flat": 31.35,
+        "leg_opening": 39.57,
+        "thigh": 33.98
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 13.4,
+        "inseam": 23.4,
+        "hip_flat": 16.3,
+        "leg_opening": 9.3,
+        "thigh": 8.8
+      },
+      "measurements_cm": {
+        "waist_flat": 27.6,
+        "inseam": 52.6,
+        "hip_flat": 35.7,
+        "leg_opening": 14.2,
+        "thigh": 17.1
+      },
+      "diagnostics": {
+        "floor_depth_m": 1.2,
+        "plane_residual_pct": 0.9,
+        "plane_p90_pct": 2.0,
+        "tilt_deg": 12.4,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 3,
+      "camera": "estimated",
+      "focal_px": 524.381,
+      "inference_seconds": 2.5,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 47.27,
+        "inseam": 54.56,
+        "hip_flat": 47.35,
+        "leg_opening": 45.37,
+        "thigh": 48.77
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 18.2,
+        "inseam": 43.1,
+        "hip_flat": 23.2,
+        "leg_opening": 9.3,
+        "thigh": 11.9
+      },
+      "measurements_cm": {
+        "waist_flat": 20.3,
+        "inseam": 35.9,
+        "hip_flat": 25.8,
+        "leg_opening": 11.2,
+        "thigh": 12.5
+      },
+      "diagnostics": {
+        "floor_depth_m": 0.92,
+        "plane_residual_pct": 1.0,
+        "plane_p90_pct": 2.5,
+        "tilt_deg": 1.5,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 3,
+      "camera": "known",
+      "focal_px": 450.0,
+      "inference_seconds": 2.63,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 40.52,
+        "inseam": 48.86,
+        "hip_flat": 40.82,
+        "leg_opening": 39.51,
+        "thigh": 42.62
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 15.6,
+        "inseam": 38.6,
+        "hip_flat": 20.0,
+        "leg_opening": 8.1,
+        "thigh": 10.4
+      },
+      "measurements_cm": {
+        "waist_flat": 22.9,
+        "inseam": 40.4,
+        "hip_flat": 29.0,
+        "leg_opening": 12.4,
+        "thigh": 14.0
+      },
+      "diagnostics": {
+        "floor_depth_m": 0.89,
+        "plane_residual_pct": 1.4,
+        "plane_p90_pct": 3.3,
+        "tilt_deg": 1.0,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 4,
+      "camera": "estimated",
+      "focal_px": 570.815,
+      "inference_seconds": 2.54,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 61.04,
+        "inseam": 63.92,
+        "hip_flat": 59.59,
+        "leg_opening": 61.46,
+        "thigh": 60.66
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 23.5,
+        "inseam": 50.5,
+        "hip_flat": 29.2,
+        "leg_opening": 12.6,
+        "thigh": 14.8
+      },
+      "measurements_cm": {
+        "waist_flat": 15.0,
+        "inseam": 28.5,
+        "hip_flat": 19.8,
+        "leg_opening": 7.9,
+        "thigh": 9.6
+      },
+      "diagnostics": {
+        "floor_depth_m": 0.99,
+        "plane_residual_pct": 0.7,
+        "plane_p90_pct": 1.8,
+        "tilt_deg": 5.6,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 4,
+      "camera": "known",
+      "focal_px": 450.0,
+      "inference_seconds": 2.55,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "waist_flat": 53.25,
+        "inseam": 55.95,
+        "hip_flat": 51.43,
+        "leg_opening": 52.68,
+        "thigh": 52.87
+      },
+      "absolute_errors_cm": {
+        "waist_flat": 20.5,
+        "inseam": 44.2,
+        "hip_flat": 25.2,
+        "leg_opening": 10.8,
+        "thigh": 12.9
+      },
+      "measurements_cm": {
+        "waist_flat": 18.0,
+        "inseam": 34.8,
+        "hip_flat": 23.8,
+        "leg_opening": 9.7,
+        "thigh": 11.5
+      },
+      "diagnostics": {
+        "floor_depth_m": 0.94,
+        "plane_residual_pct": 1.3,
+        "plane_p90_pct": 2.9,
+        "tilt_deg": 5.0,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 5,
+      "camera": "estimated",
+      "focal_px": 564.961,
+      "inference_seconds": 2.52,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 8.19,
+        "pit_to_pit": 8.15,
+        "sleeve_length": 7.37,
+        "hem_width": 8.14
+      },
+      "absolute_errors_cm": {
+        "length": 5.9,
+        "pit_to_pit": 4.4,
+        "sleeve_length": 1.4,
+        "hem_width": 4.3
+      },
+      "measurements_cm": {
+        "length": 66.1,
+        "pit_to_pit": 49.6,
+        "sleeve_length": 17.6,
+        "hem_width": 48.5
+      },
+      "diagnostics": {
+        "floor_depth_m": 1.37,
+        "plane_residual_pct": 0.5,
+        "plane_p90_pct": 1.2,
+        "tilt_deg": 0.8,
+        "mm_per_px": 1.0
+      }
+    },
+    {
+      "case": 5,
+      "camera": "known",
+      "focal_px": 450.0,
+      "inference_seconds": 2.57,
+      "mode": "depth",
+      "absolute_errors_pct": {
+        "length": 6.11,
+        "pit_to_pit": 6.3,
+        "sleeve_length": 7.37,
+        "hem_width": 5.68
+      },
+      "absolute_errors_cm": {
+        "length": 4.4,
+        "pit_to_pit": 3.4,
+        "sleeve_length": 1.4,
+        "hem_width": 3.0
+      },
+      "measurements_cm": {
+        "length": 76.4,
+        "pit_to_pit": 57.4,
+        "sleeve_length": 20.4,
+        "hem_width": 55.8
+      },
+      "diagnostics": {
+        "floor_depth_m": 1.27,
+        "plane_residual_pct": 0.8,
+        "plane_p90_pct": 1.8,
+        "tilt_deg": 1.1,
+        "mm_per_px": 1.0
+      }
+    }
+  ],
+  "summary": [
+    {
+      "camera": "estimated",
+      "accepted": 6,
+      "total": 6,
+      "scored_measurements": 29,
+      "median_error_pct": 49.42,
+      "max_error_pct": 66.81,
+      "median_error_cm": 18.0,
+      "p90_error_cm": 37.66
+    },
+    {
+      "camera": "known",
+      "accepted": 6,
+      "total": 6,
+      "scored_measurements": 29,
+      "median_error_pct": 40.52,
+      "max_error_pct": 55.95,
+      "median_error_cm": 13.4,
+      "p90_error_cm": 29.88
+    }
+  ],
+  "status": "completed",
+  "peak_rss_mb": 905.4,
+  "artifact": {
+    "name": "unidepth",
+    "repository": "lpiccinelli/unidepth-v2-vits14",
+    "revision": "038c238f06c87b6c2f5b3749fd51fbf442b1f218",
+    "source_commit": "8d8cfe4c7ee15297099983607febf0d4f32eb3d6",
+    "files": [
+      {
+        "file": "README.md",
+        "sha256": "56b1da4f52d78fd22d6191aa40b6e59223072e32393907494c31aff7b57ba3be",
+        "bytes": 397
+      },
+      {
+        "file": "config.json",
+        "sha256": "ecc1f898690debe387d10329cca5d9d66a0a447ce83c3a2a7ae3673c7ce43cfe",
+        "bytes": 3483
+      },
+      {
+        "file": "model.safetensors",
+        "sha256": "93705cb3295dd7476b44911b8a55f5215bf74e8d5eccd27cecdb1b338270a648",
+        "bytes": 136777580
+      },
+      {
+        "file": "pytorch_model.bin",
+        "sha256": "b42c32277005e2183cef1ebe8e2d68b7f59608e41848df81c2e2384d7bda9df0",
+        "bytes": 136853458
+      }
+    ]
+  },
+  "load_seconds": 16.61
+}

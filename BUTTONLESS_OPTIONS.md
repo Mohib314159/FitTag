@@ -4,6 +4,10 @@ Reviewed 10 October 2026. This is research, not a new accuracy claim or a change
 to the deployed estimator. No button, paper, coin or card is proposed as a
 required reference. Experimental models remain on the unmerged audit branch.
 
+Follow-up: [completed model trials](BUTTONLESS_MODEL_RESULTS.md) and the
+[no-Mac LiDAR trial](LIDAR_TRIAL.md) supersede the untested status of the three
+additional RGB candidates below. None was promoted to production.
+
 ## Recommendation
 
 For **new captures on an iPhone 15 Pro Max**, investigate a small native depth

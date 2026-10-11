@@ -74,3 +74,11 @@ The owner also rejected button-only measurement as unreliable and asked to inves
 ## Buttonless requirement reaffirmed (2026-10-10)
 
 The owner then explicitly rejected A4 and reaffirmed the intended experience: upload an ordinary photo, without a button or reference object, and investigate metadata, pixel geometry and any other viable cues to size. This supersedes the A4 priority above. The partial paper experiment was preserved in an unmerged Git stash on its separate branch; it is not shipped. Buttonless improvements are researched and benchmarked on `codex/fittag-buttonless-depth-audit` before changing main. Do not manufacture dependable centimetres when the required scale evidence is absent.
+
+## Model trials and rear LiDAR (2026-10-11)
+
+- The owner asked to actually try the researched alternatives. UniDepthV2 Small, DA3Metric-Large and Depth Pro were run on controlled generated captures; all produced material measurement errors. These experiments do not establish real-garment accuracy or user impact.
+- Asking whether A4 was the only option did not reverse the no-reference goal. The next explicit choice was to try rear LiDAR, like Apple Measure, while recovering supported garment measurements together rather than manually tapping each length.
+- The owner confirmed no Mac is available. Use an existing iPhone app's raw calibrated depth export for a bounded private capture/import test before investing in a native application. The chosen Record3D format is an assistant implementation choice, not a user requirement or purchase authorization.
+- The owner expressed concern about wasted effort. Prioritize one real garment trial and a clear failure diagnosis; do not keep downloading models or redesigning the UI without evidence that the measurement path is useful.
+- Keep this sensing/research work on the existing experimental branch. Do not merge it, change the deployed PWA or publish personal recordings, dimensions or outputs. A successful generated archive round trip is not physical-device verification.

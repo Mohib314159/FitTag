@@ -1,5 +1,9 @@
 # Buttonless scale audit
 
+[Completed additional model trials](BUTTONLESS_MODEL_RESULTS.md) now include
+actual UniDepthV2, DA3Metric and Depth Pro runs, geometry controls, HEIC depth
+inspection and a local [rear-LiDAR import trial](LIDAR_TRIAL.md).
+
 Follow-up: [more reliable buttonless options](BUTTONLESS_OPTIONS.md) compares
 sensor capture, original HEIC depth, newer RGB models and garment-specific
 learning, with sources and a proposed real-garment evaluation plan.
@@ -104,9 +108,10 @@ Primary sources: [Depth Anything preprocessing](https://github.com/DepthAnything
 [Microsoft MoGe](https://github.com/microsoft/MoGe),
 [the authors' ONNX limitations](https://github.com/microsoft/MoGe/blob/main/docs/onnx.md),
 [Apple Depth Pro](https://github.com/apple-aiml-research/ml-depth-pro).
-The isolated CPU PyTorch environment was prepared for comparisons, but the
-completed MoGe run uses ONNXRuntime. Depth Pro and MoGe-3 were researched,
-not benchmarked; neither is claimed as a working Render replacement.
+The completed MoGe run uses ONNXRuntime. At this initial audit, Depth Pro and
+MoGe-3 had only been researched. Depth Pro was subsequently benchmarked in the
+additional trials linked above; MoGe-3 remains untested here. Neither is a
+working Render replacement.
 
 Reproduce locally with the optional `requirements-research.txt`. Download
 weights with `python -m tools.download_moge_model /path/to/moge-small.onnx`,
